@@ -1,0 +1,152 @@
+<!--
+  chapters/10-components.xml
+
+  Components: <component name="..." tag="..."> compiles into a real
+  Custom Element. Props become signals via attributes; <style> is auto-
+  scoped; <on:mount>/<on:unmount> let components run setup/teardown.
+
+  This chapter defines a tiny <x-counter-pair> component inline and uses
+  it twice on the page.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <!--
+    A reusable counter component scoped to this chapter. Has props:
+       label  - the heading.
+       step   - how much each tick adds.
+    And a private `count` signal.
+
+    The <style> block is automatically prefixed so its rules only apply
+    inside instances of this component.
+  -->
+  <component name="counter-pair" tag="x-counter-pair" label="Counter" step="1">
+    <style>
+      .panel { border: 1px dashed rgba(255,255,255,.2); border-radius: .5rem; padding: 1rem; }
+      .panel:hover { border-color: rgba(13, 202, 240, .5); }
+      .number { font-size: 2rem; font-weight: 600; }
+    </style>
+
+    <model>
+      <signal name="count" value="0" />
+    </model>
+
+    <controller>
+      <action name="up"><set signal="count" value="count + Number(step)" /></action>
+      <action name="down"><set signal="count" value="count - Number(step)" /></action>
+      <action name="reset"><set signal="count" value="0" /></action>
+    </controller>
+
+    <view>
+      <div class="panel">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <strong>{label}</strong>
+          <small class="text-secondary">step: {step}</small>
+        </div>
+        <div class="number text-info">{count}</div>
+        <div class="d-flex gap-2 mt-2">
+          <button class="btn btn-sm btn-info" on:click="#up">+ {step}</button>
+          <button class="btn btn-sm btn-outline-light" on:click="#down">- {step}</button>
+          <button class="btn btn-sm btn-outline-secondary" on:click="#reset">reset</button>
+        </div>
+      </div>
+    </view>
+  </component>
+
+  <component name="chapter-components" tag="x-chapter-components">
+    <model>
+      <signal name="snippet"><![CDATA[<component name="counter-pair" tag="x-counter-pair" label="Counter" step="1">
+  <style>
+    .panel { border: 1px dashed rgba(255,255,255,.2); padding: 1rem; }
+  </style>
+
+  <model>
+    <signal name="count" value="0" />
+  </model>
+
+  <controller>
+    <action name="up">
+      <set signal="count" value="count + Number(step)" />
+    </action>
+  </controller>
+
+  <view>
+    <div class="panel">
+      <strong>{label}</strong>
+      <div>{count}</div>
+      <button on:click="#up">+ {step}</button>
+    </div>
+  </view>
+</component>
+
+<!-- Use it: -->
+<x-counter-pair label="Visitors" step="1" />
+<x-counter-pair label="Score" step="10" />]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-boxes" title="Components"
+          subtitle="Compile your own custom elements with props, scoped style, and lifecycle hooks." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  Every <code>&lt;component&gt;</code> registers a Custom Element with the browser.
+                  Once registered, it's just HTML - you can use it anywhere, even inside other
+                  Galath views.
+                </p>
+                <ul class="text-secondary">
+                  <li><strong>Props</strong> are attributes on the component definition. Their
+                      default value is the attribute value. The runtime maps them to signals of
+                      the same name in the component's scope.</li>
+                  <li><strong>Scoped style</strong>: a <code>&lt;style&gt;</code> block at the top
+                      of the component is rewritten so its rules only match inside that
+                      component's root.</li>
+                  <li><strong>Lifecycle</strong>: <code>&lt;on:mount&gt;</code> runs after
+                      connect; <code>&lt;on:unmount&gt;</code> runs before disconnect. Both
+                      accept the same operation vocabulary as commands and actions.</li>
+                </ul>
+                <p class="text-secondary mb-0">
+                  The two counter panels below are the same component with different props - one
+                  source of truth, two independent instances.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <x-counter-pair label="Visitors" step="1" />
+              </div>
+              <div class="col-md-4">
+                <x-counter-pair label="Score" step="10" />
+              </div>
+              <div class="col-md-4">
+                <x-counter-pair label="Temperature" step="5" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

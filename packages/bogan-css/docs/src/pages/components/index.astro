@@ -1,0 +1,134 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Components" description="UI building blocks for a Storybook-style component workshop. Each component maps to a specific region of the three-column app shell.">
+
+  <!-- Architecture map -->
+  <div class="cf-preview-frame mb-4">
+    <h2 class="h5 mb-3">Layout Architecture</h2>
+    <div class="d-flex flex-column gap-1 font-monospace small">
+      <div class="p-2 rounded text-center" style="background: rgba(var(--cf-primary-rgb),.1); border: 1px solid rgba(var(--cf-primary-rgb),.2)">
+        <strong>.cf-header</strong> — top navigation bar with logo, nav links, search
+      </div>
+      <div class="d-flex gap-1" style="min-height: 6rem">
+        <div class="p-2 rounded d-flex align-items-center justify-content-center text-center" style="flex:0 0 22%; background: rgba(var(--cf-accent-rgb),.08); border: 1px solid rgba(var(--cf-accent-rgb),.2)">
+          <span><strong>.cf-sidebar</strong><br><span class="cf-muted">story tree</span></span>
+        </div>
+        <div class="d-flex flex-column gap-1 flex-grow-1">
+          <div class="p-2 rounded text-center" style="background: rgba(var(--cf-accent-rgb),.06); border: 1px solid rgba(var(--cf-accent-rgb),.15)">
+            <strong>.cf-toolbar</strong> — tool buttons
+          </div>
+          <div class="p-2 rounded flex-grow-1 d-flex align-items-center justify-content-center text-center" style="background: var(--cf-surface-2); border: 1px solid var(--cf-line)">
+            <strong>.cf-canvas</strong> — isolated story preview
+          </div>
+          <div class="p-2 rounded text-center" style="background: rgba(var(--cf-accent-rgb),.06); border: 1px solid rgba(var(--cf-accent-rgb),.15)">
+            <strong>.cf-addon-panel</strong> — controls / actions / source
+          </div>
+        </div>
+        <div class="p-2 rounded d-flex align-items-center justify-content-center text-center" style="flex:0 0 22%; background: rgba(var(--cf-success-rgb),.06); border: 1px solid rgba(var(--cf-success-rgb),.18)">
+          <span><strong>.cf-docs-panel</strong><br><span class="cf-muted">props &amp; docs</span></span>
+        </div>
+      </div>
+      <div class="p-2 rounded text-center" style="background: rgba(var(--cf-primary-rgb),.06); border: 1px solid rgba(var(--cf-primary-rgb),.15)">
+        <strong>.cf-statusbar</strong> — status messages and version
+      </div>
+    </div>
+  </div>
+
+  <!-- Component grid -->
+  <h2 class="h5 mb-3">All Components</h2>
+  <div class="row g-3">
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/app-shell/">
+        <span class="cf-story-icon"><i class="bi bi-layout-three-columns"></i></span>
+        <div>
+          <h3 class="cf-story-title">App Shell</h3>
+          <p class="cf-muted mb-1">Root layout grid — header, workbench, and status bar. The skeleton every other component sits inside.</p>
+          <code class="small">.cf-app  .cf-header  .cf-workbench</code>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/sidebar/">
+        <span class="cf-story-icon"><i class="bi bi-layout-sidebar"></i></span>
+        <div>
+          <h3 class="cf-story-title">Sidebar & Tree</h3>
+          <p class="cf-muted mb-1">Scrollable story hierarchy with collapsible groups, active leaf, and badges.</p>
+          <code class="small">.cf-sidebar  .cf-tree  .cf-tree-item</code>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/toolbar/">
+        <span class="cf-story-icon"><i class="bi bi-tools"></i></span>
+        <div>
+          <h3 class="cf-story-title">Toolbar</h3>
+          <p class="cf-muted mb-1">Tool buttons with active states, grouped by separator, and a spacer to push items right.</p>
+          <code class="small">.cf-toolbar  .cf-tool  .cf-toolbar-group</code>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/preview/">
+        <span class="cf-story-icon"><i class="bi bi-window-fullscreen"></i></span>
+        <div>
+          <h3 class="cf-story-title">Canvas & Preview</h3>
+          <p class="cf-muted mb-1">Isolated rendering surface with dot-grid background, preview frame card, and loading overlay.</p>
+          <code class="small">.cf-canvas  .cf-preview-frame  .cf-preview-card</code>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/addon-panel/">
+        <span class="cf-story-icon"><i class="bi bi-puzzle"></i></span>
+        <div>
+          <h3 class="cf-story-title">Addon Panel</h3>
+          <p class="cf-muted mb-1">Bottom tab panel for Controls, Actions, Source, and Accessibility addons. Collapsible.</p>
+          <code class="small">.cf-addon-panel  .cf-tabbar  .cf-addon-tab</code>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/controls/">
+        <span class="cf-story-icon"><i class="bi bi-sliders"></i></span>
+        <div>
+          <h3 class="cf-story-title">Controls</h3>
+          <p class="cf-muted mb-1">Args editor grid for tweaking story props. Wraps any form control with labeled rows.</p>
+          <code class="small">.cf-control-grid  .cf-control  .cf-control-label</code>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/docs-panel/">
+        <span class="cf-story-icon"><i class="bi bi-file-text"></i></span>
+        <div>
+          <h3 class="cf-story-title">Docs Panel</h3>
+          <p class="cf-muted mb-1">Right-side panel with props table, usage examples, and sticky header for component documentation.</p>
+          <code class="small">.cf-docs-panel  .cf-props-table  .cf-doc-example</code>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/status-bar/">
+        <span class="cf-story-icon"><i class="bi bi-reception-4"></i></span>
+        <div>
+          <h3 class="cf-story-title">Status Bar</h3>
+          <p class="cf-muted mb-1">Thin footer bar showing workshop state, error count, and version. Mirrors VS Code / Storybook style.</p>
+          <code class="small">.cf-statusbar</code>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6 col-xl-4">
+      <a class="cf-story-card" href="/components/story-card/">
+        <span class="cf-story-icon"><i class="bi bi-card-list"></i></span>
+        <div>
+          <h3 class="cf-story-title">Story Card</h3>
+          <p class="cf-muted mb-1">Linked card for story overview grids and docs indexes. Includes icon, title, meta tags, and quality variant.</p>
+          <code class="small">.cf-story-card  .cf-story-icon  .cf-quality-card</code>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</BaseLayout>

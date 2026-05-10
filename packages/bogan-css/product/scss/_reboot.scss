@@ -1,0 +1,24 @@
+body {
+  min-width: 320px;
+  background: var(--cf-bg);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(var(--cf-accent-rgb), .7);
+  outline-offset: 2px;
+}
+
+.cf-muted {
+  color: var(--cf-muted);
+}
+
+.cf-mono {
+  font-family: var(--cf-font-mono);
+}

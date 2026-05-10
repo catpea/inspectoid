@@ -1,0 +1,50 @@
+@use "variables" as *;
+@use "functions" as *;
+
+:root,
+[data-bs-theme="light"] {
+  color-scheme: light;
+  --cf-bg: #{$cf-light-bg};
+  --cf-surface: #{$cf-light-surface};
+  --cf-surface-2: #{$cf-light-surface-2};
+  --cf-text: #{$cf-light-text};
+  --cf-muted: #{$cf-light-muted};
+  --cf-line: #{$cf-light-line};
+  --cf-primary: #{$cf-primary};
+  --cf-primary-rgb: #{cf-rgb($cf-primary)};
+  --cf-accent: #{$cf-accent};
+  --cf-accent-rgb: #{cf-rgb($cf-accent)};
+  --cf-success: #{$cf-success};
+  --cf-success-rgb: #{cf-rgb($cf-success)};
+  --cf-warning: #{$cf-warning};
+  --cf-warning-rgb: #{cf-rgb($cf-warning)};
+  --cf-danger: #{$cf-danger};
+  --cf-danger-rgb: #{cf-rgb($cf-danger)};
+  --cf-radius: #{$border-radius-lg};
+  --cf-radius-sm: #{$border-radius-sm};
+  --cf-shadow: #{$box-shadow};
+  --cf-font-mono: #{$cf-font-mono};
+  --cf-header-height: 3.75rem;
+  --cf-status-height: 1.75rem;
+  --cf-sidebar-width: 16.25rem;
+  --cf-docs-width: 20rem;
+  --cf-addon-height: 15.5rem;
+}
+
+[data-bs-theme="dark"] {
+  color-scheme: dark;
+  --bs-body-bg: #{$cf-dark-bg};
+  --bs-body-color: #{$cf-dark-text};
+  --bs-secondary-color: #{$cf-dark-muted};
+  --bs-border-color: #{$cf-dark-line};
+  --bs-card-bg: #{$cf-dark-surface};
+  --bs-dropdown-bg: #{$cf-dark-surface};
+  --bs-dropdown-color: #{$cf-dark-text};
+  --bs-dropdown-border-color: #{$cf-dark-line};
+  --cf-bg: #{$cf-dark-bg};
+  --cf-surface: #{$cf-dark-surface};
+  --cf-surface-2: #{$cf-dark-surface-2};
+  --cf-text: #{$cf-dark-text};
+  --cf-muted: #{$cf-dark-muted};
+  --cf-line: #{$cf-dark-line};
+}

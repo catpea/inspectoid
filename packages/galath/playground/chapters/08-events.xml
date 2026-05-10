@@ -1,0 +1,126 @@
+<!--
+  chapters/08-events.xml
+
+  XML Events: declarative listeners on the data tree, separate from DOM
+  events. Useful for cross-cutting concerns like logging, undo stacks,
+  or syncing to a server.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-events" tag="x-chapter-events">
+    <model>
+      <signal name="log" value="" />
+
+      <instance>
+        <project name="Galath">
+          <task id="t1" title="Write the runtime" done="true" />
+          <task id="t2" title="Write the playground" done="false" />
+        </project>
+      </instance>
+
+      <signal name="snippet"><![CDATA[<listeners>
+  <listener event="xforms-insert"        observer="/project" handler="#log" />
+  <listener event="xforms-delete"        observer="/project" handler="#log" />
+  <listener event="xforms-value-changed" observer="/project" handler="#log" />
+</listeners>
+
+<controller>
+  <action name="log">
+    <set signal="log" value="$event.type + ' at ' + $event.path + '\n' + log" />
+  </action>
+</controller>]]></signal>
+    </model>
+
+    <controller>
+      <action name="log">
+        <set signal="log" value="$event.type + ' at ' + $event.path + '\n' + log" />
+      </action>
+      <action name="addTask">
+        <insert ref="/project">
+          <task id="{uid()}" title="New task" done="false" />
+        </insert>
+      </action>
+      <action name="clearLog">
+        <set signal="log" value="''" />
+      </action>
+    </controller>
+
+    <listeners>
+      <listener event="xforms-insert"        observer="/project" handler="#log" />
+      <listener event="xforms-delete"        observer="/project" handler="#log" />
+      <listener event="xforms-value-changed" observer="/project" handler="#log" />
+    </listeners>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-broadcast-pin" title="XML Events"
+          subtitle="Listen to data-tree mutations the same way DOM events work, but for state." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  Three event types fire on every instance-tree mutation:
+                </p>
+                <ul class="text-secondary">
+                  <li><code>xforms-insert</code> - a node was added.</li>
+                  <li><code>xforms-delete</code> - a node was removed.</li>
+                  <li><code>xforms-value-changed</code> - an attribute or text was updated.</li>
+                </ul>
+                <p class="text-secondary">
+                  The <code>observer="/path"</code> attribute filters by path prefix, so you can
+                  listen to only the part of the tree you care about. <code>$event</code> exposes
+                  <code>type</code>, <code>path</code>, <code>node</code>, <code>parent</code>,
+                  and the attribute fields.
+                </p>
+                <p class="text-secondary mb-0">
+                  Use these for logging, undo, persistence, or any side effect that should fire on
+                  data change.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="d-flex gap-2 flex-wrap mb-3">
+              <button class="btn btn-info" on:click="#addTask"><i class="bi bi-plus-circle me-1"></i>Add task</button>
+              <button class="btn btn-outline-light" on:click="#clearLog"><i class="bi bi-eraser me-1"></i>Clear log</button>
+            </div>
+
+            <ul class="list-group mb-3">
+              <repeat ref="/project/task" as="t">
+                <li class="list-group-item d-flex align-items-center gap-2">
+                  <input class="form-check-input m-0" type="checkbox" bind:checked="$t/@done" />
+                  <input class="form-control form-control-sm flex-grow-1" bind:value="$t/@title" />
+                  <button class="btn btn-sm btn-outline-danger" on:click="deleteNode($t)">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </li>
+              </repeat>
+            </ul>
+
+            <label class="form-label">Live event log</label>
+            <textarea class="form-control font-monospace" rows="6" bind:value="log"></textarea>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

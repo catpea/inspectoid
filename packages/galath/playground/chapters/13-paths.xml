@@ -1,0 +1,197 @@
+<!--
+  chapters/13-paths.xml
+
+  Documents Galath's deliberately small instance-tree path grammar.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-paths" tag="x-chapter-paths">
+    <model>
+      <instance>
+        <todos>
+          <todo id="a" text="Draft the path chapter" done="true">first todo text</todo>
+          <todo id="b" text="Test wildcard selectors" done="false">second todo text</todo>
+          <note id="n1" text="Wildcard also matches this note">note text</note>
+        </todos>
+        <projects>
+          <project id="docs">
+            <task id="a" text="Nested task" />
+          </project>
+        </projects>
+      </instance>
+
+      <signal name="snippet"><![CDATA[<repeat ref="/todos/todo" as="todo">
+  <text value="$todo/@text" />
+</repeat>
+
+<text value="/todos/todo[@id=a]/@text" />
+<text value="/todos/todo[2]/text()" />
+<repeat ref="/todos/*" as="item">
+  <text value="$item/@id" />
+</repeat>]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-signpost-split" title="Paths"
+          subtitle="A small, predictable path grammar for reading and writing XML instance data." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  Galath paths address the component's XML instance tree. They look like a
+                  small subset of XPath, but they are intentionally simpler: walk direct
+                  children with <code>/</code>, filter one step with an attribute predicate,
+                  read attributes with <code>@</code>, read direct text with
+                  <code>text()</code>, and use <code>*</code> for a single wildcard step.
+                </p>
+                <p class="text-secondary mb-0">
+                  Paths show up in <code>repeat ref</code>, <code>items source</code>,
+                  <code>bind:value</code>, <code>setvalue ref</code>, <code>delete ref</code>,
+                  <code>listener observer</code>, <code>valueOf(path)</code>, and
+                  <code>&lt;text value="path"/&gt;</code>.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <button class="btn btn-sm btn-outline-info" use:copy="snippet"><i class="bi bi-clipboard me-1"></i>Copy</button>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card mb-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-list-check me-2"></i>Cheat sheet</strong>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-dark table-sm align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Path</th>
+                    <th>Meaning</th>
+                    <th>Result in this chapter</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>/foo/bar</code></td>
+                    <td>Direct child steps from the instance root.</td>
+                    <td><code>/todos/todo</code>: {select('/todos/todo').length} todo nodes</td>
+                  </tr>
+                  <tr>
+                    <td><code>/foo/bar[@id=x]</code></td>
+                    <td>Attribute equality predicate on one step.</td>
+                    <td><code>/todos/todo[@id=a]</code>: {valueOf('/todos/todo[@id=a]/@text')}</td>
+                  </tr>
+                  <tr>
+                    <td><code>/foo/bar[n]</code></td>
+                    <td>1-based index after matching the step.</td>
+                    <td><code>/todos/todo[2]</code>: {valueOf('/todos/todo[2]/@text')}</td>
+                  </tr>
+                  <tr>
+                    <td><code>$todo/@text</code></td>
+                    <td>Attribute from a repeat-local node.</td>
+                    <td>
+                      <repeat ref="/todos/todo" as="todo">
+                        <span class="badge text-bg-secondary me-1"><text value="$todo/@text" /></span>
+                      </repeat>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>/foo/text()</code> via the <code>/text()</code> suffix</td>
+                    <td>Direct text value of the first matching node.</td>
+                    <td><code>/todos/todo/text()</code>: {valueOf('/todos/todo/text()')}</td>
+                  </tr>
+                  <tr>
+                    <td><code>*</code></td>
+                    <td>Wildcard for one child step.</td>
+                    <td><code>/todos/*</code>: {select('/todos/*').length} children under <code>todos</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent">
+                <strong><i class="bi bi-braces me-2"></i>Grammar</strong>
+              </div>
+              <div class="card-body">
+                <pre class="xes-code rounded p-3 mb-0"><code>path        = absolute | local
+absolute    = "/" step ("/" step)*
+local       = "$" name ("/" step)*
+step        = name | "*"
+step        = step "[@attr=value]"
+step        = step "[n]"
+value-path  = path "/@attr"
+value-path  = path "/text()"</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent">
+                <strong><i class="bi bi-tree me-2"></i>Sample instance</strong>
+              </div>
+              <div class="card-body">
+                <pre class="xes-code rounded p-3 mb-0"><code>&lt;todos&gt;
+  &lt;todo id="a" text="Draft the path chapter"&gt;first todo text&lt;/todo&gt;
+  &lt;todo id="b" text="Test wildcard selectors"&gt;second todo text&lt;/todo&gt;
+  &lt;note id="n1" text="Wildcard also matches this note"&gt;note text&lt;/note&gt;
+&lt;/todos&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-slash-circle me-2"></i>Unsupported on purpose</strong>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6 col-xl-3">
+                <div class="xes-pill rounded p-3 h-100">
+                  <code>//todo</code>
+                  <p class="text-secondary mb-0 mt-2">No descendant search. Write the explicit child path.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-xl-3">
+                <div class="xes-pill rounded p-3 h-100">
+                  <code>/todos/todo[last()]</code>
+                  <p class="text-secondary mb-0 mt-2">No function calls beyond trailing <code>text()</code>.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-xl-3">
+                <div class="xes-pill rounded p-3 h-100">
+                  <code>/projects/project[task/@id=a]</code>
+                  <p class="text-secondary mb-0 mt-2">No multi-step predicates inside brackets.</p>
+                </div>
+              </div>
+              <div class="col-md-6 col-xl-3">
+                <div class="xes-pill rounded p-3 h-100">
+                  <code>/todos/todo[@id=a and @done=true]</code>
+                  <p class="text-secondary mb-0 mt-2">No boolean predicate expressions. Use a computed signal or controller code.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

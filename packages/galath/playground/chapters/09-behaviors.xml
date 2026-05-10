@@ -1,0 +1,210 @@
+<!--
+  chapters/09-behaviors.xml
+
+  Attached behaviors: tiny disposable extensions to a single element. The
+  built-ins are use:copy, use:focus, use:autosize, plus the drag/drop
+  pair.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-behaviors" tag="x-chapter-behaviors">
+    <model>
+      <instance>
+        <cards>
+          <card id="c1" text="Drag me" color="info" />
+          <card id="c2" text="Or me"   color="success" />
+          <card id="c3" text="Reorder by dropping onto another card" color="warning" />
+        </cards>
+      </instance>
+
+      <signal name="memo" value="Type something then click Copy." />
+
+      <signal name="snippet"><![CDATA[<button use:copy="memo">Copy</button>
+
+<textarea use:autosize bind:value="notes"></textarea>
+
+<input use:focus="open" />
+
+<div drag:source="$card"
+     drop:target="$card"
+     drop:command="reorder">
+  ...
+</div>
+
+<commandset>
+  <command name="reorder">
+    <eval>
+      $source.remove();
+      $target.parent.insertBefore($source, $target);
+    </eval>
+  </command>
+</commandset>]]></signal>
+    </model>
+
+    <commandset>
+      <command name="reorder">
+        <eval>
+          if ($source &amp;&amp; $target &amp;&amp; $source !== $target) {
+            $source.remove();
+            $target.parent.insertBefore($source, $target);
+          }
+        </eval>
+      </command>
+    </commandset>
+
+    <!--
+      Build your own behavior. We register `use:tilt` here at chapter
+      mount time. Real apps would register inside their own feature
+      plugin; this is the same API. The behavior receives the live DOM
+      element and returns a Disposable so the runtime can clean it up
+      on the next render.
+    -->
+    <on:mount>
+      <eval>
+        const lang = window.galath;
+        if (lang &amp;&amp; !lang.behaviors.has('tilt')) {
+          lang.behaviors.set('tilt', (element) => {
+            const onEnter = () => {
+              const angle = (Math.random() * 6 - 3).toFixed(2);
+              element.style.transition = 'transform .15s ease';
+              element.style.transform = `rotate(${angle}deg) scale(1.04)`;
+            };
+            const onLeave = () => { element.style.transform = ''; };
+            element.addEventListener('mouseenter', onEnter);
+            element.addEventListener('mouseleave', onLeave);
+            return new lang.Disposable(() => {
+              element.removeEventListener('mouseenter', onEnter);
+              element.removeEventListener('mouseleave', onLeave);
+              element.style.transform = '';
+            });
+          });
+        }
+      </eval>
+    </on:mount>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-puzzle" title="Behaviors"
+          subtitle="use:* attaches small reusable extensions; drag:* / drop:* compose into drag-and-drop." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  A behavior is a function attached to a single element. It returns a
+                  <code>Disposable</code> so it cleans up on the next render. Built-ins:
+                </p>
+                <ul class="text-secondary">
+                  <li><code>use:copy="signalOrPath"</code> - click to copy.</li>
+                  <li><code>use:focus="expr"</code> - focus when truthy.</li>
+                  <li><code>use:autosize</code> - growing textarea.</li>
+                  <li><code>drag:source="$x"</code> + <code>drop:target="$y"</code> +
+                      <code>drop:command="cmd"</code> - run a command with
+                      <code>$source</code>/<code>$target</code> in scope on drop.</li>
+                </ul>
+                <p class="text-secondary mb-0">
+                  Add your own with <code>language.behaviors.set('name', fn)</code> in a feature
+                  plugin. Each function receives <code>(element, value, instance, local)</code>
+                  and returns a Disposable.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card mb-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-clipboard me-2"></i>use:copy</strong>
+          </div>
+          <div class="card-body">
+            <div class="input-group">
+              <input class="form-control" bind:value="memo" />
+              <button class="btn btn-info" use:copy="memo">
+                <i class="bi bi-clipboard me-1"></i>Copy
+              </button>
+            </div>
+            <small class="text-secondary">Click Copy; the button briefly turns green and the value lands in your clipboard.</small>
+          </div>
+        </div>
+
+        <div class="card xes-card mb-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-tools me-2"></i>Build your own behavior</strong>
+          </div>
+          <div class="card-body">
+            <p class="text-secondary">
+              A behavior is just a function with the signature
+              <code>(element, value, instance, local) =&gt; Disposable</code>. Register it
+              once with <code>language.behaviors.set('name', fn)</code>; from then on,
+              any view can use it via <code>use:name="..."</code>. The runtime collects
+              the returned Disposable on the active render scope, so it is detached on
+              the next render or unmount automatically.
+            </p>
+            <pre class="xes-code rounded p-3"><code>language.behaviors.set('tilt', (element) =&gt; {
+  const onEnter = () =&gt; { element.style.transform = `rotate(${(Math.random() * 6 - 3)}deg)`; };
+  const onLeave = () =&gt; { element.style.transform = ''; };
+  element.addEventListener('mouseenter', onEnter);
+  element.addEventListener('mouseleave', onLeave);
+  return new language.Disposable(() =&gt; {
+    element.removeEventListener('mouseenter', onEnter);
+    element.removeEventListener('mouseleave', onLeave);
+  });
+});
+
+&lt;!-- and then anywhere in a view: --&gt;
+&lt;button use:tilt&gt;Hover me&lt;/button&gt;</code></pre>
+            <div class="d-flex gap-2 flex-wrap mt-2">
+              <button class="btn btn-info" use:tilt="">Hover me</button>
+              <button class="btn btn-outline-info" use:tilt="">Or me</button>
+              <button class="btn btn-outline-warning" use:tilt="">Behavior in action</button>
+            </div>
+            <small class="text-secondary mt-3 d-block">
+              All three buttons share the same behavior; each gets its own listener pair
+              and its own Disposable cleanup.
+            </small>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-arrows-move me-2"></i>Drag &amp; drop</strong>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <repeat ref="/cards/card" as="card">
+                <div class="col-md-4">
+                  <div class="card text-bg-{$card/@color}"
+                       drag:source="$card"
+                       drop:target="$card"
+                       drop:command="reorder"
+                       style="cursor: grab;">
+                    <div class="card-body">
+                      <i class="bi bi-grip-vertical me-2"></i>
+                      <strong><text value="$card/@text" /></strong>
+                    </div>
+                  </div>
+                </div>
+              </repeat>
+            </div>
+            <small class="text-secondary mt-3 d-block">
+              Drag a card onto another to reorder. The drag is wired by attaching three attributes
+              and writing a single command - no event handlers in JS.
+            </small>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

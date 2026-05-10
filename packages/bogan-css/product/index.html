@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Components FantasyUI</title>
+    <link rel="stylesheet" href="css/components-fantasyui.min.css">
+  </head>
+  <body>
+    <div class="cf-app">
+      <header class="cf-header">
+        <a class="cf-logo" href="index.html">
+          <span class="cf-logo-mark"><i class="bi bi-braces"></i></span>
+          <span>Components</span>
+        </a>
+        <nav class="cf-header-nav">
+          <a class="cf-header-link is-active" href="../docs/dist/index.html">Docs</a>
+          <a class="cf-header-link" href="../examples/component-workshop/index.html">Stories</a>
+          <a class="cf-header-link" href="../examples/addon-panel/index.html">Addons</a>
+        </nav>
+        <div class="cf-search">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
+            <input class="form-control" type="search" placeholder="Search components" data-cf-search>
+            <span class="input-group-text bg-transparent"><kbd class="small">Ctrl</kbd><kbd class="small ms-1">K</kbd></span>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-1"></i>Team
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><button class="dropdown-item" type="button" data-cf-theme="light"><i class="bi bi-sun me-2"></i>Light</button></li>
+            <li><button class="dropdown-item" type="button" data-cf-theme="dark"><i class="bi bi-moon-stars me-2"></i>Dark</button></li>
+            <li><button class="dropdown-item" type="button" data-cf-theme="auto"><i class="bi bi-circle-half me-2"></i>Auto</button></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Logout</a></li>
+          </ul>
+        </div>
+      </header>
+
+      <div class="cf-workbench has-docs">
+        <aside class="cf-sidebar cf-scrollbar">
+          <div class="cf-sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+              <strong>Story hierarchy</strong>
+              <span class="badge text-bg-primary">42</span>
+            </div>
+          </div>
+          <nav class="cf-tree">
+            <div class="cf-tree-group">
+              <div class="cf-tree-label"><i class="bi bi-folder2-open"></i>Components</div>
+              <a class="cf-tree-item is-active" href="#" data-cf-label="button primary"><i class="bi bi-record-circle"></i>Button / Primary <span class="cf-tree-badge">story</span></a>
+              <a class="cf-tree-item" href="#" data-cf-label="button secondary"><i class="bi bi-circle"></i>Button / Secondary</a>
+              <a class="cf-tree-item" href="#" data-cf-label="input text"><i class="bi bi-input-cursor-text"></i>Input / Text</a>
+              <a class="cf-tree-item" href="#" data-cf-label="input password"><i class="bi bi-key"></i>Input / Password</a>
+            </div>
+            <div class="cf-tree-group">
+              <div class="cf-tree-label"><i class="bi bi-window-sidebar"></i>Patterns</div>
+              <a class="cf-tree-item" href="#" data-cf-label="navigation shell"><i class="bi bi-layout-sidebar"></i>Navigation Shell</a>
+              <a class="cf-tree-item" href="#" data-cf-label="settings form"><i class="bi bi-sliders"></i>Settings Form</a>
+              <a class="cf-tree-item" href="#" data-cf-label="empty state"><i class="bi bi-inbox"></i>Empty State</a>
+            </div>
+            <div class="cf-tree-group">
+              <div class="cf-tree-label"><i class="bi bi-bezier2"></i>Design System</div>
+              <a class="cf-tree-item" href="#" data-cf-label="color tokens"><i class="bi bi-palette"></i>Color Tokens</a>
+              <a class="cf-tree-item" href="#" data-cf-label="typography"><i class="bi bi-type"></i>Typography</a>
+            </div>
+          </nav>
+        </aside>
+
+        <main class="cf-center">
+          <div class="cf-toolbar">
+            <div class="cf-toolbar-group">
+              <button class="cf-tool is-active" type="button"><i class="bi bi-window"></i>Canvas</button>
+              <button class="cf-tool" type="button" data-cf-toggle-docs aria-pressed="true"><i class="bi bi-file-text"></i>Docs</button>
+              <button class="cf-tool" type="button" data-cf-toggle-addons aria-pressed="true"><i class="bi bi-sliders"></i>Controls</button>
+              <button class="cf-tool" type="button"><i class="bi bi-activity"></i>Actions</button>
+            </div>
+            <div class="cf-toolbar-spacer"></div>
+            <div class="cf-toolbar-group">
+              <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" data-cf-fullscreen aria-label="Fullscreen" aria-pressed="false"><i class="bi bi-arrows-fullscreen"></i></button>
+              <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" aria-label="Zoom in"><i class="bi bi-zoom-in"></i></button>
+              <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" aria-label="Zoom out"><i class="bi bi-zoom-out"></i></button>
+              <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" aria-label="Reset layout"><i class="bi bi-arrow-counterclockwise"></i></button>
+            </div>
+          </div>
+
+          <section class="cf-canvas" aria-label="Story preview canvas">
+            <div class="cf-preview-frame">
+              <div class="cf-preview-card">
+                <div class="d-flex align-items-center justify-content-between gap-3">
+                  <div>
+                    <span class="badge text-bg-primary mb-2">Button</span>
+                    <h1 class="h4 mb-1">Primary Button</h1>
+                    <p class="cf-muted mb-0">Isolated story preview with realistic states and controls.</p>
+                  </div>
+                  <button class="btn btn-primary" type="button"><i class="bi bi-lightning-charge me-1"></i>Button</button>
+                </div>
+                <hr>
+                <div class="d-flex flex-wrap gap-2">
+                  <button class="btn btn-primary" type="button">Primary</button>
+                  <button class="btn btn-outline-primary" type="button">Secondary</button>
+                  <button class="btn btn-primary" type="button" disabled>Disabled</button>
+                </div>
+              </div>
+            </div>
+            <div class="cf-loading-overlay" aria-live="polite">
+              <div class="spinner-border text-primary" role="status"></div>
+            </div>
+          </section>
+
+          <section class="cf-addon-panel">
+            <div class="cf-tabbar" role="tablist" aria-label="Addon panels">
+              <button class="cf-addon-tab is-active" type="button" data-cf-tab="controls">Controls</button>
+              <button class="cf-addon-tab" type="button" data-cf-tab="actions">Actions</button>
+              <button class="cf-addon-tab" type="button" data-cf-tab="source">Source</button>
+              <button class="cf-addon-tab" type="button" data-cf-tab="a11y">Accessibility</button>
+            </div>
+            <div class="cf-addon-content">
+              <div class="cf-panel-pane is-active" data-cf-pane="controls">
+                <div class="cf-control-grid">
+                  <label class="cf-control">
+                    <span class="cf-control-label">label <code>string</code></span>
+                    <input class="form-control form-control-sm" value="Button">
+                  </label>
+                  <label class="cf-control">
+                    <span class="cf-control-label">disabled <code>boolean</code></span>
+                    <select class="form-select form-select-sm"><option>false</option><option>true</option></select>
+                  </label>
+                  <label class="cf-control">
+                    <span class="cf-control-label">size <code>enum</code></span>
+                    <select class="form-select form-select-sm"><option>small</option><option selected>medium</option><option>large</option></select>
+                  </label>
+                </div>
+              </div>
+              <div class="cf-panel-pane" data-cf-pane="actions">
+                <ul class="cf-action-log">
+                  <li class="cf-action-log-item"><span>click</span><span>{ x: 240, y: 118 }</span></li>
+                  <li class="cf-action-log-item"><span>focus</span><span>button.primary</span></li>
+                </ul>
+              </div>
+              <div class="cf-panel-pane" data-cf-pane="source">
+                <pre class="cf-preview-card cf-mono mb-0"><code>&lt;button class="btn btn-primary"&gt;Button&lt;/button&gt;</code></pre>
+              </div>
+              <div class="cf-panel-pane" data-cf-pane="a11y">
+                <span class="cf-a11y-score"><i class="bi bi-check2-circle"></i>0 violations</span>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <aside class="cf-docs-panel">
+          <div class="cf-docs-header">
+            <h2 class="h5 mb-1">Button Component</h2>
+            <p class="cf-muted small mb-0">Usage, props, and story references.</p>
+          </div>
+          <div class="cf-docs-body">
+            <h3 class="h6">Overview</h3>
+            <p>The button component communicates a user action. Use variants to express priority and state.</p>
+            <h3 class="h6 mt-4">Props</h3>
+            <table class="cf-props-table">
+              <thead><tr><th>Name</th><th>Type</th><th>Required</th></tr></thead>
+              <tbody>
+                <tr><td>label</td><td><code>string</code></td><td>Yes</td></tr>
+                <tr><td>disabled</td><td><code>boolean</code></td><td>No</td></tr>
+                <tr><td>size</td><td><code>small | medium | large</code></td><td>No</td></tr>
+              </tbody>
+            </table>
+            <div class="cf-doc-example mt-4">
+              <button class="btn btn-primary" type="button">Primary button</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="cf-statusbar">
+        <span><i class="bi bi-check-circle-fill text-success me-1"></i>Ready - 0 errors, 0 warnings</span>
+        <span>Components 0.1.0</span>
+      </footer>
+    </div>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/components.js"></script>
+  </body>
+</html>

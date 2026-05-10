@@ -1,0 +1,139 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Snippet from "../../components/Snippet.astro";
+---
+
+<BaseLayout title="Controls" description="Args editor grid for the Controls addon pane. Each control maps to a story argument and wraps any Bootstrap form element.">
+
+  <!-- Full controls grid -->
+  <h2 class="h5 mb-3">Control Grid</h2>
+  <p class="cf-muted">Use <code>.cf-control-grid</code> to create an auto-fill responsive grid of labeled inputs. Each <code>.cf-control</code> is a vertical label + input pair.</p>
+  <div class="cf-preview-card mb-2">
+    <div class="cf-control-grid">
+      <label class="cf-control">
+        <span class="cf-control-label">label <code>string</code></span>
+        <input class="form-control form-control-sm" value="Click me">
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">variant <code>enum</code></span>
+        <select class="form-select form-select-sm">
+          <option>primary</option><option>secondary</option><option>danger</option><option>warning</option>
+        </select>
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">disabled <code>boolean</code></span>
+        <select class="form-select form-select-sm"><option>false</option><option>true</option></select>
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">size <code>enum</code></span>
+        <select class="form-select form-select-sm">
+          <option>small</option><option selected>medium</option><option>large</option>
+        </select>
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">icon <code>string</code></span>
+        <input class="form-control form-control-sm" placeholder="bi-arrow-right">
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">loading <code>boolean</code></span>
+        <select class="form-select form-select-sm"><option>false</option><option>true</option></select>
+      </label>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<div class="cf-control-grid">
+  <!-- Text arg -->
+  <label class="cf-control">
+    <span class="cf-control-label">label <code>string</code></span>
+    <input class="form-control form-control-sm" value="Click me">
+  </label>
+
+  <!-- Enum / select arg -->
+  <label class="cf-control">
+    <span class="cf-control-label">variant <code>enum</code></span>
+    <select class="form-select form-select-sm">
+      <option>primary</option>
+      <option>secondary</option>
+      <option>danger</option>
+    </select>
+  </label>
+
+  <!-- Boolean arg -->
+  <label class="cf-control">
+    <span class="cf-control-label">disabled <code>boolean</code></span>
+    <select class="form-select form-select-sm">
+      <option>false</option>
+      <option>true</option>
+    </select>
+  </label>
+</div>`} />
+
+  <!-- Control input types -->
+  <h2 class="h5 mt-5 mb-3">Control Input Types</h2>
+  <p class="cf-muted">Any Bootstrap form control works inside <code>.cf-control</code>. Common patterns:</p>
+  <div class="cf-preview-card mb-2">
+    <div class="cf-control-grid">
+      <label class="cf-control">
+        <span class="cf-control-label">text input</span>
+        <input class="form-control form-control-sm" type="text" value="Hello world">
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">number</span>
+        <input class="form-control form-control-sm" type="number" value="42">
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">color</span>
+        <input class="form-control form-control-sm form-control-color" type="color" value="#ff4785" style="height:2rem">
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">range</span>
+        <input class="form-range" type="range" min="0" max="100" value="60">
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">select</span>
+        <select class="form-select form-select-sm"><option>Option A</option><option>Option B</option></select>
+      </label>
+      <label class="cf-control">
+        <span class="cf-control-label">textarea</span>
+        <textarea class="form-control form-control-sm" rows="2">Multi-line text</textarea>
+      </label>
+    </div>
+  </div>
+
+  <!-- Reset button pattern -->
+  <h2 class="h5 mt-5 mb-3">Reset Button Pattern</h2>
+  <p class="cf-muted">Use <code>.cf-control-label</code>'s flex layout to place a reset button on the right of the label row.</p>
+  <div class="cf-preview-card mb-2" style="max-width:24rem">
+    <div class="cf-control-grid">
+      <label class="cf-control">
+        <span class="cf-control-label">
+          label <code>string</code>
+          <button class="btn btn-link p-0 cf-muted" style="font-size:.72rem; line-height:1" type="button">Reset</button>
+        </span>
+        <input class="form-control form-control-sm" value="Modified value">
+      </label>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<label class="cf-control">
+  <span class="cf-control-label">
+    label <code>string</code>
+    <button class="btn btn-link p-0 cf-muted" style="font-size:.72rem" type="button">
+      Reset
+    </button>
+  </span>
+  <input class="form-control form-control-sm" value="…">
+</label>`} />
+
+  <!-- Classes reference -->
+  <h2 class="h5 mt-5 mb-3">Classes</h2>
+  <table class="cf-props-table">
+    <thead><tr><th>Class</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>.cf-control-grid</td><td>CSS grid that auto-fills columns at 14rem min-width.</td></tr>
+      <tr><td>.cf-control</td><td>Single arg row — vertical flex with <code>.35rem</code> gap between label and input.</td></tr>
+      <tr><td>.cf-control-label</td><td>Label row with space-between layout — name left, type/reset right. Uppercase, letter-spaced.</td></tr>
+    </tbody>
+  </table>
+
+</BaseLayout>

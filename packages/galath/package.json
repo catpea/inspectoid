@@ -1,0 +1,45 @@
+{
+  "name": "galath",
+  "version": "1.0.4",
+  "description": "XML language for web applications",
+  "scripts": {
+    "save": "git add .; git commit -m 'Updated Release'; npm version patch; npm publish; git push --follow-tags;",
+    "serve": "http-server -c-1 -o"
+  },
+  "keywords": [
+    "xml",
+    "language",
+    "declarative",
+    "xml",
+    "ui",
+    "web-components"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "exports": {
+    ".": "./src/index.js",
+    "./boot": "./src/boot.js",
+    "./morph": "./src/morph.js",
+    "./*": "./src/*.js"
+  },
+  "files": [
+    "src"
+  ],
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "author": "catpea (https://github.com/catpea)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catpea/galath.git"
+  },
+  "bugs": {
+    "url": "https://github.com/catpea/galath/issues"
+  },
+  "homepage": "https://catpea.github.io/galath",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/catpea"
+  }
+}

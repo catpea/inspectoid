@@ -1,0 +1,166 @@
+<!--
+  chapters/02-signals.xml
+
+  Signals are reactive cells. This chapter introduces them through three
+  worked examples:
+
+    1. A counter signal with two buttons.
+    2. A computed signal derived from another signal.
+    3. A `name` signal echoed in the heading via interpolation.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-signals" tag="x-chapter-signals">
+    <model>
+      <!-- Demo state. -->
+      <signal name="count"   value="0" />
+      <signal name="step"    value="1" />
+      <signal name="name"    value="World" />
+
+      <!--
+        A computed signal. Re-evaluated whenever `count` changes. Without
+        <computed>, you would write the same logic in every <text>
+        binding - the derived signal centralizes it once.
+      -->
+      <computed name="parity" from="count">
+        <expression>count % 2 === 0 ? 'even' : 'odd'</expression>
+      </computed>
+
+      <!--
+        Computed chain: a -> b -> c. Each computed declares its source
+        with `from=`; when `a` moves, `b` re-runs, which moves `c`. The
+        dependency direction is explicit, which keeps the data flow
+        easy to reason about (no implicit auto-tracking magic).
+      -->
+      <signal name="a" value="2" />
+      <computed name="b" from="a">
+        <expression>a * 10</expression>
+      </computed>
+      <computed name="c" from="b">
+        <expression>b + 1</expression>
+      </computed>
+
+      <signal name="snippet"><![CDATA[<component name="counter" tag="x-counter">
+  <model>
+    <signal name="count" value="0" />
+    <signal name="step"  value="1" />
+    <computed name="parity" from="count">
+      <expression>count % 2 === 0 ? 'even' : 'odd'</expression>
+    </computed>
+  </model>
+
+  <view>
+    <button on:click="set('count', count + step)">+</button>
+    <button on:click="set('count', count - step)">-</button>
+    <span>Count: {count} ({parity})</span>
+    <input type="number" bind:value="step" />
+  </view>
+</component>]]></signal>
+    </model>
+
+    <controller>
+      <action name="bump">
+        <set signal="count" value="count + step" />
+      </action>
+      <action name="bumpDown">
+        <set signal="count" value="count - step" />
+      </action>
+    </controller>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-broadcast" title="Signals"
+          subtitle="The reactive cell. Every dynamic value in Galath is a signal." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  A <strong>signal</strong> holds a value. Read it by name in any expression
+                  (<code>count + 1</code>); write it via <code>set('count', ...)</code> in a
+                  handler or with <code>&lt;set signal="count" value="..."/&gt;</code> in a
+                  controller action.
+                </p>
+                <p class="text-secondary">
+                  A <strong>computed</strong> signal is derived from another signal. It
+                  re-evaluates automatically when the source changes. Use it to centralize
+                  formulas you would otherwise repeat across the view.
+                </p>
+                <p class="text-secondary mb-0">
+                  When ANY signal in the component scope changes, the renderer schedules a
+                  microtask-batched re-render. You never call "update".
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-4">
+                <label class="form-label">Greet someone</label>
+                <input class="form-control" bind:value="name" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Step size</label>
+                <input class="form-control" type="number" bind:value="step" />
+              </div>
+              <div class="col-md-4 d-flex gap-2">
+                <button class="btn btn-info flex-grow-1" on:click="#bump">+</button>
+                <button class="btn btn-outline-light flex-grow-1" on:click="#bumpDown">-</button>
+              </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex flex-column gap-2">
+              <div class="display-6 mb-0">Hello, {name}.</div>
+              <div class="text-secondary">
+                Count: <span class="badge text-bg-info">{count}</span>
+                <span class="ms-2">parity: <span class="badge text-bg-secondary">{parity}</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card mt-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-diagram-3 me-2"></i>Computed chain: a &#8594; b &#8594; c</strong>
+          </div>
+          <div class="card-body">
+            <p class="text-secondary">
+              Each derived signal declares its source with <code>from=</code>. When you change
+              <code>a</code>, <code>b = a * 10</code> updates, then <code>c = b + 1</code>
+              follows. Dependency tracking is <em>explicit</em>, not implicit - one less thing
+              to debug.
+            </p>
+            <div class="row g-3 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label">a</label>
+                <input class="form-control" type="number" bind:value="a" />
+              </div>
+              <div class="col-md-3"><div class="text-secondary small">b = a * 10</div><div class="display-6">{b}</div></div>
+              <div class="col-md-3"><div class="text-secondary small">c = b + 1</div><div class="display-6">{c}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

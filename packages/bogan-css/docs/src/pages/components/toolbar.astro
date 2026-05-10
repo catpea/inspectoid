@@ -1,0 +1,117 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Snippet from "../../components/Snippet.astro";
+---
+
+<BaseLayout title="Toolbar" description="Horizontal strip of tool buttons above the canvas. Groups separated by dividers, with a spacer to push secondary tools right.">
+
+  <!-- Full toolbar demo -->
+  <h2 class="h5 mb-3">Full Toolbar</h2>
+  <div class="cf-toolbar rounded border mb-2">
+    <div class="cf-toolbar-group">
+      <button class="cf-tool is-active" type="button"><i class="bi bi-window"></i>Canvas</button>
+      <button class="cf-tool" type="button"><i class="bi bi-file-text"></i>Docs</button>
+    </div>
+    <div class="cf-toolbar-group">
+      <button class="cf-tool" type="button"><i class="bi bi-sliders"></i>Controls</button>
+      <button class="cf-tool" type="button"><i class="bi bi-activity"></i>Actions</button>
+      <button class="cf-tool" type="button"><i class="bi bi-universal-access"></i>A11y</button>
+    </div>
+    <span class="cf-toolbar-spacer"></span>
+    <div class="cf-toolbar-group">
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" aria-label="Fullscreen"><i class="bi bi-arrows-fullscreen"></i></button>
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" aria-label="Zoom in"><i class="bi bi-zoom-in"></i></button>
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" aria-label="Zoom out"><i class="bi bi-zoom-out"></i></button>
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" aria-label="Reset"><i class="bi bi-arrow-counterclockwise"></i></button>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<div class="cf-toolbar">
+  <div class="cf-toolbar-group">
+    <button class="cf-tool is-active" type="button"><i class="bi bi-window"></i>Canvas</button>
+    <button class="cf-tool" type="button"><i class="bi bi-file-text"></i>Docs</button>
+  </div>
+  <div class="cf-toolbar-group">
+    <button class="cf-tool" type="button"><i class="bi bi-sliders"></i>Controls</button>
+    <button class="cf-tool" type="button"><i class="bi bi-activity"></i>Actions</button>
+  </div>
+  <span class="cf-toolbar-spacer"></span>
+  <div class="cf-toolbar-group">
+    <button class="btn btn-sm btn-outline-secondary cf-icon-button"
+            type="button" aria-label="Fullscreen">
+      <i class="bi bi-arrows-fullscreen"></i>
+    </button>
+  </div>
+</div>`} />
+
+  <!-- Tool states -->
+  <h2 class="h5 mt-5 mb-3">Tool States</h2>
+  <div class="cf-toolbar rounded border mb-2">
+    <button class="cf-tool" type="button">Default</button>
+    <button class="cf-tool is-active" type="button">Active</button>
+    <button class="cf-tool" type="button" disabled style="opacity:.45; cursor:not-allowed">Disabled</button>
+    <span class="cf-toolbar-spacer"></span>
+    <button class="cf-tool" type="button"><i class="bi bi-keyboard"></i>With shortcut <kbd class="cf-shortcut">F</kbd></button>
+  </div>
+  <Snippet language="html" code={`<!-- Default -->
+<button class="cf-tool" type="button">Canvas</button>
+
+<!-- Active / selected -->
+<button class="cf-tool is-active" type="button">Canvas</button>
+
+<!-- With keyboard shortcut badge -->
+<button class="cf-tool" type="button">
+  Fullscreen <kbd class="cf-shortcut">F</kbd>
+</button>`} />
+
+  <!-- Icon-only toolbar -->
+  <h2 class="h5 mt-5 mb-3">Icon-only Tools</h2>
+  <p class="cf-muted">Use <code>.cf-icon-button</code> on Bootstrap's <code>.btn</code> for square icon-only buttons that sit alongside <code>.cf-tool</code>.</p>
+  <div class="cf-toolbar rounded border mb-2">
+    <div class="cf-toolbar-group">
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button"><i class="bi bi-arrows-fullscreen"></i></button>
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button"><i class="bi bi-zoom-in"></i></button>
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button"><i class="bi bi-zoom-out"></i></button>
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button"><i class="bi bi-arrow-counterclockwise"></i></button>
+    </div>
+    <span class="cf-toolbar-spacer"></span>
+    <div class="cf-toolbar-group">
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button"><i class="bi bi-gear"></i></button>
+      <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button"><i class="bi bi-question-circle"></i></button>
+    </div>
+  </div>
+
+  <!-- Viewport size toolbar pattern -->
+  <h2 class="h5 mt-5 mb-3">Viewport Selector Pattern</h2>
+  <p class="cf-muted">Common Storybook pattern — buttons in a group that set the canvas iframe width.</p>
+  <div class="cf-toolbar rounded border mb-2">
+    <div class="cf-toolbar-group">
+      <button class="cf-tool is-active" type="button"><i class="bi bi-display"></i>Desktop</button>
+      <button class="cf-tool" type="button"><i class="bi bi-tablet"></i>Tablet</button>
+      <button class="cf-tool" type="button"><i class="bi bi-phone"></i>Mobile</button>
+    </div>
+    <div class="cf-toolbar-group">
+      <button class="cf-tool" type="button"><i class="bi bi-sun"></i>Light</button>
+      <button class="cf-tool" type="button"><i class="bi bi-moon-stars"></i>Dark</button>
+    </div>
+    <span class="cf-toolbar-spacer"></span>
+    <div class="cf-toolbar-group">
+      <button class="cf-tool" type="button"><i class="bi bi-aspect-ratio"></i>Reset</button>
+    </div>
+  </div>
+
+  <!-- Classes reference -->
+  <h2 class="h5 mt-5 mb-3">Classes</h2>
+  <table class="cf-props-table">
+    <thead><tr><th>Class</th><th>Element</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>.cf-toolbar</td><td>div</td><td>Flex row bar. Add to the top of <code>.cf-center</code>.</td></tr>
+      <tr><td>.cf-toolbar-group</td><td>div</td><td>Flex group of tools. Adjacent groups get an auto-separator divider line.</td></tr>
+      <tr><td>.cf-toolbar-spacer</td><td>span</td><td>Flex-grow element that pushes subsequent groups to the right edge.</td></tr>
+      <tr><td>.cf-tool</td><td>button</td><td>Pill-shaped tool button. Add <code>.is-active</code> for selected state.</td></tr>
+      <tr><td>.cf-shortcut</td><td>kbd</td><td>Small keyboard shortcut badge styled for toolbar use.</td></tr>
+      <tr><td>.cf-icon-button</td><td>button</td><td>2rem × 2rem square icon-only button. Combine with <code>.btn.btn-sm.btn-outline-secondary</code>.</td></tr>
+    </tbody>
+  </table>
+
+</BaseLayout>

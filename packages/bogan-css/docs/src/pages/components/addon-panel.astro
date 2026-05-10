@@ -1,0 +1,145 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Snippet from "../../components/Snippet.astro";
+---
+
+<BaseLayout title="Addon Panel" description="Collapsible bottom panel with tab bar. Houses Controls, Actions, Source, and Accessibility addons below the canvas.">
+
+  <!-- Full addon panel demo -->
+  <h2 class="h5 mb-3">Full Addon Panel</h2>
+  <div class="cf-addon-panel rounded border mb-2">
+    <div class="cf-tabbar" role="tablist">
+      <button class="cf-addon-tab is-active" type="button" data-cf-tab="controls-demo">Controls</button>
+      <button class="cf-addon-tab" type="button" data-cf-tab="actions-demo">Actions</button>
+      <button class="cf-addon-tab" type="button" data-cf-tab="source-demo">Source</button>
+      <button class="cf-addon-tab" type="button" data-cf-tab="a11y-demo">Accessibility</button>
+    </div>
+    <div class="cf-addon-content">
+      <div class="cf-panel-pane is-active" data-cf-pane="controls-demo">
+        <div class="cf-control-grid">
+          <label class="cf-control">
+            <span class="cf-control-label">label <code>string</code></span>
+            <input class="form-control form-control-sm" value="Click me">
+          </label>
+          <label class="cf-control">
+            <span class="cf-control-label">variant <code>enum</code></span>
+            <select class="form-select form-select-sm"><option>primary</option><option>secondary</option><option>danger</option></select>
+          </label>
+          <label class="cf-control">
+            <span class="cf-control-label">disabled <code>boolean</code></span>
+            <select class="form-select form-select-sm"><option>false</option><option>true</option></select>
+          </label>
+          <label class="cf-control">
+            <span class="cf-control-label">size <code>enum</code></span>
+            <select class="form-select form-select-sm"><option>small</option><option selected>medium</option><option>large</option></select>
+          </label>
+        </div>
+      </div>
+      <div class="cf-panel-pane" data-cf-pane="actions-demo">
+        <ul class="cf-action-log">
+          <li class="cf-action-log-item"><span><strong>click</strong></span><span class="cf-mono">{"{ target: 'button.primary', x: 240, y: 118 }"}</span></li>
+          <li class="cf-action-log-item"><span><strong>focus</strong></span><span class="cf-mono">{"button[type='submit']"}</span></li>
+          <li class="cf-action-log-item"><span><strong>keydown</strong></span><span class="cf-mono">{"{ key: 'Enter', shiftKey: false }"}</span></li>
+        </ul>
+      </div>
+      <div class="cf-panel-pane" data-cf-pane="source-demo">
+        <pre class="cf-preview-card cf-mono mb-0"><code>{"<button\n  class=\"btn btn-primary\"\n  type=\"button\"\n>\n  Click me\n</button>"}</code></pre>
+      </div>
+      <div class="cf-panel-pane" data-cf-pane="a11y-demo">
+        <div class="d-flex flex-column gap-2">
+          <span class="cf-a11y-score"><i class="bi bi-check2-circle"></i>0 violations — all checks passed</span>
+          <div class="cf-control-grid">
+            <div class="cf-quality-card">
+              <div class="cf-muted small mb-1">Color contrast</div>
+              <span class="cf-a11y-score"><i class="bi bi-check-circle"></i>Pass</span>
+            </div>
+            <div class="cf-quality-card">
+              <div class="cf-muted small mb-1">Keyboard focus</div>
+              <span class="cf-a11y-score"><i class="bi bi-check-circle"></i>Pass</span>
+            </div>
+            <div class="cf-quality-card">
+              <div class="cf-muted small mb-1">ARIA labels</div>
+              <span class="cf-a11y-score"><i class="bi bi-check-circle"></i>Pass</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<section class="cf-addon-panel">
+  <div class="cf-tabbar" role="tablist" aria-label="Addon panels">
+    <button class="cf-addon-tab is-active" type="button" data-cf-tab="controls">Controls</button>
+    <button class="cf-addon-tab" type="button" data-cf-tab="actions">Actions</button>
+    <button class="cf-addon-tab" type="button" data-cf-tab="source">Source</button>
+    <button class="cf-addon-tab" type="button" data-cf-tab="a11y">Accessibility</button>
+  </div>
+  <div class="cf-addon-content">
+    <div class="cf-panel-pane is-active" data-cf-pane="controls">…</div>
+    <div class="cf-panel-pane" data-cf-pane="actions">…</div>
+    <div class="cf-panel-pane" data-cf-pane="source">…</div>
+    <div class="cf-panel-pane" data-cf-pane="a11y">…</div>
+  </div>
+</section>`} />
+
+  <!-- Collapsed state -->
+  <h2 class="h5 mt-5 mb-3">Collapsed State</h2>
+  <p class="cf-muted">Add <code>.is-collapsed</code> to hide the panel. <code>components.js</code> toggles this via <code>[data-cf-toggle-addons]</code> in the toolbar.</p>
+  <Snippet language="html" code={`<!-- In the toolbar -->
+<button class="cf-tool" type="button"
+        data-cf-toggle-addons aria-pressed="true">
+  <i class="bi bi-sliders"></i>Controls
+</button>
+
+<!-- The panel -->
+<section class="cf-addon-panel is-collapsed">…</section>`} />
+
+  <!-- Tab switching via JS -->
+  <h2 class="h5 mt-5 mb-3">Tab Switching</h2>
+  <p class="cf-muted"><code>components.js</code> wires tab switching automatically: clicking a <code>[data-cf-tab]</code> button activates the matching <code>[data-cf-pane]</code> div within the same <code>.cf-addon-panel</code>.</p>
+  <Snippet language="js" code={`// Already handled by components.js — no extra code needed.
+// The data-cf-tab / data-cf-pane pairing drives tab behavior.
+
+// Tab button
+// data-cf-tab="controls"  → activates pane: data-cf-pane="controls"
+
+// To switch programmatically:
+document.querySelector('[data-cf-tab="source"]').click();`} />
+
+  <!-- Action log detail -->
+  <h2 class="h5 mt-5 mb-3">Action Log</h2>
+  <p class="cf-muted">Use <code>.cf-action-log</code> inside the "Actions" pane. Each <code>.cf-action-log-item</code> gets a left accent stripe in the accent color.</p>
+  <ul class="cf-action-log mb-2" style="max-width:32rem">
+    <li class="cf-action-log-item"><span><strong>click</strong></span><span class="cf-mono small">button.btn-primary</span></li>
+    <li class="cf-action-log-item"><span><strong>change</strong></span><span class="cf-mono small">input[name="email"] → "user@example.com"</span></li>
+    <li class="cf-action-log-item"><span><strong>submit</strong></span><span class="cf-mono small">form#login</span></li>
+  </ul>
+
+  <Snippet language="html" code={`<ul class="cf-action-log">
+  <li class="cf-action-log-item">
+    <span><strong>click</strong></span>
+    <span>button.btn-primary</span>
+  </li>
+  <li class="cf-action-log-item">
+    <span><strong>change</strong></span>
+    <span>input[name="email"] → "user@example.com"</span>
+  </li>
+</ul>`} />
+
+  <!-- Classes reference -->
+  <h2 class="h5 mt-5 mb-3">Classes</h2>
+  <table class="cf-props-table">
+    <thead><tr><th>Class</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>.cf-addon-panel</td><td>Bottom panel with surface background. Add <code>.is-collapsed</code> to hide.</td></tr>
+      <tr><td>.cf-tabbar</td><td>Horizontal row of tab buttons with bottom-border underline style.</td></tr>
+      <tr><td>.cf-addon-tab</td><td>Tab button. Add <code>.is-active</code> for selected tab (primary underline).</td></tr>
+      <tr><td>.cf-addon-content</td><td>Content area with padding. Contains panel panes.</td></tr>
+      <tr><td>.cf-panel-pane</td><td>Hidden by default. Add <code>.is-active</code> to show. Matched via <code>data-cf-pane</code>.</td></tr>
+      <tr><td>.cf-action-log</td><td>Unstyled list for action events.</td></tr>
+      <tr><td>.cf-action-log-item</td><td>Single event row with monospace font and left accent stripe.</td></tr>
+      <tr><td>.cf-a11y-score</td><td>Inline success indicator in success color with check icon.</td></tr>
+    </tbody>
+  </table>
+
+</BaseLayout>

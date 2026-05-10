@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Addon Panel Starter</title>
+    <link rel="stylesheet" href="../../product/css/components-fantasyui.min.css">
+  </head>
+  <body>
+    <div class="cf-app">
+      <header class="cf-header">
+        <a class="cf-logo" href="../../product/index.html">
+          <span class="cf-logo-mark"><i class="bi bi-puzzle"></i></span>
+          <span>Addon Lab</span>
+        </a>
+        <nav class="cf-header-nav">
+          <a class="cf-header-link is-active" href="#">Controls</a>
+          <a class="cf-header-link" href="#">Actions</a>
+          <a class="cf-header-link" href="#">Source</a>
+        </nav>
+      </header>
+      <main class="cf-center">
+        <div class="cf-toolbar">
+          <button class="cf-tool is-active" type="button"><i class="bi bi-sliders"></i>Controls</button>
+          <button class="cf-tool" type="button"><i class="bi bi-universal-access"></i>Accessibility</button>
+        </div>
+        <section class="cf-canvas">
+          <div class="cf-preview-frame">
+            <h1 class="h5">Card / Analytics</h1>
+            <div class="cf-story-card">
+              <span class="cf-story-icon"><i class="bi bi-bar-chart"></i></span>
+              <div>
+                <h2 class="cf-story-title">Revenue card</h2>
+                <p class="cf-muted mb-0">A controlled story with editable title, metric, and trend.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="cf-addon-panel">
+          <div class="cf-tabbar">
+            <button class="cf-addon-tab is-active" type="button" data-cf-tab="controls">Controls</button>
+            <button class="cf-addon-tab" type="button" data-cf-tab="actions">Actions</button>
+            <button class="cf-addon-tab" type="button" data-cf-tab="a11y">Accessibility</button>
+          </div>
+          <div class="cf-addon-content">
+            <div class="cf-panel-pane is-active" data-cf-pane="controls">
+              <div class="cf-control-grid">
+                <label class="cf-control"><span class="cf-control-label">title</span><input class="form-control form-control-sm" value="Revenue card"></label>
+                <label class="cf-control"><span class="cf-control-label">metric</span><input class="form-control form-control-sm" value="$42,800"></label>
+                <label class="cf-control"><span class="cf-control-label">trend</span><select class="form-select form-select-sm"><option>up</option><option>down</option></select></label>
+              </div>
+            </div>
+            <div class="cf-panel-pane" data-cf-pane="actions">
+              <ul class="cf-action-log"><li class="cf-action-log-item"><span>hover</span><span>story-card</span></li></ul>
+            </div>
+            <div class="cf-panel-pane" data-cf-pane="a11y">
+              <span class="cf-a11y-score"><i class="bi bi-check-circle"></i>Pass</span>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="cf-statusbar"><span>Addon panel expanded</span><span>Addon starter</span></footer>
+    </div>
+    <script src="../../product/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../../product/js/components.js"></script>
+  </body>
+</html>

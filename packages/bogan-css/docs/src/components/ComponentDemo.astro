@@ -1,0 +1,11 @@
+---
+const { title, icon = "bi-box", body } = Astro.props;
+---
+
+<article class="cf-story-card">
+  <span class="cf-story-icon"><i class={`bi ${icon}`}></i></span>
+  <div>
+    <h2 class="cf-story-title">{title}</h2>
+    <p class="cf-muted mb-0">{body}</p>
+  </div>
+</article>

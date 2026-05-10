@@ -1,0 +1,75 @@
+.cf-docs-panel {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  background: var(--cf-surface);
+  border-left: 1px solid var(--cf-line);
+  scrollbar-color: var(--cf-line) transparent;
+  scrollbar-width: thin;
+}
+
+.cf-docs-panel.is-hidden {
+  display: none;
+}
+
+.cf-docs-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 1rem;
+  background: var(--cf-surface);
+  border-bottom: 1px solid var(--cf-line);
+}
+
+.cf-docs-body {
+  padding: 1rem;
+}
+
+.cf-props-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: .84rem;
+}
+
+.cf-props-table th {
+  padding: .45rem .4rem;
+  border-bottom: 1px solid var(--cf-line);
+  vertical-align: top;
+  color: var(--cf-muted);
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.cf-props-table td {
+  padding: .55rem .4rem;
+  border-bottom: 1px solid var(--cf-line);
+  vertical-align: top;
+}
+
+.cf-props-table td:first-child {
+  font-family: var(--cf-font-mono);
+  color: var(--cf-primary);
+  font-size: .82rem;
+}
+
+.cf-props-table tbody tr:nth-child(even) td {
+  background: rgba(var(--cf-accent-rgb), .03);
+}
+
+.cf-doc-example {
+  padding: .8rem;
+  background: var(--cf-surface-2);
+  border: 1px solid var(--cf-line);
+  border-radius: var(--cf-radius);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .05);
+}
+
+@media (max-width: 991.98px) {
+  .cf-docs-panel {
+    border-left: 0;
+    border-top: 1px solid var(--cf-line);
+  }
+}

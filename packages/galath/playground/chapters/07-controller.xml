@@ -1,0 +1,115 @@
+<!--
+  chapters/07-controller.xml
+
+  FXML-style controllers. Named actions live in <controller> and are
+  invoked from the view via on:click="#actionName" or from <listener
+  handler="#actionName">. They are also reachable from <call action="..."/>
+  so commands can compose with controllers.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-controller" tag="x-chapter-controller">
+    <model>
+      <signal name="message" value="Click a button to see what controllers do." />
+      <signal name="counter" value="0" />
+      <signal name="snippet"><![CDATA[<controller>
+  <action name="greet">
+    <set signal="message" value="'Hello, ' + ($event.target.dataset.name || 'world') + '!'" />
+  </action>
+
+  <action name="bump">
+    <set signal="counter" value="counter + 1" />
+    <call action="greet" />
+  </action>
+</controller>
+
+<button data-name="Ada" on:click="#greet">Greet Ada</button>
+<button on:click="#bump">Bump &amp; greet</button>]]></signal>
+    </model>
+
+    <controller>
+      <action name="greet">
+        <set signal="message" value="'Hello, ' + ($event.currentTarget.dataset.name || 'world') + '!'" />
+      </action>
+
+      <action name="bump">
+        <set signal="counter" value="counter + 1" />
+        <call action="greet" />
+      </action>
+
+      <action name="reset">
+        <set signal="counter" value="0" />
+        <set signal="message" value="'Reset.'" />
+      </action>
+    </controller>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-person-gear" title="Controllers"
+          subtitle="Named actions in one place. The view calls them by name." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  A <code>&lt;controller&gt;</code> contains <code>&lt;action&gt;</code>s -
+                  named procedures of operations. Anywhere a handler is expected
+                  (<code>on:click</code>, <code>&lt;listener handler="..."&gt;</code>,
+                  <code>&lt;call&gt;</code>) you can reference one with <code>#actionName</code>.
+                </p>
+                <p class="text-secondary">
+                  The same operation vocabulary is shared with
+                  <code>&lt;commandset&gt;</code>: <code>&lt;set&gt;</code>,
+                  <code>&lt;setvalue&gt;</code>, <code>&lt;insert&gt;</code>,
+                  <code>&lt;delete&gt;</code>, <code>&lt;call&gt;</code>, <code>&lt;log&gt;</code>,
+                  <code>&lt;eval&gt;</code>.
+                </p>
+                <p class="text-secondary mb-0">
+                  Inside an action, <code>$event</code> is the originating DOM event (when
+                  there was one). Read <code>$event.currentTarget.dataset.X</code> to pass small
+                  data from the markup without a separate signal per button.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="d-flex gap-2 flex-wrap mb-3">
+              <button class="btn btn-info" data-name="Ada"   on:click="#greet">Greet Ada</button>
+              <button class="btn btn-info" data-name="Linus" on:click="#greet">Greet Linus</button>
+              <button class="btn btn-info" data-name="Grace" on:click="#greet">Greet Grace</button>
+              <button class="btn btn-outline-light" on:click="#bump">Bump &amp; greet</button>
+              <button class="btn btn-outline-secondary" on:click="#reset">Reset</button>
+            </div>
+
+            <div class="alert alert-info">
+              <i class="bi bi-chat-quote me-1"></i>
+              <strong>Message:</strong> {message}
+            </div>
+
+            <div class="text-secondary xes-tiny">
+              Counter: <span class="badge text-bg-secondary">{counter}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

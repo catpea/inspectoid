@@ -1,0 +1,99 @@
+---
+const {
+  title = "Components FantasyUI",
+  description = "Bootstrap theme for component workshop applications."
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
+
+const groups = [
+  {
+    label: "Overview",
+    items: [
+      ["Introduction", "/"],
+      ["Getting Started", "/getting-started/"],
+      ["Design Tokens", "/design/"],
+      ["Starters", "/starters/"]
+    ]
+  },
+  {
+    label: "Components",
+    items: [
+      ["All Components", "/components/"],
+      ["App Shell", "/components/app-shell/"],
+      ["Sidebar & Tree", "/components/sidebar/"],
+      ["Toolbar", "/components/toolbar/"],
+      ["Canvas & Preview", "/components/preview/"],
+      ["Addon Panel", "/components/addon-panel/"],
+      ["Controls", "/components/controls/"],
+      ["Docs Panel", "/components/docs-panel/"],
+      ["Status Bar", "/components/status-bar/"],
+      ["Story Card", "/components/story-card/"]
+    ]
+  }
+];
+
+function isActive(href: string) {
+  if (href === "/") return currentPath === "/";
+  return currentPath.startsWith(href);
+}
+---
+
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title} — Components FantasyUI</title>
+    <link rel="stylesheet" href="/css/components-fantasyui.min.css" />
+  </head>
+  <body>
+    <div class="cf-app">
+      <header class="cf-header">
+        <a class="cf-logo" href="/">
+          <span class="cf-logo-mark"><i class="bi bi-braces"></i></span>
+          <span>Components</span>
+        </a>
+        <nav class="cf-header-nav d-none d-md-flex">
+          <a class={`cf-header-link${currentPath.startsWith("/components") ? " is-active" : ""}`} href="/components/">Components</a>
+          <a class={`cf-header-link${currentPath.startsWith("/starters") ? " is-active" : ""}`} href="/starters/">Starters</a>
+          <a class={`cf-header-link${currentPath.startsWith("/design") ? " is-active" : ""}`} href="/design/">Design</a>
+        </nav>
+        <div class="ms-auto d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary" type="button" data-cf-theme="light" title="Light mode"><i class="bi bi-sun"></i></button>
+          <button class="btn btn-sm btn-outline-secondary" type="button" data-cf-theme="dark" title="Dark mode"><i class="bi bi-moon-stars"></i></button>
+        </div>
+      </header>
+      <main class="container-fluid py-4">
+        <div class="row g-4">
+          <aside class="col-lg-3 col-xl-2">
+            <div class="cf-sidebar rounded border" style="position: sticky; top: 1rem;">
+              {groups.map(group => (
+                <nav class="cf-tree">
+                  <div class="cf-tree-label">{group.label}</div>
+                  {group.items.map(([label, href]) => (
+                    <a class={`cf-tree-item${isActive(href) ? " is-active" : ""}`} href={href}>{label}</a>
+                  ))}
+                </nav>
+              ))}
+            </div>
+          </aside>
+          <section class="col-lg-9 col-xl-10">
+            <div class="mb-4">
+              <h1 class="h2 mb-1">{title}</h1>
+              <p class="cf-muted mb-0">{description}</p>
+            </div>
+            <slot />
+          </section>
+        </div>
+      </main>
+      <footer class="cf-statusbar">
+        <span><i class="bi bi-check-circle-fill text-success me-1"></i>Docs ready</span>
+        <span>Components FantasyUI</span>
+      </footer>
+    </div>
+    <script is:inline src="/js/bootstrap.bundle.min.js"></script>
+    <script is:inline type="module" src="/js/components.js"></script>
+  </body>
+</html>

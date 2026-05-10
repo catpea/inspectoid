@@ -1,0 +1,132 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Snippet from "../../components/Snippet.astro";
+---
+
+<BaseLayout title="App Shell" description="The root layout grid that wraps every other component. Provides header, three-column workbench, and status bar.">
+
+  <!-- Live demo: header -->
+  <h2 class="h5 mb-3">Header</h2>
+  <div class="cf-header rounded border mb-2" style="position:static">
+    <a class="cf-logo" href="#">
+      <span class="cf-logo-mark"><i class="bi bi-braces"></i></span>
+      <span>Components</span>
+    </a>
+    <nav class="cf-header-nav">
+      <a class="cf-header-link is-active" href="#">Stories</a>
+      <a class="cf-header-link" href="#">Docs</a>
+      <a class="cf-header-link" href="#">Tests</a>
+    </nav>
+    <div class="cf-search" style="max-width:16rem">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
+        <input class="form-control" type="search" placeholder="Search stories…">
+      </div>
+    </div>
+    <div class="dropdown ms-2">
+      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <i class="bi bi-person-circle me-1"></i>Team
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><button class="dropdown-item" type="button" data-cf-theme="light"><i class="bi bi-sun me-2"></i>Light</button></li>
+        <li><button class="dropdown-item" type="button" data-cf-theme="dark"><i class="bi bi-moon-stars me-2"></i>Dark</button></li>
+        <li><button class="dropdown-item" type="button" data-cf-theme="auto"><i class="bi bi-circle-half me-2"></i>Auto</button></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+      </ul>
+    </div>
+  </div>
+  <Snippet language="html" code={`<header class="cf-header">
+  <a class="cf-logo" href="/">
+    <span class="cf-logo-mark"><i class="bi bi-braces"></i></span>
+    <span>Components</span>
+  </a>
+  <nav class="cf-header-nav">
+    <a class="cf-header-link is-active" href="#">Stories</a>
+    <a class="cf-header-link" href="#">Docs</a>
+  </nav>
+  <div class="cf-search">
+    <div class="input-group input-group-sm">
+      <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
+      <input class="form-control" type="search" placeholder="Search stories…">
+    </div>
+  </div>
+</header>`} />
+
+  <!-- Workbench layout diagram -->
+  <h2 class="h5 mt-5 mb-3">Workbench Grid</h2>
+  <p class="cf-muted">The <code>.cf-workbench</code> is a CSS grid with three columns: sidebar, center, and optional docs panel. Add <code>.has-docs</code> to show the right column.</p>
+
+  <div class="rounded border overflow-hidden mb-2" style="font-size:.82rem">
+    <div class="d-flex" style="min-height:8rem">
+      <div class="p-3 d-flex align-items-center justify-content-center text-center border-end" style="flex:0 0 20%; background:rgba(var(--cf-accent-rgb),.06)">
+        <div><code>.cf-sidebar</code><br><span class="cf-muted">260px</span></div>
+      </div>
+      <div class="p-3 d-flex flex-column gap-2 flex-grow-1">
+        <div class="p-2 rounded text-center border" style="background:rgba(var(--cf-accent-rgb),.05)"><code>.cf-toolbar</code></div>
+        <div class="p-2 rounded text-center border flex-grow-1" style="background:var(--cf-surface-2)"><code>.cf-canvas</code></div>
+        <div class="p-2 rounded text-center border" style="background:rgba(var(--cf-accent-rgb),.05)"><code>.cf-addon-panel</code></div>
+      </div>
+      <div class="p-3 d-flex align-items-center justify-content-center text-center border-start" style="flex:0 0 20%; background:rgba(var(--cf-success-rgb),.04)">
+        <div><code>.cf-docs-panel</code><br><span class="cf-muted">optional</span></div>
+      </div>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<div class="cf-app">
+  <header class="cf-header">…</header>
+
+  <div class="cf-workbench has-docs">
+    <aside class="cf-sidebar">…</aside>
+
+    <main class="cf-center">
+      <div class="cf-toolbar">…</div>
+      <section class="cf-canvas">…</section>
+      <section class="cf-addon-panel">…</section>
+    </main>
+
+    <aside class="cf-docs-panel">…</aside>
+  </div>
+
+  <footer class="cf-statusbar">…</footer>
+</div>`} />
+
+  <!-- Logo mark variants -->
+  <h2 class="h5 mt-5 mb-3">Logo Mark</h2>
+  <div class="d-flex align-items-center gap-3 mb-2">
+    <a class="cf-logo" href="#">
+      <span class="cf-logo-mark"><i class="bi bi-braces"></i></span>
+      <span>Components</span>
+    </a>
+    <a class="cf-logo" href="#">
+      <span class="cf-logo-mark"><i class="bi bi-palette2"></i></span>
+      <span>Design System</span>
+    </a>
+    <a class="cf-logo" href="#">
+      <span class="cf-logo-mark"><i class="bi bi-puzzle"></i></span>
+      <span>Addon Lab</span>
+    </a>
+  </div>
+  <Snippet language="html" code={`<a class="cf-logo" href="/">
+  <span class="cf-logo-mark"><i class="bi bi-braces"></i></span>
+  <span>Components</span>
+</a>`} />
+
+  <!-- Classes reference -->
+  <h2 class="h5 mt-5 mb-3">Classes</h2>
+  <table class="cf-props-table">
+    <thead><tr><th>Class</th><th>Element</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>.cf-app</td><td>div</td><td>Root grid — rows: header / workbench / statusbar. Sets <code>min-height:100vh</code>.</td></tr>
+      <tr><td>.cf-header</td><td>header</td><td>Sticky top bar, flex row. Receives <code>cf-logo</code>, <code>cf-header-nav</code>, <code>cf-search</code>.</td></tr>
+      <tr><td>.cf-logo</td><td>a</td><td>Brand link with gap between mark and name.</td></tr>
+      <tr><td>.cf-logo-mark</td><td>span</td><td>Gradient icon badge — swap the Bootstrap Icons class for brand identity.</td></tr>
+      <tr><td>.cf-header-link</td><td>a</td><td>Nav pill. Add <code>.is-active</code> for the current section.</td></tr>
+      <tr><td>.cf-search</td><td>div</td><td>Search wrapper — <code>margin-left:auto</code> pushes it right by default.</td></tr>
+      <tr><td>.cf-workbench</td><td>div</td><td>Three-column grid. Add <code>.has-docs</code> to reveal docs column. Add <code>.is-fullscreen</code> to collapse to single column.</td></tr>
+      <tr><td>.cf-center</td><td>main</td><td>Middle column grid — rows: toolbar / canvas / addon-panel.</td></tr>
+      <tr><td>.cf-statusbar</td><td>footer</td><td>Slim footer bar, space-between. Left for status text, right for version.</td></tr>
+    </tbody>
+  </table>
+
+</BaseLayout>

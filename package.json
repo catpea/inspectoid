@@ -1,0 +1,32 @@
+{
+  "name": "inspectoid",
+  "type": "module",
+  "version": "1.0.6",
+  "description": "Component Presentation Applicaion",
+  "keywords": [
+    "components",
+    "xml"
+  ],
+  "main": "index.js",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "save": "git add .; git commit -m 'Updated Release'; npm version patch; npm publish; git push --follow-tags;",
+    "serve": "http-server -c-1 -o"
+  },
+  "author": "catpea (https://github.com/catpea)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catpea/inspectoid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/catpea/inspectoid/issues"
+  },
+  "homepage": "https://catpea.github.io/inspectoid",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/catpea"
+  }
+}

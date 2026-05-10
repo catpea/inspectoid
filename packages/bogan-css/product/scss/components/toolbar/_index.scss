@@ -1,0 +1,78 @@
+.cf-toolbar {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  min-width: 0;
+  padding: .55rem .75rem;
+  background: var(--cf-surface);
+  border-bottom: 1px solid var(--cf-line);
+}
+
+.cf-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+}
+
+.cf-toolbar-group + .cf-toolbar-group {
+  position: relative;
+  padding-left: .6rem;
+  margin-left: .25rem;
+}
+
+.cf-toolbar-group + .cf-toolbar-group::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: var(--cf-line);
+}
+
+.cf-toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.cf-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 2rem;
+  padding: .3rem .55rem;
+  color: var(--cf-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--cf-radius-sm);
+  font-size: .82rem;
+  cursor: pointer;
+  transition: color .12s ease, background .12s ease, border-color .12s ease;
+}
+
+.cf-tool:hover {
+  color: var(--cf-text);
+  background: rgba(var(--cf-primary-rgb), .08);
+  border-color: rgba(var(--cf-primary-rgb), .14);
+}
+
+.cf-tool.is-active {
+  color: var(--cf-primary);
+  background: rgba(var(--cf-primary-rgb), .1);
+  border-color: rgba(var(--cf-primary-rgb), .18);
+  font-weight: 600;
+}
+
+.cf-shortcut {
+  color: var(--cf-muted);
+  background: var(--cf-surface-2);
+  border: 1px solid var(--cf-line);
+  border-radius: .2rem;
+  font-size: .72rem;
+  padding: .05rem .3rem;
+}
+
+@media (max-width: 767.98px) {
+  .cf-toolbar {
+    overflow-x: auto;
+  }
+}

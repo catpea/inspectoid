@@ -1,0 +1,5 @@
+---
+const { code, language = "text" } = Astro.props;
+---
+
+<pre class="cf-preview-card cf-mono"><code class={`language-${language}`}>{code}</code></pre>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Testing Dashboard Starter</title>
+    <link rel="stylesheet" href="../../product/css/components-fantasyui.min.css">
+  </head>
+  <body>
+    <div class="cf-app">
+      <header class="cf-header">
+        <a class="cf-logo" href="../../product/index.html">
+          <span class="cf-logo-mark"><i class="bi bi-check2-square"></i></span>
+          <span>Components QA</span>
+        </a>
+        <nav class="cf-header-nav">
+          <a class="cf-header-link is-active" href="#">Visual</a>
+          <a class="cf-header-link" href="#">A11y</a>
+          <a class="cf-header-link" href="#">Interactions</a>
+        </nav>
+      </header>
+      <main class="container-fluid py-4">
+        <div class="row g-3 mb-3">
+          <div class="col-md-3"><div class="cf-quality-card"><span class="cf-muted">Stories</span><strong class="d-block fs-3">248</strong></div></div>
+          <div class="col-md-3"><div class="cf-quality-card"><span class="cf-muted">Passing</span><strong class="d-block fs-3 text-success">244</strong></div></div>
+          <div class="col-md-3"><div class="cf-quality-card"><span class="cf-muted">Changed</span><strong class="d-block fs-3 text-warning">4</strong></div></div>
+          <div class="col-md-3"><div class="cf-quality-card"><span class="cf-muted">Violations</span><strong class="d-block fs-3 text-danger">0</strong></div></div>
+        </div>
+        <div class="cf-preview-frame w-100">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h1 class="h5 mb-0">Regression results</h1>
+            <button class="btn btn-sm btn-primary" type="button"><i class="bi bi-play-fill me-1"></i>Run suite</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead><tr><th>Story</th><th>Status</th><th>Visual</th><th>A11y</th><th>Updated</th></tr></thead>
+              <tbody>
+                <tr><td>Button / Primary</td><td><span class="badge text-bg-success">Pass</span></td><td>0 diff</td><td>0 issues</td><td>2m ago</td></tr>
+                <tr><td>Input / Password</td><td><span class="badge text-bg-warning">Changed</span></td><td>12 px</td><td>0 issues</td><td>5m ago</td></tr>
+                <tr><td>Modal / Confirm</td><td><span class="badge text-bg-success">Pass</span></td><td>0 diff</td><td>0 issues</td><td>9m ago</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+      <footer class="cf-statusbar"><span>Visual checks complete</span><span>Testing starter</span></footer>
+    </div>
+    <script src="../../product/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../../product/js/components.js"></script>
+  </body>
+</html>

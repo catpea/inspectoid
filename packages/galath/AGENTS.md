@@ -1,0 +1,1 @@
+- External npm dependencies are forbidden due to possibley supply chain attacks

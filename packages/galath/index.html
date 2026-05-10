@@ -1,0 +1,188 @@
+<!doctype html>
+<!--
+  index.html
+  ==========
+
+  The Galath playground entry point. A small shell:
+
+    1. Pulls in local Bootstrap CSS + Bootstrap Icons (see node_modules/galath-css).
+    2. Declares a native browser <importmap> so `import 'galath'` resolves to
+       packages/galath via a symlink in node_modules.
+    3. Declares one Galath source document. The document is mostly
+       <import src="..."/> lines that pull in chapter components and the
+       playground shell.
+    4. Boots Galath with two lines of JavaScript.
+
+  The whole tutorial is written in Galath itself - dogfooding the language.
+  Every chapter is a separate XML file under ./playground/chapters/, kept
+  small and focused. To add another chapter:
+
+    a. Create ./playground/chapters/12-my-feature.xml that defines a
+       <component name="chapter-myFeature" tag="x-chapter-myFeature">.
+    b. Add an <import src="./playground/chapters/12-my-feature.xml"/> below.
+    c. Add a <chapter id="myFeature" .../> entry in app.xml.
+    d. Add an <if test="activeChapter === 'myFeature'"> branch in app.xml.
+
+  To run:
+    npx serve .         (or `python3 -m http.server 8080`)
+    open http://localhost:8080/
+
+  No build step. No bundler. No transpiler. Just the browser.
+-->
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galath Playground</title>
+
+  <!-- Local stylesheets - works offline. -->
+  <link href="./node_modules/galath-css/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./node_modules/galath-css/css/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!--
+    Native browser import map. `galath/boot` is the convenience entry that
+    plugs every standard feature in and starts the language. The mapping
+    goes through ./node_modules/galath -> packages/galath, set up as a
+    symlink so we don't have to publish to a registry to develop locally.
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "galath": "./src/index.js",
+        "galath/boot": "./src/boot.js"
+      }
+    }
+  </script>
+
+  <style>
+    /*
+      Page chrome. Component-internal styles live inside their components'
+      <style> blocks where they get auto-scoped to the component root.
+    */
+    :root {
+      --xes-shell:  #06101f;
+      --xes-line:   rgba(255, 255, 255, .12);
+      --xes-card:   rgba(255, 255, 255, .045);
+      --xes-card-2: rgba(255, 255, 255, .022);
+    }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left,  rgba(13, 202, 240, .14), transparent 34rem),
+        radial-gradient(circle at top right, rgba(255, 193, 7, .08),  transparent 28rem),
+        linear-gradient(180deg, #040812, var(--xes-shell));
+    }
+    .xes-card        { background: linear-gradient(180deg, var(--xes-card), var(--xes-card-2)); border: 1px solid var(--xes-line); box-shadow: 0 1rem 3rem rgba(0,0,0,.22); }
+    .xes-code        { max-height: 26rem; overflow: auto; font-size: .8rem; background: rgba(0,0,0,.34); border: 1px solid var(--xes-line); }
+    .xes-nav-link    { width: 100%; text-align: left; color: var(--bs-body-color); background: transparent; border: 0; }
+    .xes-nav-link:hover { background-color: rgba(255,255,255,.07); }
+    .xes-nav-link.active { background-color: rgba(13,202,240,.16); box-shadow: inset 3px 0 0 var(--bs-info); color: var(--bs-info-text-emphasis); }
+    .xes-pill        { border: 1px solid var(--xes-line); background-color: rgba(255,255,255,.045); }
+    .xes-tiny        { font-size: .78rem; }
+    .xes-drop-hint   { outline: 1px dashed rgba(13, 202, 240, .35); outline-offset: .35rem; }
+    .xes-dragging    { opacity: .5; }
+    .xes-sidebar     { background: rgba(0,0,0,.18); }
+
+    /*
+      Syntax highlighting for the source listings. Tokens come from the
+      tiny tokenizer in playground/components/highlighter.js.
+    */
+    .xes-code .hl-cm  { color: #6c757d; font-style: italic; }
+    .xes-code .hl-cd  { color: #c792ea; }
+    .xes-code .hl-pn  { color: #6c757d; }
+    .xes-code .hl-tn  { color: #6cb4ee; font-weight: 600; }
+    .xes-code .hl-an  { color: #f0c674; }
+    .xes-code .hl-av  { color: #98c379; }
+    .xes-code .hl-itp { color: #ffb454; font-weight: 600; }
+
+    /*
+      Code-only view. The sidebar toggle flips a `xes-code-only` class on
+      the playground container. Every chapter follows the same docs/source
+      layout - a `.row.g-4` whose first `.col-lg-6` is the "How it works"
+      narration and second is the source listing - so a structural rule
+      hides docs and widens the source listing without touching each chapter.
+    */
+    .xes-code-only .row.g-4 > .col-lg-6:first-child { display: none; }
+    .xes-code-only .row.g-4 > .col-lg-6:last-child  { flex: 0 0 100%; max-width: 100%; }
+
+    /* Loading state until galath finishes booting. */
+    #mount:empty::before {
+      content: "Loading Galath playground...";
+      display: block;
+      padding: 2rem;
+      color: rgba(255,255,255,.6);
+    }
+  </style>
+</head>
+<body>
+  <div id="mount"></div>
+
+  <!--
+    The Galath source document. Almost everything is in imports. Adding
+    a chapter is one line here + one line in playground/app.xml + the
+    actual chapter file.
+  -->
+  <script type="application/xml" id="galath-source">
+    <galath version="1.0">
+      <!-- shared building blocks first so chapters can reference them -->
+      <import src="./playground/components/chapter-shell.xml" />
+
+      <!-- one chapter file each, in tutorial order -->
+      <import src="./playground/chapters/01-welcome.xml" />
+      <import src="./playground/chapters/02-signals.xml" />
+      <import src="./playground/chapters/03-instance.xml" />
+      <import src="./playground/chapters/04-bindings.xml" />
+      <import src="./playground/chapters/12-expressions.xml" />
+      <import src="./playground/chapters/13-paths.xml" />
+      <import src="./playground/chapters/05-lists.xml" />
+      <import src="./playground/chapters/06-commands.xml" />
+      <import src="./playground/chapters/07-controller.xml" />
+      <import src="./playground/chapters/08-events.xml" />
+      <import src="./playground/chapters/09-behaviors.xml" />
+      <import src="./playground/chapters/10-components.xml" />
+      <import src="./playground/chapters/11-imports.xml" />
+
+      <!-- the shell that ties chapters together -->
+      <import src="./playground/app.xml" />
+
+      <!-- entry point: just instantiate the shell -->
+      <application name="playground">
+        <x-playground />
+      </application>
+    </galath>
+  </script>
+
+  <!--
+    Boot. Two lines: read the source from the script tag, hand it to
+    galath, watch the page light up. `boot` returns the language object
+    so we expose it on `window.galath` for console exploration.
+  -->
+  <script type="module">
+    import { boot } from 'galath/boot';
+    import { attachHighlighter } from './playground/components/highlighter.js';
+    import { attachRunSnippet } from './playground/components/run-snippet.js';
+
+    try {
+      attachRunSnippet();
+      window.galath = await boot({
+        source: document.getElementById('galath-source').textContent,
+        mount:  document.getElementById('mount'),
+      });
+      attachHighlighter(document.getElementById('mount'));
+    } catch (error) {
+      // If the boot itself crashed, the error never reaches the user
+      // through the normal rendering path. Surface it loudly.
+      const mount = document.getElementById('mount');
+      mount.innerHTML = `
+        <div class="container-xxl py-5">
+          <div class="alert alert-danger">
+            <h2 class="h5"><i class="bi bi-exclamation-triangle me-2"></i>Galath failed to boot</h2>
+            <pre class="mb-0">${String(error?.stack || error)}</pre>
+          </div>
+        </div>
+      `;
+      throw error;
+    }
+  </script>
+</body>
+</html>

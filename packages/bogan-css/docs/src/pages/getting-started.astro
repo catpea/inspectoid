@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Snippet from "../components/Snippet.astro";
+---
+
+<BaseLayout title="Getting Started" description="Build and use Components FantasyUI through the repository Docker wrapper.">
+  <h2 class="h4">Container-first build</h2>
+  <Snippet language="sh" code={`./build-components-fantasyui.sh\n./build-components-fantasyui.sh npm run docs:build`} />
+
+  <h2 class="h4 mt-4">Use assets</h2>
+  <Snippet language="html" code={`<link rel="stylesheet" href="/css/components-fantasyui.min.css">\n<script src="/js/bootstrap.bundle.min.js"></script>\n<script type="module" src="/js/components.js"></script>`} />
+</BaseLayout>

@@ -1,0 +1,136 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Snippet from "../../components/Snippet.astro";
+---
+
+<BaseLayout title="Docs Panel" description="Right-side documentation panel with sticky header, props table, and live examples. Shown when .cf-workbench has the .has-docs class.">
+
+  <!-- Full docs panel demo -->
+  <h2 class="h5 mb-3">Full Docs Panel</h2>
+  <div class="row g-3 mb-2">
+    <div class="col-lg-7">
+      <div class="cf-docs-panel rounded border" style="max-height:36rem; overflow:auto">
+        <div class="cf-docs-header" style="position:sticky;top:0;z-index:1">
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <div>
+              <h2 class="h5 mb-1">Button Component</h2>
+              <p class="cf-muted small mb-0">Usage, props, and story references.</p>
+            </div>
+            <span class="badge text-bg-primary">v2.1</span>
+          </div>
+        </div>
+        <div class="cf-docs-body">
+          <h3 class="h6">Overview</h3>
+          <p>The <strong>Button</strong> communicates a user action. Use the primary variant for the single most important action on a surface, outline for secondary actions.</p>
+
+          <div class="cf-doc-example mb-3">
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn btn-primary">Primary</button>
+              <button class="btn btn-outline-primary">Outline</button>
+              <button class="btn btn-secondary">Secondary</button>
+              <button class="btn btn-primary" disabled>Disabled</button>
+            </div>
+          </div>
+
+          <h3 class="h6 mt-4">Props</h3>
+          <table class="cf-props-table">
+            <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Required</th></tr></thead>
+            <tbody>
+              <tr><td>label</td><td><code>string</code></td><td>—</td><td>Yes</td></tr>
+              <tr><td>variant</td><td><code>primary | secondary | danger</code></td><td><code>primary</code></td><td>No</td></tr>
+              <tr><td>size</td><td><code>sm | md | lg</code></td><td><code>md</code></td><td>No</td></tr>
+              <tr><td>disabled</td><td><code>boolean</code></td><td><code>false</code></td><td>No</td></tr>
+              <tr><td>onClick</td><td><code>() =&gt; void</code></td><td>—</td><td>No</td></tr>
+            </tbody>
+          </table>
+
+          <h3 class="h6 mt-4">Stories</h3>
+          <ul class="list-unstyled d-flex flex-column gap-1">
+            <li><a href="#" class="d-flex align-items-center gap-2 small"><i class="bi bi-record-circle text-primary"></i>Button / Primary</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 small"><i class="bi bi-circle cf-muted"></i>Button / Secondary</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 small"><i class="bi bi-circle cf-muted"></i>Button / Disabled</a></li>
+            <li><a href="#" class="d-flex align-items-center gap-2 small"><i class="bi bi-circle cf-muted"></i>Button / Sizes</a></li>
+          </ul>
+
+          <h3 class="h6 mt-4">Accessibility</h3>
+          <p class="small">Always use a meaningful <code>type</code> attribute (<code>button</code>, <code>submit</code>, or <code>reset</code>). For icon-only buttons, add <code>aria-label</code>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="cf-preview-card h-100">
+        <p class="cf-muted small">The docs panel sits in the <strong>third column</strong> of <code>.cf-workbench.has-docs</code>. Its sticky header stays visible while scrolling long prop tables.</p>
+        <hr>
+        <p class="cf-muted small mb-0">Toggle visibility with <code>[data-cf-toggle-docs]</code> — this removes <code>.has-docs</code> from the workbench and adds <code>.is-hidden</code> to the panel.</p>
+      </div>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<aside class="cf-docs-panel">
+  <div class="cf-docs-header">
+    <h2 class="h5 mb-1">Button Component</h2>
+    <p class="cf-muted small mb-0">Usage, props, and story references.</p>
+  </div>
+  <div class="cf-docs-body">
+    <h3 class="h6">Props</h3>
+    <table class="cf-props-table">
+      <thead><tr><th>Name</th><th>Type</th><th>Default</th></tr></thead>
+      <tbody>
+        <tr><td>label</td><td><code>string</code></td><td>—</td></tr>
+        <tr><td>disabled</td><td><code>boolean</code></td><td>false</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="h6 mt-4">Example</h3>
+    <div class="cf-doc-example">
+      <button class="btn btn-primary">Primary button</button>
+    </div>
+  </div>
+</aside>`} />
+
+  <!-- Doc example variants -->
+  <h2 class="h5 mt-5 mb-3">Doc Examples</h2>
+  <p class="cf-muted">Wrap live inline examples in <code>.cf-doc-example</code>. Provides a surface-2 background with subtle inset shadow.</p>
+  <div class="row g-2 mb-2">
+    <div class="col-md-6">
+      <div class="cf-doc-example">
+        <button class="btn btn-primary me-2">Primary</button>
+        <button class="btn btn-outline-secondary">Secondary</button>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="cf-doc-example">
+        <div class="d-flex flex-column gap-2">
+          <div class="form-check"><input class="form-check-input" type="checkbox" checked id="chk1"><label class="form-check-label" for="chk1">Enabled</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" id="chk2"><label class="form-check-label" for="chk2">Default</label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toggle visibility -->
+  <h2 class="h5 mt-5 mb-3">Toggle Docs Panel</h2>
+  <Snippet language="html" code={`<!-- In the toolbar -->
+<button class="cf-tool" type="button"
+        data-cf-toggle-docs aria-pressed="true">
+  <i class="bi bi-file-text"></i>Docs
+</button>
+
+<!-- components.js toggles: -->
+<!-- workbench.classList.toggle('has-docs') -->
+<!-- panel.classList.toggle('is-hidden') -->`} />
+
+  <!-- Classes reference -->
+  <h2 class="h5 mt-5 mb-3">Classes</h2>
+  <table class="cf-props-table">
+    <thead><tr><th>Class</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>.cf-docs-panel</td><td>Right column, scrollable. Add <code>.is-hidden</code> to collapse.</td></tr>
+      <tr><td>.cf-docs-header</td><td>Sticky header row with surface background. Stays pinned while body scrolls.</td></tr>
+      <tr><td>.cf-docs-body</td><td>Padded content area for prose, props table, and examples.</td></tr>
+      <tr><td>.cf-props-table</td><td>Full-width table with alternating rows and monospace first column.</td></tr>
+      <tr><td>.cf-doc-example</td><td>Inset surface box for live component demonstrations.</td></tr>
+    </tbody>
+  </table>
+
+</BaseLayout>

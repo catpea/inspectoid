@@ -1,0 +1,321 @@
+<!doctype html>
+<!--
+  seed.html
+  =========
+
+  A self-contained reference example for the Galath language. It demonstrates
+  every major feature in one page so a new author can read top-to-bottom and
+  see how the pieces fit:
+
+    * components with model + view + commandset + controller + listeners
+    * XML instance trees, signals, computed values
+    * bind:, on:, use:, drag:, drop: directives
+    * datatemplates and <items>
+    * routed XML events
+    * scoped <style>
+
+  The runtime lives in packages/galath. We pull it in via a native browser
+  import map so there is no build step. To run this file locally:
+
+      npx serve .
+      # or
+      python3 -m http.server 8080
+
+  Then open http://localhost:8080/seed.html
+-->
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galath Strong Core - Reference Demo</title>
+
+  <!-- Local Bootstrap so the demo works offline. -->
+  <link href="./node_modules/galath-css/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./node_modules/galath-css/css/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!--
+    The import map lets `import 'galath'` resolve to our local source. No
+    bundler, no transpiler. The mapped path goes through the symlink at
+    node_modules/galath -> packages/galath.
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "galath": "./src/index.js",
+        "galath/boot": "./src/boot.js"
+      }
+    }
+  </script>
+
+  <style>
+    /* These styles are page-level (the demo's chrome). Component-level
+       styles live inside the <component>'s own <style> block - see how the
+       feature-badge component's accent color is scoped, below. */
+    :root {
+      --xes-shell: #06101f;
+      --xes-line: rgba(255, 255, 255, .12);
+      --xes-card: rgba(255, 255, 255, .045);
+      --xes-card-2: rgba(255, 255, 255, .022);
+    }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(13, 202, 240, .14), transparent 34rem),
+        radial-gradient(circle at top right, rgba(255, 193, 7, .08), transparent 28rem),
+        linear-gradient(180deg, #040812, var(--xes-shell));
+    }
+    .xes-shell { min-height: 100vh; }
+    .xes-hero  { border-bottom: 1px solid var(--xes-line); background: linear-gradient(180deg, rgba(255,255,255,.05), transparent); }
+    .xes-card  { background: linear-gradient(180deg, var(--xes-card), var(--xes-card-2)); border: 1px solid var(--xes-line); box-shadow: 0 1rem 3rem rgba(0,0,0,.22); }
+    .xes-code  { max-height: 24rem; overflow: auto; font-size: .825rem; background: rgba(0,0,0,.34); border: 1px solid var(--xes-line); }
+    .xes-nav-link { width: 100%; text-align: left; color: var(--bs-body-color); background: transparent; border: 0; }
+    .xes-nav-link:hover { background-color: rgba(255,255,255,.07); }
+    .xes-nav-link.active { background-color: rgba(13,202,240,.16); box-shadow: inset 3px 0 0 var(--bs-info); color: var(--bs-info-text-emphasis); }
+    .xes-pill   { border: 1px solid var(--xes-line); background-color: rgba(255,255,255,.045); }
+    .xes-tiny   { font-size: .78rem; }
+    .xes-drop-hint { outline: 1px dashed rgba(13, 202, 240, .35); outline-offset: .35rem; }
+    .xes-dragging  { opacity: .55; }
+  </style>
+</head>
+<body>
+  <div id="mount"></div>
+
+  <!--
+    The Galath source lives in a script tag with a non-JS MIME type. The
+    browser does not execute it; we read its textContent at boot time.
+    Embedding the source as a <script> avoids escaping issues that you'd
+    hit with putting it inside a JS string.
+  -->
+  <script type="application/xml" id="galath-source">
+    <galath version="1.0"
+            xmlns:bind="urn:galath:bind"
+            xmlns:on="urn:galath:on"
+            xmlns:use="urn:galath:use"
+            xmlns:drag="urn:galath:drag"
+            xmlns:drop="urn:galath:drop"
+            xmlns:class="urn:galath:class">
+
+      <!--
+        A tiny presentational component. It accepts `icon`, `label`, and
+        `tone` props and renders a Bootstrap pill. `<style>` content is
+        auto-scoped to instances of this tag.
+      -->
+      <component name="feature-badge" tag="x-feature-badge" icon="bi-cpu" label="Feature" tone="info">
+        <style>
+          .badge { transition: transform .12s ease; }
+          .badge:hover { transform: translateY(-1px); }
+        </style>
+        <view>
+          <span class="badge rounded-pill xes-pill text-body-emphasis me-1 mb-1">
+            <i class="bi {icon} me-1"></i>{label}
+          </span>
+        </view>
+      </component>
+
+      <!--
+        The main app component. Holds an instance tree of todos plus a few
+        signals for UI state. Demonstrates: signals, computed, instance
+        tree, bindings, repeaters, items + datatemplate, commands,
+        controllers, listeners, behaviors, drag/drop.
+      -->
+      <component name="docs-app" tag="x-docs-app" title="Galath Strong Core">
+        <model>
+          <signal name="activeSection" value="model" />
+          <signal name="eventLog" value="" />
+          <signal name="noteText" value="Actions are controller-owned. Views stay declarative." />
+
+          <!--
+            The instance tree IS the application's state. Attributes are
+            reactive cells; mutations emit `xforms-*` events.
+          -->
+          <instance>
+            <draft text="Write a stronger XML app language" />
+            <todos>
+              <todo id="t1" text="Model data as XML instance nodes" done="true" />
+              <todo id="t2" text="Bind controls to paths" done="false" />
+              <todo id="t3" text="Render nodes with DataTemplate" done="false" />
+            </todos>
+          </instance>
+
+          <!--
+            <computed> is a derived signal. It re-evaluates whenever its
+            `from` source changes. We pin it to the tree's version counter
+            (any tree change) by referencing a magical `eventLog` signal
+            via `from` - see the engine's <computed> setup for the rule.
+          -->
+          <computed name="todoCount" from="eventLog">
+            <expression>select('/todos/todo').length</expression>
+          </computed>
+        </model>
+
+        <!-- Reusable view fragment. Used below by <items>. -->
+        <datatemplate name="todo-card" for="todo">
+          <div class="col-md-6 col-xl-4">
+            <div class="card xes-card h-100" drag:source="$todo" drop:target="$todo" drop:command="moveTodoBefore">
+              <div class="card-body">
+                <div class="d-flex gap-2 align-items-start">
+                  <input class="form-check-input mt-1" type="checkbox" bind:checked="$todo/@done" />
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold"><text value="$todo/@text" /></div>
+                    <div class="text-secondary xes-tiny">id: <text value="$todo/@id" /></div>
+                  </div>
+                  <button class="btn btn-sm btn-outline-danger" on:click="deleteNode($todo)" title="Delete">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </datatemplate>
+
+        <!--
+          Centralized commands. Each one declares optional `enabled` logic
+          re-evaluated as part of every render so buttons disable
+          automatically.
+        -->
+        <commandset>
+          <command name="addTodo" enabled="valueOf('/draft/@text').trim().length > 0">
+            <insert ref="/todos">
+              <todo id="{uid()}" text="{valueOf('/draft/@text')}" done="false" />
+            </insert>
+            <setvalue ref="/draft/@text" value="'New XML task'" />
+          </command>
+
+          <command name="deleteDone" enabled="select('/todos/todo[@done=true]').length > 0">
+            <delete ref="/todos/todo[@done=true]" />
+          </command>
+
+          <command name="clearLog" enabled="eventLog.length > 0">
+            <set signal="eventLog" value="''" />
+          </command>
+
+          <!--
+            moveTodoBefore is bound to drop:command. It receives `$source`
+            and `$target` in scope - both are XNodes.
+          -->
+          <command name="moveTodoBefore">
+            <eval>
+              if ($source &amp;&amp; $target &amp;&amp; $source !== $target) {
+                $source.remove();
+                $target.parent.insertBefore($source, $target);
+              }
+            </eval>
+          </command>
+        </commandset>
+
+        <!-- Named actions. Views invoke them with `#actionName`. -->
+        <controller>
+          <action name="logTreeEvent">
+            <set signal="eventLog" value="$event.type + ' at ' + $event.path + '\n' + eventLog" />
+          </action>
+          <action name="markAllDone">
+            <setvalue ref="/todos/todo/@done" value="true" />
+          </action>
+        </controller>
+
+        <!--
+          Routed XML events: the controller can react to data-tree
+          mutations declaratively. `observer` filters by path prefix.
+        -->
+        <listeners>
+          <listener event="xforms-insert"        observer="/todos" handler="#logTreeEvent" />
+          <listener event="xforms-delete"        observer="/todos" handler="#logTreeEvent" />
+          <listener event="xforms-value-changed" observer="/todos" handler="#logTreeEvent" />
+        </listeners>
+
+        <view>
+          <main class="xes-shell">
+            <section class="xes-hero py-5">
+              <div class="container-xxl">
+                <div class="row align-items-center g-4">
+                  <div class="col-lg-8">
+                    <div class="d-flex gap-2 flex-wrap mb-3">
+                      <x-feature-badge icon="bi-database" label="XForms" />
+                      <x-feature-badge icon="bi-ui-checks-grid" label="XAML" />
+                      <x-feature-badge icon="bi-command" label="XUL" />
+                      <x-feature-badge icon="bi-person-gear" label="FXML" />
+                      <x-feature-badge icon="bi-puzzle" label="Behaviors" />
+                    </div>
+                    <h1 class="display-5 fw-semibold mb-3">{title}</h1>
+                    <p class="lead text-secondary mb-4">
+                      Galath: a stronger XML language for the web. XML instance data, path
+                      bindings, repeaters, templates, commandsets, controllers, routed events,
+                      attached behaviors, scoped signals, and surgical DOM rendering.
+                    </p>
+                    <div class="d-flex gap-2 flex-wrap">
+                      <a class="btn btn-info" href="./index.html">
+                        <i class="bi bi-play-circle me-1"></i>Open the Playground
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="container-xxl py-4">
+              <div class="row g-4">
+                <div class="col-lg-12">
+                  <div class="card xes-card">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                      <strong><i class="bi bi-window-stack me-2"></i>Live XML instance demo</strong>
+                      <span class="badge text-bg-info"><text value="todoCount" /> XML nodes</span>
+                    </div>
+                    <div class="card-body">
+                      <div class="row g-3 mb-4">
+                        <div class="col-lg-7">
+                          <label class="form-label">Draft todo bound to <code>/draft/@text</code></label>
+                          <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-pencil-square"></i></span>
+                            <input class="form-control" bind:value="/draft/@text" />
+                            <button class="btn btn-info" command="addTodo">
+                              <i class="bi bi-plus-circle me-1"></i>Insert
+                            </button>
+                          </div>
+                        </div>
+                        <div class="col-lg-5 d-flex align-items-end gap-2 flex-wrap">
+                          <button class="btn btn-outline-light" command="deleteDone"><i class="bi bi-trash me-1"></i>Delete done</button>
+                          <button class="btn btn-outline-light" on:click="#markAllDone"><i class="bi bi-check2-all me-1"></i>Mark all done</button>
+                          <button class="btn btn-outline-secondary" command="clearLog"><i class="bi bi-eraser me-1"></i>Clear log</button>
+                        </div>
+                      </div>
+
+                      <div class="row g-3 mb-4">
+                        <items source="/todos/todo" as="todo" template="todo-card" />
+                      </div>
+
+                      <label class="form-label">Event log</label>
+                      <textarea class="form-control font-monospace" rows="5" bind:value="eventLog"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+        </view>
+      </component>
+
+      <!-- The application is the page-level entry. -->
+      <application name="demo">
+        <x-docs-app title="Galath Strong Core"></x-docs-app>
+      </application>
+    </galath>
+  </script>
+
+  <!--
+    Boot: read the source from the script tag, hand it to galath, and let
+    the runtime register components and mount the app. Async because
+    `<import>` can fetch additional XML at startup.
+  -->
+  <script type="module">
+    import { boot } from 'galath/boot';
+
+    const language = await boot({
+      source: document.getElementById('galath-source').textContent,
+      mount: document.getElementById('mount'),
+    });
+
+    // Expose for console exploration in dev tools.
+    window.galath = language;
+  </script>
+</body>
+</html>

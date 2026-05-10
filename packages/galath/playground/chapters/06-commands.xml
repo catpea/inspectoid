@@ -1,0 +1,144 @@
+<!--
+  chapters/06-commands.xml
+
+  XUL-style commandsets. A <command> bundles a name, an enabled
+  predicate, and a list of operations. Buttons attach to commands via
+  command="name" and pick up their enabled state automatically.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-commands" tag="x-chapter-commands">
+    <model>
+      <instance>
+        <draft text="" />
+        <items>
+          <item id="i1" text="Bread" />
+          <item id="i2" text="Apples" />
+        </items>
+      </instance>
+
+      <signal name="snippet"><![CDATA[<commandset>
+  <command name="addItem"
+           shortcut="ctrl+enter"
+           enabled="valueOf('/draft/@text').trim().length > 0">
+    <insert ref="/items">
+      <item id="{uid()}" text="{valueOf('/draft/@text')}" />
+    </insert>
+    <setvalue ref="/draft/@text" value="''" />
+  </command>
+
+  <command name="clearAll"
+           shortcut="ctrl+shift+x"
+           enabled="select('/items/item').length > 0">
+    <delete ref="/items/item" />
+  </command>
+</commandset>
+
+<button command="addItem">Add (Ctrl+Enter)</button>
+<button command="clearAll">Clear all (Ctrl+Shift+X)</button>]]></signal>
+    </model>
+
+    <commandset>
+      <command name="addItem"
+               shortcut="ctrl+enter"
+               enabled="valueOf('/draft/@text').trim().length > 0">
+        <insert ref="/items">
+          <item id="{uid()}" text="{valueOf('/draft/@text')}" />
+        </insert>
+        <setvalue ref="/draft/@text" value="''" />
+      </command>
+
+      <command name="clearAll"
+               shortcut="ctrl+shift+x"
+               enabled="select('/items/item').length > 0">
+        <delete ref="/items/item" />
+      </command>
+    </commandset>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-command" title="Commands"
+          subtitle="Centralize operations and let buttons inherit their enabled/disabled state." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  A <code>&lt;commandset&gt;</code> declares named commands. Each
+                  <code>&lt;command&gt;</code> has:
+                </p>
+                <ul class="text-secondary">
+                  <li><strong>name</strong> - referenced by <code>command="..."</code>.</li>
+                  <li><strong>enabled</strong> (optional) - an expression. Buttons are auto-disabled when it is falsy.</li>
+                  <li><strong>shortcut</strong> (optional) - a keybinding like
+                      <code>ctrl+s</code> or <code>ctrl+shift+x</code>. The runtime installs a
+                      global keydown listener; modifier-bearing shortcuts work even while a
+                      form field has focus.</li>
+                  <li>A body of operations: <code>&lt;set&gt;</code>, <code>&lt;setvalue&gt;</code>,
+                      <code>&lt;insert&gt;</code>, <code>&lt;delete&gt;</code>, <code>&lt;call&gt;</code>,
+                      <code>&lt;eval&gt;</code>, <code>&lt;log&gt;</code>, <code>&lt;fetch&gt;</code>.</li>
+                </ul>
+                <p class="text-secondary mb-0">
+                  Why bother? Three reasons: re-use (one command, many buttons / menu items), one
+                  source of enabled/disabled truth, and a clean separation between intent ("add
+                  item") and visual layout.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="input-group mb-3">
+              <span class="input-group-text"><i class="bi bi-pencil-square"></i></span>
+              <input class="form-control" placeholder="Type something to add (or hit Ctrl+Enter)..." bind:value="/draft/@text" />
+              <button class="btn btn-info" command="addItem">
+                <i class="bi bi-plus-circle me-1"></i>Add <kbd class="ms-1">Ctrl+Enter</kbd>
+              </button>
+              <button class="btn btn-outline-light" command="clearAll">
+                <i class="bi bi-trash me-1"></i>Clear <kbd class="ms-1">Ctrl+Shift+X</kbd>
+              </button>
+            </div>
+
+            <p class="text-secondary xes-tiny">
+              Notice how <strong>Add</strong> stays disabled until you type something, and
+              <strong>Clear all</strong> stays disabled when the list is empty - both with no
+              hand-written disabled logic. The shortcuts run the same commands, so they
+              also respect those <code>enabled</code> predicates.
+            </p>
+
+            <ul class="list-group">
+              <repeat ref="/items/item" as="it">
+                <li class="list-group-item d-flex align-items-center justify-content-between">
+                  <span><text value="$it/@text" /></span>
+                  <button class="btn btn-sm btn-outline-danger" on:click="deleteNode($it)">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </li>
+              </repeat>
+              <if test="select('/items/item').length === 0">
+                <li class="list-group-item text-secondary text-center">No items yet.</li>
+              </if>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

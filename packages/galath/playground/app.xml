@@ -1,0 +1,214 @@
+<!--
+  playground/app.xml
+
+  The shell of the Galath playground. Owns the chapter navigation state
+  and switches between chapter components. Each chapter is a separately-
+  imported component that owns its own demo and explanation.
+
+  The chapter list is data (an XML instance), so the sidebar renders
+  itself from a single <repeat>. Adding a new chapter is two lines: an
+  <import src=...> in index.html plus a <chapter id=... title=.../> here.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="playground" tag="x-playground">
+    <model>
+      <signal name="activeChapter" value="welcome" />
+      <!-- Toggle between the narrated chapter view (default) and a
+           docs-hidden view for experienced readers. Persisted via the
+           URL hash through #syncFromHash. -->
+      <signal name="codeOnly" value="false" />
+
+      <instance>
+        <chapters>
+          <chapter id="welcome"     icon="bi-stars"         title="Welcome" />
+          <chapter id="signals"     icon="bi-broadcast"     title="Signals" />
+          <chapter id="instance"    icon="bi-database"      title="Instance Tree" />
+          <chapter id="bindings"    icon="bi-link-45deg"    title="Bindings" />
+          <chapter id="expressions" icon="bi-braces"        title="Expressions" />
+          <chapter id="paths"       icon="bi-signpost-split" title="Paths" />
+          <chapter id="lists"       icon="bi-collection"    title="Lists &amp; Templates" />
+          <chapter id="commands"    icon="bi-command"       title="Commands" />
+          <chapter id="controller"  icon="bi-person-gear"   title="Controllers" />
+          <chapter id="events"      icon="bi-broadcast-pin" title="XML Events" />
+          <chapter id="behaviors"   icon="bi-puzzle"        title="Behaviors" />
+          <chapter id="components"  icon="bi-boxes"         title="Components" />
+          <chapter id="imports"     icon="bi-arrow-down-up" title="Imports" />
+        </chapters>
+      </instance>
+    </model>
+
+    <controller>
+      <!--
+        navigateTo - reads `data-chapter-id` from the click target so any
+        nav button can wire itself by setting that attribute. We then
+        write the URL hash so deep links survive a page refresh.
+      -->
+      <action name="navigateTo">
+        <set signal="activeChapter" value="$event.currentTarget.dataset.chapterId" />
+        <eval>
+          window.location.hash = $event.currentTarget.dataset.chapterId;
+        </eval>
+      </action>
+
+      <!-- Read the current URL hash into activeChapter. -->
+      <action name="syncFromHash">
+        <eval>
+          const id = (window.location.hash || '#welcome').replace(/^#/, '');
+          if (id) set('activeChapter', id);
+        </eval>
+      </action>
+
+      <!-- Step backward / forward through the chapter list. -->
+      <action name="goPrev">
+        <eval>
+          const ids = select('/chapters/chapter').map(c => c.get('id'));
+          const i = ids.indexOf(activeChapter);
+          if (i > 0) {
+            const next = ids[i - 1];
+            set('activeChapter', next);
+            window.location.hash = next;
+          }
+        </eval>
+      </action>
+      <action name="goNext">
+        <eval>
+          const ids = select('/chapters/chapter').map(c => c.get('id'));
+          const i = ids.indexOf(activeChapter);
+          if (i >= 0 &amp;&amp; i &lt; ids.length - 1) {
+            const next = ids[i + 1];
+            set('activeChapter', next);
+            window.location.hash = next;
+          }
+        </eval>
+      </action>
+
+      <action name="toggleCodeOnly">
+        <set signal="codeOnly" value="!codeOnly" />
+      </action>
+    </controller>
+
+    <!--
+      Mount: sync once from hash, then keep listening for hash changes so
+      the back button and manual hash edits work. The handler is stashed
+      on the element so on:unmount can remove it.
+    -->
+    <on:mount>
+      <call action="syncFromHash" />
+      <eval>
+        // Listen for hash changes so the back button and manual hash
+        // edits keep activeChapter in sync. The handler is stashed on
+        // window because by the time disconnectedCallback fires, the
+        // element is no longer queryable from the document.
+        const onHash = () => {
+          const id = (window.location.hash || '#welcome').replace(/^#/, '');
+          set('activeChapter', id);
+        };
+        window.addEventListener('hashchange', onHash);
+        window.__galathHashHandler = onHash;
+
+        // Arrow-key chapter navigation. We ignore key events whose target
+        // is a form control or contenteditable surface so typing inside a
+        // demo input never advances the chapter.
+        const onKey = (event) => {
+          if (event.altKey || event.ctrlKey || event.metaKey) return;
+          const t = event.target;
+          if (t &amp;&amp; (t.isContentEditable || t.matches?.('input, textarea, select'))) return;
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            const ids = select('/chapters/chapter').map(c => c.get('id'));
+            const i = ids.indexOf(valueOf('activeChapter'));
+            if (i > 0) {
+              const next = ids[i - 1];
+              set('activeChapter', next);
+              window.location.hash = next;
+            }
+          } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            const ids = select('/chapters/chapter').map(c => c.get('id'));
+            const i = ids.indexOf(valueOf('activeChapter'));
+            if (i &gt;= 0 &amp;&amp; i &lt; ids.length - 1) {
+              const next = ids[i + 1];
+              set('activeChapter', next);
+              window.location.hash = next;
+            }
+          }
+        };
+        window.addEventListener('keydown', onKey);
+        window.__galathKeyHandler = onKey;
+      </eval>
+    </on:mount>
+
+    <on:unmount>
+      <eval>
+        if (window.__galathHashHandler) {
+          window.removeEventListener('hashchange', window.__galathHashHandler);
+          window.__galathHashHandler = null;
+        }
+        if (window.__galathKeyHandler) {
+          window.removeEventListener('keydown', window.__galathKeyHandler);
+          window.__galathKeyHandler = null;
+        }
+      </eval>
+    </on:unmount>
+
+    <view>
+      <div class="container-fluid p-0 {codeOnly ? 'xes-code-only' : ''}">
+        <div class="row g-0 min-vh-100">
+          <aside class="col-md-3 col-lg-2 border-end overflow-auto py-3 xes-sidebar">
+            <div class="px-3 mb-3 d-flex align-items-center gap-2">
+              <i class="bi bi-diagram-3-fill text-info fs-4"></i>
+              <div>
+                <div class="fw-semibold">Galath Playground</div>
+                <small class="text-secondary">XML for web applications</small>
+              </div>
+            </div>
+            <nav class="px-2">
+              <repeat ref="/chapters/chapter" as="ch">
+                <button class="btn xes-nav-link rounded px-3 py-2 mb-1 {activeChapter === valueOf('$ch/@id') ? 'active' : ''}"
+                        data-chapter-id="{valueOf('$ch/@id')}"
+                        on:click="#navigateTo">
+                  <i class="bi {valueOf('$ch/@icon')} me-2"></i><text value="$ch/@title" />
+                </button>
+              </repeat>
+            </nav>
+            <div class="px-3 pt-3 mt-2 border-top d-flex flex-column gap-2">
+              <button class="btn btn-sm btn-outline-info w-100" on:click="#toggleCodeOnly">
+                <i class="bi {codeOnly ? 'bi-journal-text' : 'bi-code-square'} me-1"></i>
+                <if test="codeOnly">Show docs</if>
+                <if test="!codeOnly">Code-only view</if>
+              </button>
+              <div class="text-secondary xes-tiny px-1">
+                <kbd>&#8592;</kbd> <kbd>&#8594;</kbd> to step through chapters.
+              </div>
+              <a class="btn btn-sm btn-outline-light w-100" href="./seed.html">
+                <i class="bi bi-arrow-up-right-square me-1"></i>Reference demo
+              </a>
+            </div>
+          </aside>
+
+          <section class="col overflow-auto">
+            <!--
+              Chapter switcher. Each chapter is its own custom element
+              registered by an imported XML file. A chain of <if>s is
+              the most readable form for newcomers and adding a chapter
+              is one line here plus the import.
+            -->
+            <if test="activeChapter === 'welcome'"    ><x-chapter-welcome    /></if>
+            <if test="activeChapter === 'signals'"    ><x-chapter-signals    /></if>
+            <if test="activeChapter === 'instance'"   ><x-chapter-instance   /></if>
+            <if test="activeChapter === 'bindings'"   ><x-chapter-bindings   /></if>
+            <if test="activeChapter === 'expressions'"><x-chapter-expressions /></if>
+            <if test="activeChapter === 'paths'"      ><x-chapter-paths      /></if>
+            <if test="activeChapter === 'lists'"      ><x-chapter-lists      /></if>
+            <if test="activeChapter === 'commands'"   ><x-chapter-commands   /></if>
+            <if test="activeChapter === 'controller'" ><x-chapter-controller /></if>
+            <if test="activeChapter === 'events'"     ><x-chapter-events     /></if>
+            <if test="activeChapter === 'behaviors'"  ><x-chapter-behaviors  /></if>
+            <if test="activeChapter === 'components'" ><x-chapter-components /></if>
+            <if test="activeChapter === 'imports'"    ><x-chapter-imports    /></if>
+          </section>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

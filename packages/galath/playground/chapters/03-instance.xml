@@ -1,0 +1,130 @@
+<!--
+  chapters/03-instance.xml
+
+  The instance tree: state shaped as XML you can navigate by path.
+
+  Demo: a simple "settings" instance with nested elements; we read and
+  write attribute values from the view and show the live tree as
+  serialized XML.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-instance" tag="x-chapter-instance">
+    <model>
+      <instance>
+        <user name="Ada" theme="dark">
+          <prefs>
+            <pref key="emails" value="weekly" />
+            <pref key="autosave" value="true" />
+          </prefs>
+        </user>
+      </instance>
+
+      <signal name="snippet"><![CDATA[<model>
+  <instance>
+    <user name="Ada" theme="dark">
+      <prefs>
+        <pref key="emails" value="weekly" />
+      </prefs>
+    </user>
+  </instance>
+</model>
+
+<input bind:value="/user/@name" />
+<select bind:value="/user/@theme">
+  <option value="dark">Dark</option>
+  <option value="light">Light</option>
+</select>
+
+<repeat ref="/user/prefs/pref" as="p">
+  <div>
+    <text value="$p/@key" />: <text value="$p/@value" />
+  </div>
+</repeat>]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-database" title="Instance Tree"
+          subtitle="Application state lives as XML. Bind to attributes by path." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  The <code>&lt;instance&gt;</code> block defines initial state as XML. Every
+                  attribute becomes a reactive signal under the hood, so any change is observed
+                  by the renderer.
+                </p>
+                <p class="text-secondary">
+                  Paths look like a strict subset of XPath:
+                </p>
+                <ul class="text-secondary mb-0">
+                  <li><code>/user/@name</code> - root, child, attribute.</li>
+                  <li><code>/user/prefs/pref[@key=emails]/@value</code> - predicate selector.</li>
+                  <li><code>$p/@key</code> - path under a local variable bound by <code>&lt;repeat as="p"&gt;</code>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Name</label>
+                <input class="form-control" bind:value="/user/@name" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Theme</label>
+                <select class="form-select" bind:value="/user/@theme">
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option>
+                  <option value="contrast">High contrast</option>
+                </select>
+              </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <h3 class="h6 text-uppercase text-secondary">Preferences</h3>
+            <div class="d-flex flex-column gap-2">
+              <repeat ref="/user/prefs/pref" as="p">
+                <div class="input-group">
+                  <span class="input-group-text" style="min-width: 7rem;">
+                    <text value="$p/@key" />
+                  </span>
+                  <input class="form-control" bind:value="$p/@value" />
+                </div>
+              </repeat>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="alert alert-info mb-0">
+              <i class="bi bi-info-circle me-1"></i>
+              Hello <strong>{valueOf('/user/@name')}</strong>! Your theme is <code>{valueOf('/user/@theme')}</code>.
+              Edit the inputs above and watch this line update without any explicit binding code.
+            </div>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

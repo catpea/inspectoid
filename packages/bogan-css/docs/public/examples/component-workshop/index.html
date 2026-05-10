@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Component Workshop Starter</title>
+    <link rel="stylesheet" href="../../product/css/components-fantasyui.min.css">
+  </head>
+  <body>
+    <div class="cf-app">
+      <header class="cf-header">
+        <a class="cf-logo" href="../../product/index.html">
+          <span class="cf-logo-mark"><i class="bi bi-braces"></i></span>
+          <span>Components</span>
+        </a>
+        <nav class="cf-header-nav">
+          <a class="cf-header-link is-active" href="#">Stories</a>
+          <a class="cf-header-link" href="../design-system-docs/index.html">Docs</a>
+          <a class="cf-header-link" href="../testing-dashboard/index.html">Tests</a>
+        </nav>
+        <div class="cf-search">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
+            <input class="form-control" type="search" placeholder="Search stories" data-cf-search>
+          </div>
+        </div>
+      </header>
+      <div class="cf-workbench">
+        <aside class="cf-sidebar">
+          <div class="cf-sidebar-header"><strong>Components</strong></div>
+          <nav class="cf-tree">
+            <div class="cf-tree-label"><i class="bi bi-folder"></i>Inputs</div>
+            <a class="cf-tree-item is-active" href="#" data-cf-label="button primary">Button / Primary</a>
+            <a class="cf-tree-item" href="#" data-cf-label="form field">Form Field</a>
+            <a class="cf-tree-item" href="#" data-cf-label="checkbox">Checkbox</a>
+          </nav>
+        </aside>
+        <main class="cf-center">
+          <div class="cf-toolbar">
+            <button class="cf-tool is-active" type="button"><i class="bi bi-window"></i>Canvas</button>
+            <button class="cf-tool" type="button" data-cf-toggle-addons><i class="bi bi-sliders"></i>Addons</button>
+            <span class="cf-toolbar-spacer"></span>
+            <button class="btn btn-sm btn-outline-secondary cf-icon-button" type="button" data-cf-fullscreen><i class="bi bi-arrows-fullscreen"></i></button>
+          </div>
+          <section class="cf-canvas">
+            <div class="cf-preview-frame">
+              <h1 class="h5">Button / Primary</h1>
+              <p class="cf-muted">A starter for a conventional component workshop.</p>
+              <button class="btn btn-primary" type="button">Save changes</button>
+            </div>
+          </section>
+          <section class="cf-addon-panel">
+            <div class="cf-tabbar">
+              <button class="cf-addon-tab is-active" type="button" data-cf-tab="controls">Controls</button>
+              <button class="cf-addon-tab" type="button" data-cf-tab="source">Source</button>
+            </div>
+            <div class="cf-addon-content">
+              <div class="cf-panel-pane is-active" data-cf-pane="controls">
+                <div class="cf-control-grid">
+                  <label class="cf-control"><span class="cf-control-label">label</span><input class="form-control form-control-sm" value="Save changes"></label>
+                  <label class="cf-control"><span class="cf-control-label">variant</span><select class="form-select form-select-sm"><option>primary</option><option>outline</option></select></label>
+                </div>
+              </div>
+              <div class="cf-panel-pane" data-cf-pane="source">
+                <pre class="cf-preview-card cf-mono mb-0"><code>&lt;button class="btn btn-primary"&gt;Save changes&lt;/button&gt;</code></pre>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+      <footer class="cf-statusbar"><span>Ready</span><span>Workshop starter</span></footer>
+    </div>
+    <script src="../../product/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../../product/js/components.js"></script>
+  </body>
+</html>

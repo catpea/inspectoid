@@ -1,0 +1,20 @@
+// Components FantasyUI theme entrypoint.
+//
+// Stack: configure Bootstrap, expose runtime color variables, then layer the
+// component-workshop UI pieces from the symbolic sketch.
+
+@use "bootstrap-theme";
+@use "root";
+@use "reboot";
+
+@use "components/app-shell";
+@use "components/sidebar";
+@use "components/toolbar";
+@use "components/preview";
+@use "components/controls";
+@use "components/docs";
+@use "components/story-card";
+@use "utilities";
+
+$bootstrap-icons-font-dir: "./fonts";
+@import "bootstrap-icons/font/bootstrap-icons";

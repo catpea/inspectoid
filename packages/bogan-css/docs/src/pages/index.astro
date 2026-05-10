@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ComponentDemo from "../components/ComponentDemo.astro";
+---
+
+<BaseLayout title="Components FantasyUI" description="A Bootstrap component-workshop theme with story trees, preview canvases, addon controls, docs panels, and quality dashboards.">
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><ComponentDemo title="Story Workspace" icon="bi-window-sidebar" body="A three-column shell for component trees, isolated previews, and documentation." /></div>
+    <div class="col-md-4"><ComponentDemo title="Addon Controls" icon="bi-sliders" body="Bottom panel patterns for args, actions, source, and accessibility checks." /></div>
+    <div class="col-md-4"><ComponentDemo title="Starter Templates" icon="bi-grid" body="Multiple ready-made views for docs, workshops, tests, and addon labs." /></div>
+  </div>
+  <section class="cf-preview-frame">
+    <h2 class="h4">Primary Preview</h2>
+    <p class="cf-muted">The product preview lives at <code>product/index.html</code> and mirrors the symbolic sketch.</p>
+    <a class="btn btn-primary" href="/starters/"><i class="bi bi-rocket-takeoff me-1"></i>View starters</a>
+  </section>
+</BaseLayout>

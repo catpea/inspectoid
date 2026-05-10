@@ -1,0 +1,29 @@
+<!--
+  components/chapter-shell.xml
+
+  A small heading component used by every chapter. We deliberately keep
+  this minimal - chapters render their own docs / demo / code cards
+  inline because their content differs in length and structure.
+
+  Usage:
+
+      <x-chapter-heading
+         icon="bi-broadcast"
+         title="Signals"
+         subtitle="Reactive cells that drive the rest of the system." />
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-heading" tag="x-chapter-heading"
+             icon="bi-bookmark"
+             title="Chapter"
+             subtitle="">
+    <view>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <i class="bi {icon} text-info fs-4"></i>
+        <span class="badge text-bg-info-subtle text-info-emphasis">Chapter</span>
+      </div>
+      <h1 class="display-6 fw-semibold mb-2">{title}</h1>
+      <p class="lead text-secondary mb-4">{subtitle}</p>
+    </view>
+  </component>
+</galath>

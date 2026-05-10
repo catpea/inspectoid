@@ -1,0 +1,156 @@
+<!--
+  chapters/04-bindings.xml
+
+  Directives for connecting view elements to state and behavior:
+
+    bind:property="signal|path"   two-way value/checked/etc.
+    on:event="code | #action"     one-way event handler
+    class:name="expr"             toggle a class
+    {expr}                         attribute interpolation
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-bindings" tag="x-chapter-bindings">
+    <model>
+      <signal name="email"      value="ada@example.com" />
+      <signal name="newsletter" value="true" />
+      <signal name="strength"   value="3" />
+      <signal name="role"       value="editor" />
+      <signal name="dueDate"    value="2026-06-01" />
+      <signal name="snippet"><![CDATA[<input bind:value="email" />
+<input type="checkbox" bind:checked="newsletter" />
+
+<button on:click="set('count', count + 1)">+</button>
+<button on:click="#submit">Submit</button>
+
+<div class:active="email.length > 0">
+  ...
+</div>
+
+<select bind:value="role">
+  <option value="viewer">Viewer</option>
+  <option value="editor">Editor</option>
+  <option value="admin">Admin</option>
+</select>
+
+<input type="date" bind:value="dueDate" />]]></signal>
+    </model>
+
+    <controller>
+      <action name="logSubmit">
+        <log value="'Submitted ' + email" />
+      </action>
+    </controller>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-link-45deg" title="Bindings"
+          subtitle="Connect view elements to signals, paths, and event handlers." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <ul class="text-secondary mb-3">
+                  <li><code>bind:value</code>, <code>bind:checked</code> are two-way binds. Edits
+                    flow back into the underlying signal or instance attribute.</li>
+                  <li><code>on:click</code>, <code>on:input</code>, etc. attach event listeners.
+                    The value can be inline JS (with all signals in scope) or a controller
+                    reference like <code>#submit</code>.</li>
+                  <li><code>class:active="expr"</code> toggles a class when the expression is
+                    truthy.</li>
+                  <li><code>{expr}</code> inside an attribute or text node is interpolation. It is
+                    HTML-escaped automatically - safe by default.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input class="form-control" type="email" bind:value="email" />
+              <small class="text-secondary">Live value: <code>{email}</code></small>
+            </div>
+
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="cb-news" bind:checked="newsletter" />
+              <label class="form-check-label" for="cb-news">Subscribe to the newsletter</label>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Password strength: {strength}</label>
+              <input class="form-range" type="range" min="0" max="5" bind:value="strength" />
+              <div class="progress" style="height: .35rem;">
+                <div class="progress-bar bg-info" style="width: {strength * 20}%"></div>
+              </div>
+            </div>
+
+            <div class="alert mb-3 {strength &gt;= 4 ? 'alert-success' : strength &gt;= 2 ? 'alert-warning' : 'alert-danger'}">
+              <i class="bi bi-shield-check me-1"></i>
+              <strong>Strength is {strength}/5</strong> -
+              <if test="strength >= 4">strong enough.</if>
+              <if test="strength === 3">acceptable but consider longer.</if>
+              <if test="strength &lt; 3">too weak.</if>
+            </div>
+
+            <button class="btn btn-info" on:click="#logSubmit">
+              <i class="bi bi-send me-1"></i>Submit (logs to console)
+            </button>
+          </div>
+        </div>
+
+        <div class="card xes-card mt-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-ui-checks-grid me-2"></i>Selects and date inputs</strong>
+          </div>
+          <div class="card-body">
+            <p class="text-secondary">
+              <code>bind:value</code> works for any control with a string-shaped value -
+              including <code>&lt;select&gt;</code> and <code>&lt;input type="date"&gt;</code>.
+              The signal holds the option value or the ISO date string; the runtime keeps the
+              control in sync after a render.
+            </p>
+            <div class="row g-3 align-items-end">
+              <div class="col-md-4">
+                <label class="form-label">Role</label>
+                <select class="form-select" bind:value="role">
+                  <option value="viewer">Viewer</option>
+                  <option value="editor">Editor</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <small class="text-secondary">Selected: <code>{role}</code></small>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Due date</label>
+                <input class="form-control" type="date" bind:value="dueDate" />
+                <small class="text-secondary">Picked: <code>{dueDate}</code></small>
+              </div>
+              <div class="col-md-4">
+                <div class="alert mb-0 alert-info">
+                  Granting <strong>{role}</strong> access until <strong>{dueDate}</strong>.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

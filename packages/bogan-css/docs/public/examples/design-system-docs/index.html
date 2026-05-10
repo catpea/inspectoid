@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Design System Docs Starter</title>
+    <link rel="stylesheet" href="../../product/css/components-fantasyui.min.css">
+  </head>
+  <body>
+    <div class="cf-app">
+      <header class="cf-header">
+        <a class="cf-logo" href="../../product/index.html">
+          <span class="cf-logo-mark"><i class="bi bi-palette2"></i></span>
+          <span>Components Docs</span>
+        </a>
+        <nav class="cf-header-nav">
+          <a class="cf-header-link is-active" href="#">Foundations</a>
+          <a class="cf-header-link" href="../component-workshop/index.html">Stories</a>
+          <a class="cf-header-link" href="../addon-panel/index.html">Addons</a>
+        </nav>
+      </header>
+      <main class="container-fluid py-4">
+        <div class="row g-4">
+          <aside class="col-lg-3">
+            <div class="cf-sidebar rounded border">
+              <div class="cf-sidebar-header"><strong>Docs outline</strong></div>
+              <nav class="cf-tree">
+                <a class="cf-tree-item is-active" href="#">Button</a>
+                <a class="cf-tree-item" href="#">Input</a>
+                <a class="cf-tree-item" href="#">Navigation</a>
+              </nav>
+            </div>
+          </aside>
+          <section class="col-lg-6">
+            <div class="cf-preview-frame">
+              <span class="badge text-bg-primary mb-2">Component</span>
+              <h1>Button</h1>
+              <p class="cf-muted">Buttons trigger commands. Use the strongest treatment for the primary action on a surface.</p>
+              <div class="cf-doc-example">
+                <button class="btn btn-primary me-2" type="button">Primary</button>
+                <button class="btn btn-outline-primary" type="button">Secondary</button>
+              </div>
+            </div>
+          </section>
+          <aside class="col-lg-3">
+            <div class="cf-docs-panel rounded border">
+              <div class="cf-docs-header"><h2 class="h6 mb-0">Props</h2></div>
+              <div class="cf-docs-body">
+                <table class="cf-props-table">
+                  <tr><td>variant</td><td><code>primary</code></td></tr>
+                  <tr><td>disabled</td><td><code>boolean</code></td></tr>
+                  <tr><td>size</td><td><code>sm | md | lg</code></td></tr>
+                </table>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+      <footer class="cf-statusbar"><span>Docs ready</span><span>Design system starter</span></footer>
+    </div>
+    <script src="../../product/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../../product/js/components.js"></script>
+  </body>
+</html>

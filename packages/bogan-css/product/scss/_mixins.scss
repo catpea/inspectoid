@@ -1,0 +1,11 @@
+@mixin cf-panel($radius: var(--cf-radius)) {
+  background: var(--cf-surface);
+  border: 1px solid var(--cf-line);
+  border-radius: $radius;
+  box-shadow: 0 4px 16px rgba(18, 24, 39, .08), 0 1px 0 rgba(255, 255, 255, .06) inset;
+}
+
+@mixin cf-focus-ring {
+  outline: 0;
+  box-shadow: 0 0 0 .18rem rgba(var(--cf-accent-rgb), .22);
+}

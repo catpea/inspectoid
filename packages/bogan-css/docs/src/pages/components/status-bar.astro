@@ -1,0 +1,95 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Snippet from "../../components/Snippet.astro";
+---
+
+<BaseLayout title="Status Bar" description="Slim footer bar fixed at the bottom of the app shell. Shows workshop state on the left and version / metadata on the right.">
+
+  <!-- Full status bar demo -->
+  <h2 class="h5 mb-3">Status Bar Variants</h2>
+
+  <p class="cf-muted">Ready state</p>
+  <div class="cf-statusbar rounded border mb-3">
+    <span><i class="bi bi-check-circle-fill text-success me-1"></i>Ready — 0 errors, 0 warnings</span>
+    <span>Components 0.1.0</span>
+  </div>
+
+  <p class="cf-muted">Building state</p>
+  <div class="cf-statusbar rounded border mb-3">
+    <span>
+      <span class="spinner-border spinner-border-sm text-primary me-1" role="status"></span>
+      Compiling 3 stories…
+    </span>
+    <span>Components 0.1.0</span>
+  </div>
+
+  <p class="cf-muted">Error state</p>
+  <div class="cf-statusbar rounded border mb-3" style="background: rgba(var(--cf-danger-rgb, 237,90,90),.06)">
+    <span><i class="bi bi-x-circle-fill text-danger me-1"></i>2 errors, 1 warning</span>
+    <span>Components 0.1.0</span>
+  </div>
+
+  <p class="cf-muted">Warning state</p>
+  <div class="cf-statusbar rounded border mb-3">
+    <span><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>0 errors, 3 warnings</span>
+    <span>Components 0.1.0</span>
+  </div>
+
+  <p class="cf-muted">Rich right side — with mode indicator and git branch</p>
+  <div class="cf-statusbar rounded border mb-3">
+    <span><i class="bi bi-check-circle-fill text-success me-1"></i>Ready — all stories loaded</span>
+    <div class="d-flex align-items-center gap-3">
+      <span><i class="bi bi-sun me-1"></i>Light</span>
+      <span><i class="bi bi-git me-1"></i>main</span>
+      <span>v0.1.0</span>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<!-- Ready -->
+<footer class="cf-statusbar">
+  <span><i class="bi bi-check-circle-fill text-success me-1"></i>Ready — 0 errors, 0 warnings</span>
+  <span>Components 0.1.0</span>
+</footer>
+
+<!-- Building -->
+<footer class="cf-statusbar">
+  <span>
+    <span class="spinner-border spinner-border-sm text-primary me-1" role="status"></span>
+    Compiling 3 stories…
+  </span>
+  <span>Components 0.1.0</span>
+</footer>
+
+<!-- Rich right side -->
+<footer class="cf-statusbar">
+  <span><i class="bi bi-check-circle-fill text-success me-1"></i>Ready</span>
+  <div class="d-flex align-items-center gap-3">
+    <span><i class="bi bi-sun me-1"></i>Light</span>
+    <span><i class="bi bi-git me-1"></i>main</span>
+    <span>v0.1.0</span>
+  </div>
+</footer>`} />
+
+  <!-- Usage context -->
+  <h2 class="h5 mt-5 mb-3">In Context</h2>
+  <p class="cf-muted">The status bar is the last row of <code>.cf-app</code>'s grid. Its height is controlled by the <code>--cf-status-height</code> CSS variable (default <code>1.75rem</code>).</p>
+  <Snippet language="html" code={`<div class="cf-app">
+  <header class="cf-header">…</header>
+  <div class="cf-workbench">…</div>
+  <footer class="cf-statusbar">
+    <span>Ready</span>
+    <span>v0.1.0</span>
+  </footer>
+</div>`} />
+
+  <!-- CSS custom properties -->
+  <h2 class="h5 mt-5 mb-3">CSS Custom Properties</h2>
+  <table class="cf-props-table">
+    <thead><tr><th>Variable</th><th>Default</th><th>Controls</th></tr></thead>
+    <tbody>
+      <tr><td>--cf-status-height</td><td>1.75rem</td><td>Row height in <code>.cf-app</code> grid.</td></tr>
+      <tr><td>--cf-header-height</td><td>3.75rem</td><td>Row height for the header row.</td></tr>
+    </tbody>
+  </table>
+
+</BaseLayout>

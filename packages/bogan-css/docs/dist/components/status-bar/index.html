@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="en" data-bs-theme="light"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Slim footer bar fixed at the bottom of the app shell. Shows workshop state on the left and version / metadata on the right."><title>Status Bar — Components FantasyUI</title><link rel="stylesheet" href="/css/components-fantasyui.min.css"></head> <body> <div class="cf-app"> <header class="cf-header"> <a class="cf-logo" href="/"> <span class="cf-logo-mark"><i class="bi bi-braces"></i></span> <span>Components</span> </a> <nav class="cf-header-nav d-none d-md-flex"> <a class="cf-header-link is-active" href="/components/">Components</a> <a class="cf-header-link" href="/starters/">Starters</a> <a class="cf-header-link" href="/design/">Design</a> </nav> <div class="ms-auto d-flex gap-2"> <button class="btn btn-sm btn-outline-secondary" type="button" data-cf-theme="light" title="Light mode"><i class="bi bi-sun"></i></button> <button class="btn btn-sm btn-outline-secondary" type="button" data-cf-theme="dark" title="Dark mode"><i class="bi bi-moon-stars"></i></button> </div> </header> <main class="container-fluid py-4"> <div class="row g-4"> <aside class="col-lg-3 col-xl-2"> <div class="cf-sidebar rounded border" style="position: sticky; top: 1rem;"> <nav class="cf-tree"> <div class="cf-tree-label">Overview</div> <a class="cf-tree-item" href="/">Introduction</a><a class="cf-tree-item" href="/getting-started/">Getting Started</a><a class="cf-tree-item" href="/design/">Design Tokens</a><a class="cf-tree-item" href="/starters/">Starters</a> </nav><nav class="cf-tree"> <div class="cf-tree-label">Components</div> <a class="cf-tree-item is-active" href="/components/">All Components</a><a class="cf-tree-item" href="/components/app-shell/">App Shell</a><a class="cf-tree-item" href="/components/sidebar/">Sidebar &amp; Tree</a><a class="cf-tree-item" href="/components/toolbar/">Toolbar</a><a class="cf-tree-item" href="/components/preview/">Canvas &amp; Preview</a><a class="cf-tree-item" href="/components/addon-panel/">Addon Panel</a><a class="cf-tree-item" href="/components/controls/">Controls</a><a class="cf-tree-item" href="/components/docs-panel/">Docs Panel</a><a class="cf-tree-item is-active" href="/components/status-bar/">Status Bar</a><a class="cf-tree-item" href="/components/story-card/">Story Card</a> </nav> </div> </aside> <section class="col-lg-9 col-xl-10"> <div class="mb-4"> <h1 class="h2 mb-1">Status Bar</h1> <p class="cf-muted mb-0">Slim footer bar fixed at the bottom of the app shell. Shows workshop state on the left and version / metadata on the right.</p> </div>   <h2 class="h5 mb-3">Status Bar Variants</h2> <p class="cf-muted">Ready state</p> <div class="cf-statusbar rounded border mb-3"> <span><i class="bi bi-check-circle-fill text-success me-1"></i>Ready — 0 errors, 0 warnings</span> <span>Components 0.1.0</span> </div> <p class="cf-muted">Building state</p> <div class="cf-statusbar rounded border mb-3"> <span> <span class="spinner-border spinner-border-sm text-primary me-1" role="status"></span>
+Compiling 3 stories…
+</span> <span>Components 0.1.0</span> </div> <p class="cf-muted">Error state</p> <div class="cf-statusbar rounded border mb-3" style="background: rgba(var(--cf-danger-rgb, 237,90,90),.06)"> <span><i class="bi bi-x-circle-fill text-danger me-1"></i>2 errors, 1 warning</span> <span>Components 0.1.0</span> </div> <p class="cf-muted">Warning state</p> <div class="cf-statusbar rounded border mb-3"> <span><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>0 errors, 3 warnings</span> <span>Components 0.1.0</span> </div> <p class="cf-muted">Rich right side — with mode indicator and git branch</p> <div class="cf-statusbar rounded border mb-3"> <span><i class="bi bi-check-circle-fill text-success me-1"></i>Ready — all stories loaded</span> <div class="d-flex align-items-center gap-3"> <span><i class="bi bi-sun me-1"></i>Light</span> <span><i class="bi bi-git me-1"></i>main</span> <span>v0.1.0</span> </div> </div> <pre class="cf-preview-card cf-mono"><code class="language-html">&lt;!-- Ready --&gt;
+&lt;footer class=&quot;cf-statusbar&quot;&gt;
+  &lt;span&gt;&lt;i class=&quot;bi bi-check-circle-fill text-success me-1&quot;&gt;&lt;/i&gt;Ready — 0 errors, 0 warnings&lt;/span&gt;
+  &lt;span&gt;Components 0.1.0&lt;/span&gt;
+&lt;/footer&gt;
+
+&lt;!-- Building --&gt;
+&lt;footer class=&quot;cf-statusbar&quot;&gt;
+  &lt;span&gt;
+    &lt;span class=&quot;spinner-border spinner-border-sm text-primary me-1&quot; role=&quot;status&quot;&gt;&lt;/span&gt;
+    Compiling 3 stories…
+  &lt;/span&gt;
+  &lt;span&gt;Components 0.1.0&lt;/span&gt;
+&lt;/footer&gt;
+
+&lt;!-- Rich right side --&gt;
+&lt;footer class=&quot;cf-statusbar&quot;&gt;
+  &lt;span&gt;&lt;i class=&quot;bi bi-check-circle-fill text-success me-1&quot;&gt;&lt;/i&gt;Ready&lt;/span&gt;
+  &lt;div class=&quot;d-flex align-items-center gap-3&quot;&gt;
+    &lt;span&gt;&lt;i class=&quot;bi bi-sun me-1&quot;&gt;&lt;/i&gt;Light&lt;/span&gt;
+    &lt;span&gt;&lt;i class=&quot;bi bi-git me-1&quot;&gt;&lt;/i&gt;main&lt;/span&gt;
+    &lt;span&gt;v0.1.0&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;</code></pre>  <h2 class="h5 mt-5 mb-3">In Context</h2> <p class="cf-muted">The status bar is the last row of <code>.cf-app</code>'s grid. Its height is controlled by the <code>--cf-status-height</code> CSS variable (default <code>1.75rem</code>).</p> <pre class="cf-preview-card cf-mono"><code class="language-html">&lt;div class=&quot;cf-app&quot;&gt;
+  &lt;header class=&quot;cf-header&quot;&gt;…&lt;/header&gt;
+  &lt;div class=&quot;cf-workbench&quot;&gt;…&lt;/div&gt;
+  &lt;footer class=&quot;cf-statusbar&quot;&gt;
+    &lt;span&gt;Ready&lt;/span&gt;
+    &lt;span&gt;v0.1.0&lt;/span&gt;
+  &lt;/footer&gt;
+&lt;/div&gt;</code></pre>  <h2 class="h5 mt-5 mb-3">CSS Custom Properties</h2> <table class="cf-props-table"> <thead><tr><th>Variable</th><th>Default</th><th>Controls</th></tr></thead> <tbody> <tr><td>--cf-status-height</td><td>1.75rem</td><td>Row height in <code>.cf-app</code> grid.</td></tr> <tr><td>--cf-header-height</td><td>3.75rem</td><td>Row height for the header row.</td></tr> </tbody> </table>  </section> </div> </main> <footer class="cf-statusbar"> <span><i class="bi bi-check-circle-fill text-success me-1"></i>Docs ready</span> <span>Components FantasyUI</span> </footer> </div> <script src="/js/bootstrap.bundle.min.js"></script> <script type="module" src="/js/components.js"></script> </body> </html>

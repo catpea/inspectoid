@@ -1,0 +1,108 @@
+<!--
+  chapters/11-imports.xml
+
+  <import src="..."> - the modularity primitive. Galath's answer to ES
+  modules. Every chapter you've seen in this playground is a separate
+  XML file, imported into index.html.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-imports" tag="x-chapter-imports">
+    <model>
+      <signal name="snippetEntry"><![CDATA[<!-- index.html, inside the embedded <galath> source -->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <import src="./playground/components/chapter-shell.xml" />
+  <import src="./playground/chapters/01-welcome.xml" />
+  <import src="./playground/chapters/02-signals.xml" />
+  <!-- ...one line per chapter... -->
+  <import src="./playground/app.xml" />
+
+  <application name="playground">
+    <x-playground />
+  </application>
+</galath>]]></signal>
+
+      <signal name="snippetChild"><![CDATA[<!-- playground/chapters/01-welcome.xml -->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-welcome" tag="x-chapter-welcome">
+    <view>
+      <h1>Welcome</h1>
+    </view>
+  </component>
+</galath>]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-arrow-down-up" title="Imports"
+          subtitle="Split a Galath app across files. The same way ES modules split a JS app." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  An <code>&lt;import src="./path/to/file.xml"/&gt;</code> element is replaced at
+                  boot time by the children of the imported file's root. The import is fetched
+                  asynchronously, the result is cached by URL, and nested imports inside the
+                  imported file are resolved relative to that file's URL.
+                </p>
+                <p class="text-secondary">
+                  The fetched file's root can be:
+                </p>
+                <ul class="text-secondary">
+                  <li><code>&lt;galath&gt;</code> or <code>&lt;fragment&gt;</code> - splices in
+                      its <em>children</em>. Use this when one file ships several components.</li>
+                  <li>Anything else - splices in the root element itself. Use this when one file
+                      is one component.</li>
+                </ul>
+                <p class="text-secondary mb-0">
+                  Cycles are detected by URL and broken silently. If a fetch fails, a
+                  <code>&lt;parseerror&gt;</code> element appears in place so you can spot the
+                  problem.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent">
+                <strong><i class="bi bi-house me-2"></i>Entry document</strong>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippetEntry" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card mb-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-file-earmark-code me-2"></i>One imported chapter</strong>
+          </div>
+          <div class="card-body p-0">
+            <pre class="xes-code rounded p-3 mb-0"><code><text value="snippetChild" /></code></pre>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-lightbulb me-2"></i>You're already inside one</strong>
+          </div>
+          <div class="card-body">
+            <p class="text-secondary mb-2">
+              Every chapter you've clicked through is a separate <code>.xml</code> file under
+              <code>./playground/chapters/</code>. The shared chapter heading is in
+              <code>./playground/components/</code>. Open <code>index.html</code> to see how it
+              all wires together - it's a small file because the work is delegated to imports.
+            </p>
+            <p class="text-secondary mb-0">
+              Rule of thumb: when an XML file gets long enough that you start scrolling to find
+              things, break it into imports. Same heuristic as JS modules.
+            </p>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

@@ -1,0 +1,152 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Snippet from "../../components/Snippet.astro";
+---
+
+<BaseLayout title="Story Card" description="Linked card for story overview grids, starters pages, and documentation indexes. Includes icon, title, meta tags, and quality card variant.">
+
+  <!-- Story card grid -->
+  <h2 class="h5 mb-3">Story Card Grid</h2>
+  <div class="row g-3 mb-2">
+    <div class="col-md-6">
+      <a class="cf-story-card" href="#">
+        <span class="cf-story-icon"><i class="bi bi-window-sidebar"></i></span>
+        <div>
+          <h3 class="cf-story-title">Component Workshop</h3>
+          <p class="cf-muted mb-2">Default story tree, preview canvas, and controls panel.</p>
+          <div class="cf-story-meta">
+            <span class="badge text-bg-secondary">starter</span>
+            <span>12 stories</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="cf-story-card" href="#">
+        <span class="cf-story-icon"><i class="bi bi-journal-code"></i></span>
+        <div>
+          <h3 class="cf-story-title">Design System Docs</h3>
+          <p class="cf-muted mb-2">Documentation-first pages with props tables and inline examples.</p>
+          <div class="cf-story-meta">
+            <span class="badge text-bg-secondary">docs</span>
+            <span>8 components</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="cf-story-card" href="#">
+        <span class="cf-story-icon"><i class="bi bi-check2-square"></i></span>
+        <div>
+          <h3 class="cf-story-title">Testing Dashboard</h3>
+          <p class="cf-muted mb-2">Visual regression, interaction tests, and a11y status at a glance.</p>
+          <div class="cf-story-meta">
+            <span class="badge text-bg-success">24 passing</span>
+            <span class="badge text-bg-danger">2 failing</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a class="cf-story-card" href="#">
+        <span class="cf-story-icon"><i class="bi bi-puzzle"></i></span>
+        <div>
+          <h3 class="cf-story-title">Addon Lab</h3>
+          <p class="cf-muted mb-2">Controls-heavy variant for building and testing addon panels.</p>
+          <div class="cf-story-meta">
+            <span class="badge text-bg-secondary">experimental</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<a class="cf-story-card" href="/stories/button--primary">
+  <span class="cf-story-icon"><i class="bi bi-window-sidebar"></i></span>
+  <div>
+    <h2 class="cf-story-title">Component Workshop</h2>
+    <p class="cf-muted mb-2">Default story tree and canvas.</p>
+    <div class="cf-story-meta">
+      <span class="badge text-bg-secondary">starter</span>
+      <span>12 stories</span>
+    </div>
+  </div>
+</a>`} />
+
+  <!-- Icon variants -->
+  <h2 class="h5 mt-5 mb-3">Story Icon Variants</h2>
+  <p class="cf-muted">The icon badge uses Bootstrap Icons. Swap the class to match component category.</p>
+  <div class="d-flex flex-wrap gap-3 mb-2">
+    {[
+      ["bi-window-sidebar", "Layout"],
+      ["bi-braces", "Code"],
+      ["bi-palette", "Design"],
+      ["bi-sliders", "Controls"],
+      ["bi-check2-circle", "Testing"],
+      ["bi-puzzle", "Addon"],
+      ["bi-type", "Typography"],
+      ["bi-grid-3x3-gap", "Spacing"],
+      ["bi-shadows", "Effects"],
+      ["bi-bell", "Alerts"]
+    ].map(([icon, label]) => (
+      <div class="d-flex flex-column align-items-center gap-1">
+        <span class="cf-story-icon"><i class={`bi ${icon}`}></i></span>
+        <span class="small cf-muted">{label}</span>
+      </div>
+    ))}
+  </div>
+
+  <!-- Quality card -->
+  <h2 class="h5 mt-5 mb-3">Quality Card</h2>
+  <p class="cf-muted">Use <code>.cf-quality-card</code> in testing dashboards and status grids. Gets a green top accent border to signal quality data.</p>
+  <div class="row g-3 mb-2">
+    <div class="col-md-3">
+      <div class="cf-quality-card">
+        <div class="cf-muted small mb-1">Visual Tests</div>
+        <strong class="d-block h5 mb-0">24 <span class="text-success">✓</span></strong>
+        <span class="cf-muted small">passing</span>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="cf-quality-card">
+        <div class="cf-muted small mb-1">Interaction</div>
+        <strong class="d-block h5 mb-0">18 <span class="text-success">✓</span></strong>
+        <span class="cf-muted small">passing</span>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="cf-quality-card">
+        <div class="cf-muted small mb-1">Accessibility</div>
+        <strong class="d-block h5 mb-0" style="color:var(--cf-danger)">2 <span>✗</span></strong>
+        <span class="cf-muted small">violations</span>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="cf-quality-card">
+        <div class="cf-muted small mb-1">Coverage</div>
+        <strong class="d-block h5 mb-0">94<span class="cf-muted fs-6">%</span></strong>
+        <span class="cf-muted small">of stories</span>
+      </div>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<div class="cf-quality-card">
+  <div class="cf-muted small mb-1">Visual Tests</div>
+  <strong class="d-block h5 mb-0">24 <span class="text-success">✓</span></strong>
+  <span class="cf-muted small">passing</span>
+</div>`} />
+
+  <!-- Classes reference -->
+  <h2 class="h5 mt-5 mb-3">Classes</h2>
+  <table class="cf-props-table">
+    <thead><tr><th>Class</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>.cf-story-card</td><td>Flex card with hover lift + shadow. Use as an <code>&lt;a&gt;</code> for navigation.</td></tr>
+      <tr><td>.cf-story-icon</td><td>Gradient icon badge, 2.25rem square. Place a Bootstrap Icons <code>&lt;i&gt;</code> inside.</td></tr>
+      <tr><td>.cf-story-title</td><td>Card heading — 0.95rem, 700 weight, no bottom margin.</td></tr>
+      <tr><td>.cf-story-meta</td><td>Flex row of tags and counts below the title. Wraps on small widths.</td></tr>
+      <tr><td>.cf-quality-card</td><td>Non-linked metric card with a 3px green top border. Use in quality dashboards.</td></tr>
+    </tbody>
+  </table>
+
+</BaseLayout>

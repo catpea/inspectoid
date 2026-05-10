@@ -1,0 +1,135 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Snippet from "../../components/Snippet.astro";
+---
+
+<BaseLayout title="Sidebar & Tree" description="Scrollable story hierarchy with collapsible groups, active leaf highlighting, and category badges.">
+
+  <!-- Live demo: full sidebar -->
+  <h2 class="h5 mb-3">Full Sidebar</h2>
+  <div class="d-flex gap-3 mb-2" style="max-width:52rem">
+    <div class="cf-sidebar rounded border cf-scrollbar" style="width:16rem; max-height:28rem; flex:0 0 auto">
+      <div class="cf-sidebar-header">
+        <div class="d-flex align-items-center justify-content-between">
+          <strong>Story Hierarchy</strong>
+          <span class="badge text-bg-primary">42</span>
+        </div>
+      </div>
+      <nav class="cf-tree">
+        <div class="cf-tree-group">
+          <div class="cf-tree-label"><i class="bi bi-folder2-open"></i>Components</div>
+          <a class="cf-tree-item is-active" href="#"><i class="bi bi-record-circle"></i>Button / Primary <span class="cf-tree-badge">story</span></a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-circle"></i>Button / Secondary</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-input-cursor-text"></i>Input / Text</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-key"></i>Input / Password</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-toggle-on"></i>Toggle / Default</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-check-square"></i>Checkbox</a>
+        </div>
+        <div class="cf-tree-group">
+          <div class="cf-tree-label"><i class="bi bi-window-sidebar"></i>Patterns</div>
+          <a class="cf-tree-item" href="#"><i class="bi bi-layout-sidebar"></i>Navigation Shell</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-sliders"></i>Settings Form</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-inbox"></i>Empty State</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-exclamation-triangle"></i>Error Boundary</a>
+        </div>
+        <div class="cf-tree-group">
+          <div class="cf-tree-label"><i class="bi bi-bezier2"></i>Design System</div>
+          <a class="cf-tree-item" href="#"><i class="bi bi-palette"></i>Color Tokens</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-type"></i>Typography</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-grid-3x3-gap"></i>Spacing</a>
+          <a class="cf-tree-item" href="#"><i class="bi bi-shadows"></i>Shadows</a>
+        </div>
+      </nav>
+    </div>
+    <div class="flex-grow-1 cf-preview-card">
+      <h3 class="h6 mb-2">Selected story</h3>
+      <p class="cf-muted small mb-0">Click any tree item to simulate navigation. The <code>.is-active</code> class applies the primary accent stripe to the left edge of the active leaf.</p>
+      <hr>
+      <p class="small mb-0">The sidebar uses a sticky header for always-visible title + badge, and renders groups with <code>.cf-tree-group</code> for visual separation.</p>
+    </div>
+  </div>
+
+  <Snippet language="html" code={`<aside class="cf-sidebar cf-scrollbar">
+  <div class="cf-sidebar-header">
+    <div class="d-flex align-items-center justify-content-between">
+      <strong>Story Hierarchy</strong>
+      <span class="badge text-bg-primary">42</span>
+    </div>
+  </div>
+  <nav class="cf-tree">
+    <div class="cf-tree-group">
+      <div class="cf-tree-label"><i class="bi bi-folder2-open"></i>Components</div>
+      <a class="cf-tree-item is-active" href="/stories/button--primary">
+        <i class="bi bi-record-circle"></i>Button / Primary
+        <span class="cf-tree-badge">story</span>
+      </a>
+      <a class="cf-tree-item" href="/stories/button--secondary">
+        <i class="bi bi-circle"></i>Button / Secondary
+      </a>
+    </div>
+    <div class="cf-tree-group">
+      <div class="cf-tree-label"><i class="bi bi-bezier2"></i>Design System</div>
+      <a class="cf-tree-item" href="/stories/color-tokens">
+        <i class="bi bi-palette"></i>Color Tokens
+      </a>
+    </div>
+  </nav>
+</aside>`} />
+
+  <!-- Tree label variants -->
+  <h2 class="h5 mt-5 mb-3">Tree Label Variants</h2>
+  <div class="cf-sidebar rounded border mb-2" style="max-width:20rem">
+    <nav class="cf-tree">
+      <div class="cf-tree-label"><i class="bi bi-folder2-open"></i>Open folder</div>
+      <div class="cf-tree-label"><i class="bi bi-folder2"></i>Closed folder</div>
+      <div class="cf-tree-label"><i class="bi bi-window-sidebar"></i>Patterns group</div>
+      <div class="cf-tree-label"><i class="bi bi-bezier2"></i>Design tokens</div>
+    </nav>
+  </div>
+
+  <!-- Active and states -->
+  <h2 class="h5 mt-5 mb-3">Item States</h2>
+  <div class="cf-sidebar rounded border mb-2" style="max-width:20rem">
+    <nav class="cf-tree">
+      <div class="cf-tree-label"><i class="bi bi-folder2-open"></i>States</div>
+      <a class="cf-tree-item" href="#">Default item</a>
+      <a class="cf-tree-item is-active" href="#">Active item (current story)</a>
+      <a class="cf-tree-item" href="#" style="opacity:.4">Disabled / hidden item</a>
+    </nav>
+  </div>
+
+  <!-- Resize handle -->
+  <h2 class="h5 mt-5 mb-3">Resize Handle</h2>
+  <p class="cf-muted">Place <code>.cf-resize-handle</code> between the sidebar and center columns to allow drag-resizing. It renders as a 4px transparent column that highlights primary on hover.</p>
+  <Snippet language="html" code={`<div class="cf-workbench">
+  <aside class="cf-sidebar">…</aside>
+  <div class="cf-resize-handle" role="separator" aria-orientation="vertical"></div>
+  <main class="cf-center">…</main>
+</div>`} />
+
+  <!-- Search integration -->
+  <h2 class="h5 mt-5 mb-3">Search Integration</h2>
+  <p class="cf-muted">Add <code>data-cf-search</code> to the search input and <code>data-cf-label="…"</code> to each tree item. <code>components.js</code> hides non-matching items on input.</p>
+  <Snippet language="html" code={`<input class="form-control" type="search" placeholder="Search stories…" data-cf-search>
+
+<!-- In the tree: -->
+<a class="cf-tree-item" href="#" data-cf-label="button primary">Button / Primary</a>
+<a class="cf-tree-item" href="#" data-cf-label="input text">Input / Text</a>`} />
+
+  <!-- Classes reference -->
+  <h2 class="h5 mt-5 mb-3">Classes</h2>
+  <table class="cf-props-table">
+    <thead><tr><th>Class</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>.cf-sidebar</td><td>Scrollable column with surface background and right border.</td></tr>
+      <tr><td>.cf-sidebar-header</td><td>Sticky title row at the top of the sidebar.</td></tr>
+      <tr><td>.cf-tree</td><td>Padding wrapper for a group of tree items.</td></tr>
+      <tr><td>.cf-tree-group</td><td>Adds bottom margin between sibling groups.</td></tr>
+      <tr><td>.cf-tree-label</td><td>Section heading — uppercase, letter-spaced, non-interactive.</td></tr>
+      <tr><td>.cf-tree-item</td><td>Navigable leaf. Add <code>.is-active</code> for the selected story.</td></tr>
+      <tr><td>.cf-tree-badge</td><td>Right-aligned tag (e.g. "story", "docs"). Auto <code>margin-left:auto</code>.</td></tr>
+      <tr><td>.cf-resize-handle</td><td>4px drag target between sidebar and center. Cursor: col-resize.</td></tr>
+    </tbody>
+  </table>
+
+</BaseLayout>

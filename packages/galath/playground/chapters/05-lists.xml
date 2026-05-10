@@ -1,0 +1,138 @@
+<!--
+  chapters/05-lists.xml
+
+  <repeat> and <items> + <datatemplate>. Both iterate over a node-set
+  resolved from a path; <items> uses a named template, <repeat> inlines
+  the body.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-lists" tag="x-chapter-lists">
+    <model>
+      <instance>
+        <library>
+          <book title="The Phoenix Project" author="Gene Kim" read="true"  />
+          <book title="Designing Data-Intensive Applications" author="Martin Kleppmann" read="false" />
+          <book title="A Philosophy of Software Design" author="John Ousterhout" read="true"  />
+          <book title="Out of the Tar Pit" author="Moseley &amp; Marks" read="false" />
+        </library>
+      </instance>
+
+      <signal name="snippet"><![CDATA[<datatemplate name="book-row" for="book">
+  <li>
+    <input type="checkbox" bind:checked="$book/@read" />
+    <strong><text value="$book/@title" /></strong>
+    by <text value="$book/@author" />
+  </li>
+</datatemplate>
+
+<ul>
+  <items source="/library/book" as="book" template="book-row" />
+</ul>
+
+<!-- or, lower level: -->
+<ul>
+  <repeat ref="/library/book" as="book">
+    <li><text value="$book/@title" /></li>
+  </repeat>
+</ul>]]></signal>
+    </model>
+
+    <!--
+      A reusable row template. The renderer instantiates it once per
+      matched node and binds $book to the loop item.
+    -->
+    <datatemplate name="book-row" for="book">
+      <div class="list-group-item d-flex align-items-center gap-2">
+        <input class="form-check-input m-0" type="checkbox" bind:checked="$book/@read" />
+        <div class="flex-grow-1">
+          <div class="fw-semibold {$book/@read ? 'text-decoration-line-through text-secondary' : ''}">
+            <text value="$book/@title" />
+          </div>
+          <small class="text-secondary">by <text value="$book/@author" /></small>
+        </div>
+        <span class="badge text-bg-{$book/@read ? 'success' : 'secondary'}">
+          <if test="$book/@read">read</if>
+          <if test="!$book/@read">unread</if>
+        </span>
+      </div>
+    </datatemplate>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-collection" title="Lists &amp; Templates"
+          subtitle="Iterate over selected nodes with &lt;repeat&gt; or a reusable &lt;datatemplate&gt;." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  <code>&lt;repeat ref="..." as="x"&gt;</code> renders its children once per node
+                  in the selection, with <code>$x</code> in scope.
+                </p>
+                <p class="text-secondary">
+                  <code>&lt;datatemplate name="..." for="..."&gt;</code> declares a reusable
+                  fragment. <code>&lt;items source="..." template="name"/&gt;</code> instantiates it.
+                  Same effect, less duplication when the row is non-trivial.
+                </p>
+                <p class="text-secondary mb-0">
+                  Inside the template, <code>$x</code> is the loop item (an <code>XNode</code>).
+                  Use <code>$x/@attr</code> to read an attribute, or <code>$x/text()</code> for
+                  the element text.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+            <span class="badge text-bg-info">
+              {select('/library/book[@read=true]').length} / {select('/library/book').length} read
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="list-group">
+              <items source="/library/book" as="book" template="book-row" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card mt-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-list-ol me-2"></i>The implicit <code>index</code> local</strong>
+          </div>
+          <div class="card-body">
+            <p class="text-secondary">
+              Inside a <code>&lt;repeat&gt;</code> or <code>&lt;items&gt;</code>, the runtime
+              binds <code>index</code> (zero-based) so you can number rows or alternate styling
+              without touching the data.
+            </p>
+            <ol class="list-group list-group-numbered">
+              <repeat ref="/library/book" as="book">
+                <li class="list-group-item d-flex align-items-center">
+                  <span class="badge text-bg-{index % 2 === 0 ? 'info' : 'secondary'} me-2">#{index + 1}</span>
+                  <span class="flex-grow-1"><text value="$book/@title" /></span>
+                  <small class="text-secondary">index = {index}</small>
+                </li>
+              </repeat>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

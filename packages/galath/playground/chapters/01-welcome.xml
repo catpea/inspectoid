@@ -1,0 +1,94 @@
+<!--
+  chapters/01-welcome.xml
+
+  Title screen. Sets expectations: what Galath is, why it exists, who it's
+  for, and how to read the rest of the playground.
+
+  Pure presentation - no instance tree or interactive demo here. The
+  point of the welcome chapter is to leave the reader oriented, not to
+  show off.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-welcome" tag="x-chapter-welcome">
+    <model>
+      <signal name="introBoot"><![CDATA[<script type="module">
+  import { boot } from 'galath/boot';
+  await boot({
+    source: document.getElementById('galath-source').textContent,
+    mount: document.getElementById('mount'),
+  });
+</script>]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-stars" title="Welcome to Galath"
+          subtitle="A stronger XML language for declarative web apps. Read top-to-bottom; every chapter is runnable." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-compass me-2 text-info"></i>What is Galath?</h2>
+                <p class="text-secondary mb-3">
+                  Galath is an XML-based programming language for the web. It blends ideas from XForms
+                  (instance trees + path bindings), XAML (templates and attached behaviors), XUL
+                  (commandsets), FXML (named controller actions), and modern reactive frameworks
+                  (signals, scoped lifetimes, surgical DOM updates).
+                </p>
+                <p class="text-secondary mb-0">
+                  The result is a small, readable language where most of an app is structure and
+                  data. JavaScript is reachable as an escape hatch; you rarely need it.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-layers me-2 text-info"></i>Why XML?</h2>
+                <ul class="text-secondary mb-0">
+                  <li><strong>Trees are the right data structure</strong> for UI - your view IS a tree.</li>
+                  <li><strong>Tooling already exists</strong>: parsers, validators, editors, syntax highlighting.</li>
+                  <li><strong>Content and code coexist</strong>: a chapter of prose and a working component live in the same file.</li>
+                  <li><strong>Diffs read cleanly</strong>: structural changes look structural in source control.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card mb-4">
+          <div class="card-body">
+            <h2 class="h5 mb-3"><i class="bi bi-rocket-takeoff me-2 text-info"></i>Boot in two lines</h2>
+            <p class="text-secondary">
+              No build step. No bundler. Just a browser, an import map, and your XML.
+            </p>
+            <pre class="xes-code rounded p-3 mb-0"><code><text value="introBoot" /></code></pre>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-body">
+            <h2 class="h5 mb-3"><i class="bi bi-signpost me-2 text-info"></i>Tour map</h2>
+            <p class="text-secondary mb-3">
+              Each chapter introduces one feature, shows it running, and includes the source so you
+              can copy it out and play. Read in order; each chapter builds on the previous one.
+            </p>
+            <ol class="text-secondary mb-0">
+              <li><strong>Signals</strong> - the reactive cell that powers everything else.</li>
+              <li><strong>Instance Tree</strong> - state as XML you can navigate with paths.</li>
+              <li><strong>Bindings</strong> - <code>bind:</code>, <code>on:</code>, and friends.</li>
+              <li><strong>Lists</strong> - <code>&lt;repeat&gt;</code>, <code>&lt;items&gt;</code>, and <code>&lt;datatemplate&gt;</code>.</li>
+              <li><strong>Commands</strong> &amp; <strong>Controllers</strong> - centralizing behavior.</li>
+              <li><strong>XML Events</strong> - listening to data-tree mutations.</li>
+              <li><strong>Behaviors</strong> - <code>use:</code>, drag &amp; drop, focus.</li>
+              <li><strong>Components</strong> - custom elements with props, lifecycle, scoped style.</li>
+              <li><strong>Imports</strong> - splitting an app across files like ES modules.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>
