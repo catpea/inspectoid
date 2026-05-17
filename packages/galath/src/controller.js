@@ -141,12 +141,57 @@ export function controllerFeature(language) {
         continue;
       }
 
-      // <fetch url="..." into="signalName" as="json|text"> - asynchronous
-      // HTTP load. The result is written to the named signal when the
-      // response resolves. We also flip an optional `loading` signal and
-      // an `error` signal so the view can render spinners / error states
-      // without writing JS. Operations after <fetch> in the same block
-      // run immediately - this is fire-and-forget.
+      // <store signal="name" key="storageKey" /> - persist a signal to localStorage.
+      // <restore signal="name" key="storageKey" default="value" /> - read it back.
+      // Use <restore> in <on:mount> to rehydrate on page load; pair with a
+      // signal-change <listener> that calls <store> to keep it in sync.
+      if (op.localName === 'store') {
+        const sig = instance.scope.signal(op.getAttribute('signal'));
+        const key = language.evaluate(op.getAttribute('key') ?? '', instance, local, '', event);
+        if (sig && key) {
+          try { localStorage.setItem(key, JSON.stringify(sig.value)); } catch { /* quota or private-mode */ }
+        }
+        continue;
+      }
+
+      if (op.localName === 'restore') {
+        const sig = instance.scope.signal(op.getAttribute('signal'));
+        const key = language.evaluate(op.getAttribute('key') ?? '', instance, local, '', event);
+        if (sig && key) {
+          try {
+            const raw = localStorage.getItem(key);
+            if (raw != null) {
+              sig.value = JSON.parse(raw);
+            } else if (op.hasAttribute('default')) {
+              sig.value = language.evaluate(op.getAttribute('default'), instance, local, sig.value, event);
+            }
+          } catch {
+            if (op.hasAttribute('default')) {
+              sig.value = language.evaluate(op.getAttribute('default'), instance, local, sig.value, event);
+            }
+          }
+        }
+        continue;
+      }
+
+      // <fetch url="..." into="signalName" as="json|text"
+      //        method="POST" body="expr" headers="expr" loading="sig"
+      //        error="sig"> - asynchronous HTTP load.
+      //
+      //   url       - evaluated expression yielding the absolute or relative URL
+      //   method    - HTTP method, default GET (literal string, not evaluated)
+      //   body      - evaluated expression; objects are JSON-encoded, strings
+      //               pass through, FormData/Blob/etc are sent as-is
+      //   headers   - evaluated expression; should yield a plain object whose
+      //               keys/values are added to the request (auto-injects
+      //               Content-Type: application/json when body is an object)
+      //   into      - signal to receive the response value
+      //   as        - parse mode: json (default), text, or response (raw)
+      //   loading   - signal toggled true while in-flight
+      //   error     - signal set to an error message when the request fails
+      //
+      // The op is fire-and-forget: operations after <fetch> in the same
+      // block run synchronously, before the response resolves.
       if (op.localName === 'fetch') {
         const url = language.evaluate(
           op.getAttribute('url') ?? "''",
@@ -157,6 +202,7 @@ export function controllerFeature(language) {
         );
         const into = op.getAttribute('into');
         const as = (op.getAttribute('as') || 'json').toLowerCase();
+        const method = (op.getAttribute('method') || 'GET').toUpperCase();
         const loadingSig = op.getAttribute('loading');
         const errorSig = op.getAttribute('error');
         const setSig = (name, value) => {
@@ -164,11 +210,39 @@ export function controllerFeature(language) {
           const sig = instance.scope.signal(name);
           if (sig) sig.value = value;
         };
+
+        const init = { method };
+        const headersAttr = op.getAttribute('headers');
+        const headers = headersAttr
+          ? language.evaluate(headersAttr, instance, local, {}, event)
+          : {};
+        if (op.hasAttribute('body')) {
+          const raw = language.evaluate(op.getAttribute('body'), instance, local, null, event);
+          if (raw == null) {
+            // null body -> send nothing
+          } else if (
+            typeof raw === 'string' ||
+            raw instanceof FormData ||
+            raw instanceof Blob ||
+            raw instanceof ArrayBuffer ||
+            (typeof URLSearchParams !== 'undefined' && raw instanceof URLSearchParams)
+          ) {
+            init.body = raw;
+          } else {
+            init.body = JSON.stringify(raw);
+            if (!('content-type' in lowerKeyed(headers))) {
+              headers['Content-Type'] = 'application/json';
+            }
+          }
+        }
+        if (Object.keys(headers).length) init.headers = headers;
+
         setSig(loadingSig, true);
         setSig(errorSig, '');
-        fetch(url)
+        fetch(url, init)
           .then(response => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            if (as === 'response') return response;
             return as === 'text' ? response.text() : response.json();
           })
           .then(data => setSig(into, data))
@@ -176,6 +250,35 @@ export function controllerFeature(language) {
           .finally(() => setSig(loadingSig, false));
         continue;
       }
+
+      // <emit name="my-event" detail="expr" bubbles="true|false"
+      //       composed="true|false" /> - dispatch a CustomEvent on the
+      // component host element. Parents listen with on:my-event="..."
+      // and read $event.detail in the handler. This is the standard
+      // child-to-parent signaling pattern for Custom Elements.
+      if (op.localName === 'emit') {
+        const name = op.getAttribute('name');
+        if (!name) continue;
+        const detail = op.hasAttribute('detail')
+          ? language.evaluate(op.getAttribute('detail'), instance, local, null, event)
+          : null;
+        const bubbles = op.getAttribute('bubbles') !== 'false';
+        const composed = op.getAttribute('composed') === 'true';
+        try {
+          instance.dispatchEvent(new CustomEvent(name, { detail, bubbles, composed }));
+        } catch (error) {
+          console.warn('[galath] <emit> failed:', name, error);
+        }
+        continue;
+      }
     }
   };
+
+  // Helper for case-insensitive header lookup. The fetch op auto-injects
+  // Content-Type only when the user has not already provided one.
+  function lowerKeyed(obj) {
+    const out = {};
+    for (const k of Object.keys(obj || {})) out[String(k).toLowerCase()] = obj[k];
+    return out;
+  }
 }

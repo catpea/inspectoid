@@ -1,0 +1,143 @@
+<!--
+  chapters/15-lifecycle.xml
+
+  <on:mount> and <on:unmount> are component lifecycle hooks. Both accept
+  the same operation vocabulary as commands and controller actions.
+
+  Use them for: initial fetches, subscribing to platform events, starting
+  timers, hydrating signals from localStorage, etc. Anything that has to
+  happen exactly once when a component connects/disconnects.
+
+  This chapter mounts a ticking clock so the reader sees the timer start
+  when the chapter opens and stop when they navigate away.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-lifecycle" tag="x-chapter-lifecycle">
+    <model>
+      <signal name="now"     value="" />
+      <signal name="mounts"  value="0" />
+      <signal name="ticks"   value="0" />
+
+      <signal name="snippet"><![CDATA[<component name="clock" tag="x-clock">
+  <model>
+    <signal name="now" value="" />
+  </model>
+
+  <on:mount>
+    <eval>
+      // Resolve the signal once, then drive it from a plain setInterval.
+      // Stash the timer handle on `this` so on:unmount can clear it.
+      const sig = this.scope.signal('now');
+      sig.value = new Date().toLocaleTimeString();
+      this.__timer = setInterval(() => {
+        sig.value = new Date().toLocaleTimeString();
+      }, 1000);
+    </eval>
+  </on:mount>
+
+  <on:unmount>
+    <eval>
+      clearInterval(this.__timer);
+      this.__timer = null;
+    </eval>
+  </on:unmount>
+
+  <view>
+    <span class="badge text-bg-info">{now}</span>
+  </view>
+</component>]]></signal>
+    </model>
+
+    <on:mount>
+      <set signal="mounts" value="mounts + 1" />
+      <eval><![CDATA[
+        // Grab signal references once. The lambda below captures them via
+        // closure, so the timer keeps working even after the with() scope
+        // of this <eval> has exited.
+        const now   = this.scope.signal('now');
+        const ticks = this.scope.signal('ticks');
+        now.value = new Date().toLocaleTimeString();
+        this.__timer = setInterval(() => {
+          now.value   = new Date().toLocaleTimeString();
+          ticks.value = ticks.value + 1;
+        }, 1000);
+      ]]></eval>
+    </on:mount>
+
+    <on:unmount>
+      <eval><![CDATA[
+        clearInterval(this.__timer);
+        this.__timer = null;
+      ]]></eval>
+    </on:unmount>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-arrow-clockwise" title="Lifecycle hooks"
+          subtitle="Run setup and teardown code exactly once per component instance." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  Galath components are real Custom Elements. When the browser connects
+                  one to the DOM, <code>&lt;on:mount&gt;</code> runs after the first render.
+                  When it disconnects, <code>&lt;on:unmount&gt;</code> runs before the
+                  element goes away.
+                </p>
+                <p class="text-secondary">
+                  Both hooks accept the same operation vocabulary as <code>&lt;action&gt;</code>
+                  and <code>&lt;command&gt;</code> bodies: <code>&lt;set&gt;</code>,
+                  <code>&lt;setvalue&gt;</code>, <code>&lt;insert&gt;</code>,
+                  <code>&lt;fetch&gt;</code>, <code>&lt;store&gt;</code>,
+                  <code>&lt;restore&gt;</code>, <code>&lt;emit&gt;</code>,
+                  <code>&lt;eval&gt;</code>, <code>&lt;log&gt;</code>, <code>&lt;call&gt;</code>.
+                </p>
+                <p class="text-secondary mb-0">
+                  Inside <code>&lt;eval&gt;</code>, <code>this</code> is the component element,
+                  so you can stash timer/listener handles on it and clean them up later. The
+                  clock below survives only as long as this chapter is mounted.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="d-flex flex-column gap-2">
+              <div class="display-6">{now}</div>
+              <div class="text-secondary">
+                Mounted <span class="badge text-bg-info">{mounts}</span> time(s) since the page loaded.
+                <span class="ms-2">Ticks since this mount:
+                  <span class="badge text-bg-secondary">{ticks}</span>
+                </span>
+              </div>
+              <div class="text-secondary xes-tiny">
+                Navigate to another chapter and back: the tick counter resets to zero,
+                proving <code>&lt;on:unmount&gt;</code> cleaned up the timer and a fresh
+                <code>&lt;on:mount&gt;</code> ran.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

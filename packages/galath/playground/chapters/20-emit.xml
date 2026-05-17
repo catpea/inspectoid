@@ -1,0 +1,149 @@
+<!--
+  chapters/20-emit.xml
+
+  Child-to-parent communication via custom DOM events.
+
+  Galath has two parent-to-child signals:
+     bind:from-parent  - mirror a parent signal into a child read-only.
+     parentSignal()    - read a parent signal in an expression.
+
+  For the reverse direction (child telling parent something happened),
+  use <emit name="event-name" detail="..." />. The parent listens with
+  on:event-name on the child element, exactly like any DOM event.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <!--
+    A tiny rating widget that emits a `rated` event whenever the user
+    picks a star. The host has no idea how the widget works; it just
+    receives an event with the new value in event.detail.
+  -->
+  <component name="star-rating" tag="x-star-rating" value="0">
+    <style>
+      .star { cursor: pointer; font-size: 1.4rem; color: rgba(255,255,255,.25); }
+      .star.on { color: var(--bs-warning); }
+    </style>
+
+    <controller>
+      <action name="pick">
+        <set signal="value" value="Number($event.currentTarget.dataset.star)" />
+        <emit name="rated" detail="Number($event.currentTarget.dataset.star)" />
+      </action>
+    </controller>
+
+    <view>
+      <span>
+        <i class="bi bi-star-fill star {Number(value) >= 1 ? 'on' : ''}" data-star="1" on:click="#pick"></i>
+        <i class="bi bi-star-fill star {Number(value) >= 2 ? 'on' : ''}" data-star="2" on:click="#pick"></i>
+        <i class="bi bi-star-fill star {Number(value) >= 3 ? 'on' : ''}" data-star="3" on:click="#pick"></i>
+        <i class="bi bi-star-fill star {Number(value) >= 4 ? 'on' : ''}" data-star="4" on:click="#pick"></i>
+        <i class="bi bi-star-fill star {Number(value) >= 5 ? 'on' : ''}" data-star="5" on:click="#pick"></i>
+      </span>
+    </view>
+  </component>
+
+  <component name="chapter-emit" tag="x-chapter-emit">
+    <model>
+      <signal name="rating" value="0" />
+      <signal name="log"    value="" />
+
+      <signal name="snippet"><![CDATA[<!-- Child component: dispatch a custom event on click. -->
+<component name="star-rating" tag="x-star-rating" value="0">
+  <controller>
+    <action name="pick">
+      <set signal="value"
+           value="Number($event.currentTarget.dataset.star)" />
+      <emit name="rated"
+            detail="Number($event.currentTarget.dataset.star)" />
+    </action>
+  </controller>
+  <view>
+    <i class="star" data-star="1" on:click="#pick">*</i>
+    <i class="star" data-star="2" on:click="#pick">*</i>
+    <i class="star" data-star="3" on:click="#pick">*</i>
+  </view>
+</component>
+
+<!-- Parent: listen with on:event-name on the child element. -->
+<component name="signup-form" tag="x-signup-form">
+  <model>
+    <signal name="rating" value="0" />
+  </model>
+  <view>
+    Pick a rating:
+    <x-star-rating on:rated="set('rating', $event.detail)" />
+    <p>You rated: {rating}</p>
+  </view>
+</component>]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-megaphone" title="Emit events"
+          subtitle="Child components signal parents the same way DOM elements do - with events." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  <code>&lt;emit name="my-event" detail="expr" /&gt;</code> dispatches a
+                  <code>CustomEvent</code> on the component's host element. The detail
+                  expression is evaluated in the current scope and passed as
+                  <code>event.detail</code>.
+                </p>
+                <p class="text-secondary">
+                  Parents listen with <code>on:my-event="..."</code> exactly like any other
+                  DOM event. <code>$event.detail</code> carries the payload; standard event
+                  fields (<code>currentTarget</code>, <code>type</code>, etc) are also
+                  available.
+                </p>
+                <p class="text-secondary mb-0">
+                  Optional attributes: <code>bubbles="false"</code> stops the event from
+                  bubbling (default <code>true</code>), <code>composed="true"</code> lets
+                  it cross shadow DOM boundaries. These mirror the
+                  <code>CustomEvent</code> constructor's options.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <p class="text-secondary">
+              Click a star. The rating widget knows nothing about this parent - it just
+              <code>&lt;emit&gt;</code>s a <code>rated</code> event. The parent listens
+              with <code>on:rated</code> and writes the detail into a signal.
+            </p>
+
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <span class="text-secondary">Rating:</span>
+              <x-star-rating value="{rating}"
+                             on:rated="set('rating', $event.detail);
+                                       set('log',    'rated: ' + $event.detail + ' (received at ' + new Date().toLocaleTimeString() + ')\n' + log)" />
+              <span class="badge text-bg-info">value = {rating}</span>
+            </div>
+
+            <label class="form-label small text-secondary">Event log (parent side)</label>
+            <textarea class="form-control font-monospace xes-tiny" rows="5" bind:value="log"></textarea>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

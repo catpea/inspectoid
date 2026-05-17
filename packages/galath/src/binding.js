@@ -134,6 +134,23 @@ export function bindingFeature(language) {
   }
 
   /**
+   * Translate XML-friendly operator keywords to their JS equivalents so
+   * authors can avoid XML-escaping `&&` and `||` inside attribute values.
+   *
+   *   count and enabled   →  count && enabled
+   *   x or y              →  x || y
+   *
+   * Word-boundary matching prevents false hits inside identifiers like
+   * `android` or `format`. The XML parser already unescapes `&amp;&amp;`
+   * to `&&` before we see it, so both styles continue to work.
+   */
+  function normalizeExpr(expr) {
+    return String(expr ?? '')
+      .replace(/\band\b/g, '&&')
+      .replace(/\bor\b/g, '||');
+  }
+
+  /**
    * The hot path. Evaluate `expr` against the instance + local context.
    *
    * Returns `fallback` if evaluation throws (and logs to the console). We
@@ -147,7 +164,7 @@ export function bindingFeature(language) {
       // eslint-disable-next-line no-new-func
       return Function(
         'ctx',
-        `with (ctx) { return (${expr}); }`,
+        `with (ctx) { return (${normalizeExpr(expr)}); }`,
       )(buildContext(instance, local, event));
     } catch (error) {
       console.warn('[galath] expression failed:', expr, error);
@@ -164,7 +181,7 @@ export function bindingFeature(language) {
       // eslint-disable-next-line no-new-func
       return Function(
         'ctx',
-        `with (ctx) { ${code}; }`,
+        `with (ctx) { ${normalizeExpr(code)}; }`,
       )(buildContext(instance, local, event));
     } catch (error) {
       console.error('[galath] handler failed:', code, error);

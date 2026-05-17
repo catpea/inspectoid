@@ -1,0 +1,37 @@
+<component name="story-form-validation" tag="x-story-form-validation">
+  <view>
+    <form class="inspectoid-story-form" novalidate="novalidate">
+      <div class="mb-3">
+        <label for="valName" class="form-label">Full Name</label>
+        <input type="text" class="form-control is-valid" id="valName" value="Jane Doe" />
+        <div class="valid-feedback">Looks good.</div>
+      </div>
+      <div class="mb-3">
+        <label for="valEmail" class="form-label">Email address</label>
+        <input type="email" class="form-control is-invalid" id="valEmail" value="not-an-email" />
+        <div class="invalid-feedback">Please provide a valid email address.</div>
+      </div>
+      <div class="mb-3">
+        <label for="valSubject" class="form-label">Subject</label>
+        <select class="form-select is-valid" id="valSubject">
+          <option value="support" selected="selected">Support</option>
+          <option value="sales">Sales</option>
+          <option value="general">General inquiry</option>
+        </select>
+        <div class="valid-feedback">Great choice.</div>
+      </div>
+      <div class="mb-3">
+        <label for="valMessage" class="form-label">Message</label>
+        <textarea class="form-control is-invalid" id="valMessage" rows="4"></textarea>
+        <div class="invalid-feedback">Please enter a message.</div>
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input is-invalid" id="valConsent" />
+        <label class="form-check-label" for="valConsent">I agree to the privacy policy</label>
+        <div class="invalid-feedback">You must agree before submitting.</div>
+      </div>
+      <button type="submit" class="btn btn-primary">Send message</button>
+      <button type="reset" class="btn btn-outline-secondary ms-2">Clear</button>
+    </form>
+  </view>
+</component>

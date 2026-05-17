@@ -1,0 +1,68 @@
+<!--
+  .inspectoid/project.xml
+
+  Inspectoid imports this file at startup and inside the app model. It is
+  the default project configuration that drives the side menu and story docs.
+-->
+<project id="forms" title="Bootstrap Forms" version="1.1.0" manifest="./.inspectoid/project.xml">
+  <groups>
+    <group id="bootstrap-form" icon="bi-folder2-open" title="Bootstrap / Form">
+      <story id="basic"
+             kind="story"
+             title="Basic Form"
+             label="form basic contact message"
+             component="x-story-form-basic"
+             file="./projects/forms/components/basic.xml"
+             summary="Standard contact form with text, email, select, textarea, consent, and submit controls." />
+      <story id="validation"
+             kind="story"
+             title="Validation States"
+             label="form validation states feedback"
+             component="x-story-form-validation"
+             file="./projects/forms/components/validation.xml"
+             summary="Bootstrap valid and invalid states with feedback messages wired to each control." />
+      <story id="floating"
+             kind="story"
+             title="Floating Labels"
+             label="form floating labels"
+             component="x-story-form-floating"
+             file="./projects/forms/components/floating.xml"
+             summary="Compact fields using Bootstrap floating labels for text, email, select, and textarea controls." />
+      <story id="signup"
+             kind="story"
+             title="Sign-Up"
+             label="form sign-up account registration"
+             component="x-story-form-signup"
+             file="./projects/forms/components/sign-up.xml"
+             summary="Account creation form with identity fields, password requirements, plan choice, and terms consent." />
+      <story id="login"
+             kind="story"
+             title="Login Form"
+             label="form login authentication remember"
+             component="x-story-form-login"
+             file="./projects/forms/components/login.xml"
+             summary="Focused authentication form with email, password, remember-me, recovery link, and alternate action." />
+      <story id="profile"
+             kind="story"
+             title="User Profile"
+             label="form user profile account details"
+             component="x-story-form-profile"
+             file="./projects/forms/components/user-profile.xml"
+             summary="Profile editor with personal details, job information, avatar upload, and biography fields." />
+      <story id="settings"
+             kind="story"
+             title="Application Settings"
+             label="form application settings preferences"
+             component="x-story-form-settings"
+             file="./projects/forms/components/application-settings.xml"
+             summary="Application preferences form with locale, timezone, notifications, privacy, and API key controls." />
+      <story id="survey"
+             kind="story"
+             title="Survey Form"
+             label="form survey feedback rating"
+             component="x-story-form-survey"
+             file="./projects/forms/components/survey.xml"
+             summary="Feedback survey with rating radios, multi-select interests, satisfaction level, and comments." />
+    </group>
+  </groups>
+</project>

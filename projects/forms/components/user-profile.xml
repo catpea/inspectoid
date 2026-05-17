@@ -1,0 +1,43 @@
+<component name="story-form-profile" tag="x-story-form-profile">
+  <view>
+    <form class="inspectoid-story-form">
+      <div class="inspectoid-form-grid">
+        <div class="mb-3">
+          <label for="profileDisplayName" class="form-label">Display Name</label>
+          <input type="text" class="form-control" id="profileDisplayName" value="Jane Doe" />
+        </div>
+        <div class="mb-3">
+          <label for="profileHandle" class="form-label">Username</label>
+          <div class="input-group">
+            <span class="input-group-text">@</span>
+            <input type="text" class="form-control" id="profileHandle" value="janedoe" />
+          </div>
+        </div>
+      </div>
+      <div class="inspectoid-form-grid">
+        <div class="mb-3">
+          <label for="profileTitle" class="form-label">Job Title</label>
+          <input type="text" class="form-control" id="profileTitle" value="Product Designer" />
+        </div>
+        <div class="mb-3">
+          <label for="profileTeam" class="form-label">Team</label>
+          <select class="form-select" id="profileTeam">
+            <option value="design" selected="selected">Design</option>
+            <option value="engineering">Engineering</option>
+            <option value="success">Customer Success</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="profileAvatar" class="form-label">Avatar</label>
+        <input type="file" class="form-control" id="profileAvatar" accept="image/*" />
+      </div>
+      <div class="mb-3">
+        <label for="profileBio" class="form-label">Bio</label>
+        <textarea class="form-control" id="profileBio" rows="4">Design systems, forms, and workflow tooling.</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Save profile</button>
+      <button type="reset" class="btn btn-outline-secondary ms-2">Reset</button>
+    </form>
+  </view>
+</component>

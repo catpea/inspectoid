@@ -1,0 +1,169 @@
+<!--
+  chapters/19-validation.xml
+
+  XForms-style validation. <bind> declarations attach rules to a path in
+  the instance tree; expression helpers (valid, invalid, required,
+  validity) read those rules and report against the live value.
+
+  This is enough to wire up Bootstrap's is-invalid styling and a
+  disabled-until-valid submit button without writing a line of JS.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-validation" tag="x-chapter-validation">
+    <model>
+      <instance>
+        <signup name="" email="" age="" agreed="false" />
+      </instance>
+
+      <bind ref="/signup/@name"   required="true" />
+      <bind ref="/signup/@email"  required="true" type="email" />
+      <bind ref="/signup/@age"    type="integer" constraint="Number(value) >= 13 and Number(value) &lt;= 120" />
+      <bind ref="/signup/@agreed" constraint="value === true or value === 'true'" />
+
+      <signal name="snippet"><![CDATA[<model>
+  <instance>
+    <signup name="" email="" age="" agreed="false" />
+  </instance>
+
+  <bind ref="/signup/@name"   required="true" />
+  <bind ref="/signup/@email"  required="true" type="email" />
+  <bind ref="/signup/@age"    type="integer"
+                              constraint="Number(value) >= 13 and Number(value) <= 120" />
+  <bind ref="/signup/@agreed" constraint="value === true" />
+</model>
+
+<view>
+  <!-- The is-invalid class lights up when the bind fails. -->
+  <input class="form-control {invalid('/signup/@email') ? 'is-invalid' : ''}"
+         bind:value="/signup/@email" />
+  <div class="invalid-feedback">
+    <if test="validity('/signup/@email').required and validity('/signup/@email').value === ''">
+      Email is required.
+    </if>
+    <if test="!validity('/signup/@email').type">
+      That doesn't look like an email address.
+    </if>
+  </div>
+
+  <button class="btn btn-primary"
+          disabled="{invalid('/signup/@name') or invalid('/signup/@email')
+                    or invalid('/signup/@age') or invalid('/signup/@agreed')}">
+    Submit
+  </button>
+</view>]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-shield-check" title="Validation"
+          subtitle="Declare validity rules in the model. Read them from expressions in the view." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  <code>&lt;bind ref="path"&gt;</code> in <code>&lt;model&gt;</code> declares
+                  validation rules against an instance-tree path. Three attributes:
+                </p>
+                <ul class="text-secondary">
+                  <li><code>required</code> - boolean expression. When truthy, the field is
+                      required and the value must be non-empty.</li>
+                  <li><code>type</code> - one of <code>email</code>, <code>number</code>,
+                      <code>integer</code>, <code>url</code>, <code>date</code>.</li>
+                  <li><code>constraint</code> - boolean expression. <code>value</code> is
+                      bound to the current path value inside the expression.</li>
+                </ul>
+                <p class="text-secondary">
+                  Read state from the view with these expression helpers:
+                </p>
+                <ul class="text-secondary mb-0">
+                  <li><code>valid('/path')</code> - <code>true</code> when every bind passes.</li>
+                  <li><code>invalid('/path')</code> - inverse of <code>valid</code>.</li>
+                  <li><code>required('/path')</code> - whether the path is currently required.</li>
+                  <li><code>validity('/path')</code> - the full summary object:
+                      <code>{value, required, type, constraint, valid}</code>.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <form novalidate="novalidate" class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Name <span class="text-danger">*</span></label>
+                <input class="form-control {invalid('/signup/@name') ? 'is-invalid' : ''}"
+                       bind:value="/signup/@name" />
+                <div class="invalid-feedback">Required.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Email <span class="text-danger">*</span></label>
+                <input class="form-control {invalid('/signup/@email') ? 'is-invalid' : ''}"
+                       bind:value="/signup/@email" />
+                <div class="invalid-feedback">
+                  <if test="validity('/signup/@email').value === ''">Email is required.</if>
+                  <if test="validity('/signup/@email').value !== '' and !validity('/signup/@email').type">
+                    Doesn&apos;t look like an email address.
+                  </if>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Age</label>
+                <input class="form-control {invalid('/signup/@age') ? 'is-invalid' : ''}"
+                       bind:value="/signup/@age" />
+                <div class="invalid-feedback">Must be a whole number between 13 and 120.</div>
+              </div>
+
+              <div class="col-md-8 d-flex align-items-end">
+                <div class="form-check">
+                  <input class="form-check-input {invalid('/signup/@agreed') ? 'is-invalid' : ''}"
+                         id="agree" type="checkbox" bind:checked="/signup/@agreed" />
+                  <label class="form-check-label" for="agree">
+                    I agree to the terms
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-12 d-flex align-items-center gap-3">
+                <button class="btn btn-primary"
+                        disabled="{invalid('/signup/@name') or invalid('/signup/@email') or invalid('/signup/@age') or invalid('/signup/@agreed')}">
+                  <i class="bi bi-send me-1"></i>Submit
+                </button>
+                <small class="text-secondary">
+                  Stays disabled until every field passes its rules.
+                </small>
+              </div>
+            </form>
+
+            <hr class="my-4" />
+
+            <p class="text-secondary mb-2">Live <code>validity()</code> snapshot:</p>
+            <pre class="xes-code rounded p-3 mb-0"><code>name:   {JSON.stringify(validity('/signup/@name'))}
+email:  {JSON.stringify(validity('/signup/@email'))}
+age:    {JSON.stringify(validity('/signup/@age'))}
+agreed: {JSON.stringify(validity('/signup/@agreed'))}</code></pre>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

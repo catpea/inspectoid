@@ -1,0 +1,136 @@
+<!--
+  chapters/16-slots.xml
+
+  <slot> projects host-supplied content into a component's view. The host
+  writes markup between the component's opening and closing tag; that
+  markup appears wherever the component declares a <slot>.
+
+  This is the same mental model as web-component / Vue / Svelte slots,
+  scoped down to one element. There is no named-slot system yet - if a
+  component needs multiple injection points, pass them as props or use
+  multiple sub-components.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <!--
+    A reusable "card shell" - the heading and footer are component-owned,
+    the body comes from whoever uses the tag.
+  -->
+  <component name="card-shell" tag="x-card-shell" title="Card" tone="info">
+    <style>
+      .xes-shell { border: 1px solid var(--bs-border-color); border-radius: .5rem; overflow: hidden; }
+      .xes-shell-hd { padding: .5rem .9rem; font-weight: 600; }
+      .xes-shell-bd { padding: 1rem; }
+      .xes-shell-ft { padding: .35rem .9rem; font-size: .8rem; color: var(--bs-secondary-color); border-top: 1px solid var(--bs-border-color); }
+    </style>
+
+    <view>
+      <div class="xes-shell text-bg-{tone}-subtle">
+        <div class="xes-shell-hd text-{tone}-emphasis"><i class="bi bi-bookmark me-2"></i>{title}</div>
+        <div class="xes-shell-bd">
+          <slot>
+            <em class="text-secondary">(no content supplied)</em>
+          </slot>
+        </div>
+        <div class="xes-shell-ft">x-card-shell &#xB7; tone: {tone}</div>
+      </div>
+    </view>
+  </component>
+
+  <component name="chapter-slots" tag="x-chapter-slots">
+    <model>
+      <signal name="snippet"><![CDATA[<component name="card-shell" tag="x-card-shell" title="Card" tone="info">
+  <style>
+    .xes-shell    { border: 1px solid var(--bs-border-color); border-radius: .5rem; }
+    .xes-shell-hd { padding: .5rem .9rem; font-weight: 600; }
+    .xes-shell-bd { padding: 1rem; }
+  </style>
+  <view>
+    <div class="xes-shell text-bg-{tone}-subtle">
+      <div class="xes-shell-hd">{title}</div>
+      <div class="xes-shell-bd">
+        <slot>
+          <em>(no content supplied)</em>
+        </slot>
+      </div>
+    </div>
+  </view>
+</component>
+
+<!-- Use it: -->
+<x-card-shell title="Hello" tone="info">
+  <p>This paragraph was authored by the <em>host</em>.</p>
+  <button class="btn btn-primary">A button lives inside the slot</button>
+</x-card-shell>
+
+<!-- Default content kicks in when the host writes nothing: -->
+<x-card-shell title="Empty" tone="warning" />]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-layout-split" title="Slots"
+          subtitle="Hosts write content between the tags. The component decides where it lands." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  A <code>&lt;slot&gt;</code> inside a component's view is a placeholder. When
+                  the host element is connected (<code>&lt;x-card-shell&gt;&#x2026;&lt;/x-card-shell&gt;</code>),
+                  Galath captures whatever the host wrote between the tags and projects it
+                  into the slot at the next render.
+                </p>
+                <p class="text-secondary">
+                  If the host wrote nothing, the slot's own children render instead - the
+                  default fallback content. This is the same shape as Web Components'
+                  <code>&lt;slot&gt;</code>, Vue's named slots, and Svelte's
+                  <code>&lt;slot /&gt;</code>.
+                </p>
+                <p class="text-secondary mb-0">
+                  Captured DOM is <strong>moved</strong>, not cloned - any listeners the host
+                  attached are preserved. Subsequent renders by the component leave the slot
+                  contents alone (they are stamped <code>data-xes-frozen</code> so the
+                  morph layer does not recurse).
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Live demo</strong>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <x-card-shell title="Greeting" tone="info">
+                  <p class="mb-2">This paragraph was authored by the <em>host</em>.</p>
+                  <p class="mb-0 text-secondary xes-tiny">
+                    The card itself has no idea what is inside. It just renders a <code>&lt;slot/&gt;</code>.
+                  </p>
+                </x-card-shell>
+              </div>
+              <div class="col-md-6">
+                <x-card-shell title="Empty card" tone="warning" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </view>
+  </component>
+</galath>

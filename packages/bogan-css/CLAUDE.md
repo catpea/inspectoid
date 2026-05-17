@@ -236,6 +236,8 @@ Every page follows this exact grid. Do not alter the nesting order.
 | `.cf-tree-item` | `a` | Story leaf link. |
 | `.cf-tree-item.is-active` | | Primary color + left accent stripe. |
 | `.cf-tree-badge` | `span` | Right-aligned meta tag (e.g. "story"). Auto-pushed right. |
+| `.cf-tree-group.is-collapsed` | | Hides all `.cf-tree-item` children. Toggled by clicking `.cf-tree-label`. |
+| `.cf-tree-group-recent` | `div` | Auto-injected "Recently Visited" group at tree top. Persisted in `localStorage`. |
 | `.cf-resize-handle` | `div` | 4px drag target. `cursor:col-resize`. Hover → primary tint. |
 
 ### Toolbar
@@ -256,7 +258,11 @@ Every page follows this exact grid. Do not alter the nesting order.
 |---|---|
 | `.cf-canvas` | Dot-grid rendering surface. Centers content. Scrollable. |
 | `.cf-canvas.is-dark` | Dark background canvas for dark-themed stories. |
-| `.cf-preview-frame` | Elevated white panel (max-w 42rem) centered in the canvas. |
+| `.cf-canvas.is-white` | Solid white canvas background. |
+| `.cf-canvas.is-checkerboard` | Checkerboard canvas (transparency grid). |
+| `.cf-preview-frame` | Elevated white panel (max-w 42rem) centered in the canvas. Supports `--cf-zoom` CSS property for scale. |
+| `.cf-preview-frame.is-mobile` | Constrain frame width to 375px. |
+| `.cf-preview-frame.is-tablet` | Constrain frame width to 768px. |
 | `.cf-preview-card` | Flat bordered box — source blocks, inline examples. |
 | `.cf-loading-overlay` | Absolute overlay with blur. Hidden by default. |
 | `.cf-loading-overlay.is-visible` | Show the overlay. |
@@ -276,6 +282,8 @@ Every page follows this exact grid. Do not alter the nesting order.
 | `.cf-action-log` | `ul` for event entries. |
 | `.cf-action-log-item` | Single event row — monospace, accent left stripe. |
 | `.cf-a11y-score` | Inline success indicator (green, check icon). |
+| `.cf-copy-btn` | Auto-injected clipboard button on source pane `<pre>` blocks. Appears on hover. |
+| `.cf-source-line` | Auto-injected per-line `<span>` inside source `<code>`. Drives CSS counter line numbers. |
 
 ### Controls
 
@@ -284,6 +292,8 @@ Every page follows this exact grid. Do not alter the nesting order.
 | `.cf-control-grid` | Auto-fill grid — 14rem min column. |
 | `.cf-control` | Label + input pair (`display:grid`, vertical). |
 | `.cf-control-label` | Row: name left, type/reset right. Uppercase, letter-spaced. |
+| `.cf-control input[type="color"]` | Styled color-picker knob. |
+| `.cf-control input[type="range"]` | Styled range-slider knob with primary accent color. |
 
 ### Docs Panel
 
@@ -329,6 +339,9 @@ Every page follows this exact grid. Do not alter the nesting order.
 | `data-cf-toggle-addons` | `button` | Toggles `.cf-addon-panel.is-collapsed`. |
 | `data-cf-fullscreen` | `button` | Toggles `.cf-workbench.is-fullscreen`. |
 | `data-cf-theme="light\|dark\|auto"` | `button` | Sets `data-bs-theme` on `<html>`. Persisted to `localStorage`. |
+| `data-cf-viewport="mobile\|tablet\|desktop"` | `button` | Constrains `.cf-preview-frame` to 375px / 768px / full width. |
+| `data-cf-zoom="in\|out\|reset"` | `button` | Scales `.cf-preview-frame` via `--cf-zoom` CSS property (0.25–2×). |
+| `data-cf-canvas-bg` | `button` | Cycles `.cf-canvas` background: dot-grid → white → checkerboard. |
 
 ---
 

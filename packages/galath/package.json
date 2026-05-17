@@ -1,6 +1,6 @@
 {
   "name": "galath",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "XML language for web applications",
   "scripts": {
     "save": "git add .; git commit -m 'Updated Release'; npm version patch; npm publish; git push --follow-tags;",

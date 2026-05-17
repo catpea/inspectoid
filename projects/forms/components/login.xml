@@ -1,0 +1,26 @@
+<component name="story-form-login" tag="x-story-form-login">
+  <view>
+    <form class="inspectoid-story-form" style="max-width:28rem">
+      <div class="mb-3">
+        <label for="loginEmail" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" autocomplete="email" />
+      </div>
+      <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <label for="loginPassword" class="form-label">Password</label>
+          <a class="small" href="#">Forgot password?</a>
+        </div>
+        <input type="password" class="form-control" id="loginPassword" autocomplete="current-password" />
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="loginRemember" checked="checked" />
+        <label class="form-check-label" for="loginRemember">Keep me signed in</label>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Log in</button>
+      <div class="text-center mt-3 small">
+        <span class="text-secondary">No account?</span>
+        <a href="#">Create one</a>
+      </div>
+    </form>
+  </view>
+</component>

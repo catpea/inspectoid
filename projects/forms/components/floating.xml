@@ -1,0 +1,33 @@
+<component name="story-form-floating" tag="x-story-form-floating">
+  <view>
+    <form class="inspectoid-story-form">
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatName" placeholder="Jane Doe" />
+        <label for="floatName">Full Name</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="floatEmail" placeholder="name@example.com" />
+        <label for="floatEmail">Email address</label>
+      </div>
+      <div class="form-floating mb-3">
+        <select class="form-select" id="floatSubject">
+          <option value="">Choose a topic...</option>
+          <option value="support">Support</option>
+          <option value="sales">Sales</option>
+          <option value="general">General inquiry</option>
+        </select>
+        <label for="floatSubject">Subject</label>
+      </div>
+      <div class="form-floating mb-3">
+        <textarea class="form-control" id="floatMessage" placeholder="Your message" style="height:120px"></textarea>
+        <label for="floatMessage">Message</label>
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="floatConsent" />
+        <label class="form-check-label" for="floatConsent">I agree to the privacy policy</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Send message</button>
+      <button type="reset" class="btn btn-outline-secondary ms-2">Clear</button>
+    </form>
+  </view>
+</component>

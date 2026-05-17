@@ -1,0 +1,55 @@
+<component name="story-form-settings" tag="x-story-form-settings">
+  <view>
+    <form class="inspectoid-story-form">
+      <div class="inspectoid-form-grid">
+        <div class="mb-3">
+          <label for="settingsLanguage" class="form-label">Language</label>
+          <select class="form-select" id="settingsLanguage">
+            <option value="en" selected="selected">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="settingsTimezone" class="form-label">Timezone</label>
+          <select class="form-select" id="settingsTimezone">
+            <option value="america-new-york" selected="selected">America/New York</option>
+            <option value="america-los-angeles">America/Los Angeles</option>
+            <option value="europe-london">Europe/London</option>
+          </select>
+        </div>
+      </div>
+      <fieldset class="mb-3">
+        <legend class="form-label">Notifications</legend>
+        <div class="form-check form-switch mb-2">
+          <input class="form-check-input" type="checkbox" role="switch" id="settingsEmailAlerts" checked="checked" />
+          <label class="form-check-label" for="settingsEmailAlerts">Email alerts</label>
+        </div>
+        <div class="form-check form-switch mb-2">
+          <input class="form-check-input" type="checkbox" role="switch" id="settingsPushAlerts" />
+          <label class="form-check-label" for="settingsPushAlerts">Push alerts</label>
+        </div>
+      </fieldset>
+      <fieldset class="mb-3">
+        <legend class="form-label">Workspace Visibility</legend>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="workspaceVisibility" id="settingsPrivate" value="private" checked="checked" />
+          <label class="form-check-label" for="settingsPrivate">Private workspace</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="workspaceVisibility" id="settingsTeam" value="team" />
+          <label class="form-check-label" for="settingsTeam">Visible to team</label>
+        </div>
+      </fieldset>
+      <div class="mb-3">
+        <label for="settingsApiKey" class="form-label">API Key</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="settingsApiKey" value="sk_live_************" readonly="readonly" />
+          <button class="btn btn-outline-secondary" type="button">Rotate</button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Save settings</button>
+      <button type="button" class="btn btn-outline-danger ms-2">Disable app</button>
+    </form>
+  </view>
+</component>

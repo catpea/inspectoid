@@ -1,0 +1,163 @@
+<!--
+  chapters/14-switch.xml
+
+  <switch> / <case> / <default>. Branching on a single value without
+  chaining <if>s. Two matching modes: literal value= and boolean test=.
+-->
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:use="urn:galath:use" xmlns:drag="urn:galath:drag" xmlns:drop="urn:galath:drop" xmlns:class="urn:galath:class">
+  <component name="chapter-switch" tag="x-chapter-switch">
+    <model>
+      <signal name="shape"  value="circle" />
+      <signal name="rating" value="3" />
+
+      <signal name="snippet"><![CDATA[<!-- value= does a literal string match against on= -->
+<switch on="activeTab">
+  <case value="overview">
+    <x-tab-overview />
+  </case>
+  <case value="settings">
+    <x-tab-settings />
+  </case>
+  <default>
+    <p>Unknown tab.</p>
+  </default>
+</switch>
+
+<!-- test= evaluates a full boolean expression.
+     Omit on= entirely for free-form branching. -->
+<switch>
+  <case test="score >= 90">Grade: A</case>
+  <case test="score >= 70">Grade: B</case>
+  <case test="score >= 50">Grade: C</case>
+  <default>Grade: F</default>
+</switch>]]></signal>
+    </model>
+
+    <view>
+      <div class="px-4 py-5">
+        <x-chapter-heading icon="bi-sign-turn-right-fill" title="Switch"
+          subtitle="Branch on a value cleanly — no chained &lt;if&gt;s." />
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-body">
+                <h2 class="h5"><i class="bi bi-journal-text me-2 text-info"></i>How it works</h2>
+                <p class="text-secondary">
+                  <code>&lt;switch on="expr"&gt;</code> evaluates the expression once and renders
+                  the first matching <code>&lt;case&gt;</code>. If nothing matches, the optional
+                  <code>&lt;default&gt;</code> is rendered instead.
+                </p>
+                <p class="text-secondary"><strong>Two matching modes on a case:</strong></p>
+                <ul class="text-secondary">
+                  <li>
+                    <code>value="basic"</code> — literal string compared against the <code>on=</code>
+                    result. No quotes needed; the value is always treated as plain text.
+                  </li>
+                  <li>
+                    <code>test="score &gt;= 90"</code> — full boolean expression evaluated in the
+                    component scope. Omit <code>on=</code> when using <code>test=</code> for
+                    range or multi-condition branching.
+                  </li>
+                </ul>
+                <p class="text-secondary mb-0">
+                  Only the <em>first</em> matching case renders. The rest are skipped, just
+                  like a JavaScript <code>switch</code> with implicit breaks.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card xes-card h-100">
+              <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-code-slash me-2"></i>Source</strong>
+                <div class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-info" on:click="window.galathRunSnippet(snippet)" title="Open this snippet in a new tab"><i class="bi bi-play-fill me-1"></i>Run</button><button class="btn btn-outline-info" use:copy="snippet" title="Copy to clipboard"><i class="bi bi-clipboard me-1"></i>Copy</button></div>
+              </div>
+              <div class="card-body p-0">
+                <pre class="xes-code rounded p-3 mb-0"><code><text value="snippet" /></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live demo 1: value= matching -->
+        <div class="card xes-card mb-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-play-circle me-2"></i>Demo — <code>value=</code> matching</strong>
+          </div>
+          <div class="card-body">
+            <div class="row g-3 align-items-center">
+              <div class="col-md-4">
+                <label class="form-label">Shape</label>
+                <select class="form-select" bind:value="shape">
+                  <option value="circle">circle</option>
+                  <option value="square">square</option>
+                  <option value="triangle">triangle (default)</option>
+                </select>
+              </div>
+              <div class="col-md-8">
+                <div class="p-4 border rounded text-center">
+                  <switch on="shape">
+                    <case value="circle">
+                      <i class="bi bi-circle fs-1 text-info"></i>
+                      <div class="text-secondary small mt-1">A circle</div>
+                    </case>
+                    <case value="square">
+                      <i class="bi bi-square fs-1 text-warning"></i>
+                      <div class="text-secondary small mt-1">A square</div>
+                    </case>
+                    <default>
+                      <i class="bi bi-triangle fs-1 text-danger"></i>
+                      <div class="text-secondary small mt-1">A triangle — matched by <code>&lt;default&gt;</code></div>
+                    </default>
+                  </switch>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live demo 2: test= range matching -->
+        <div class="card xes-card">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-filter me-2"></i>Demo — <code>test=</code> range matching</strong>
+          </div>
+          <div class="card-body">
+            <p class="text-secondary">
+              When cases use <code>test=</code>, you can leave out <code>on=</code> entirely.
+              Each case is an independent boolean; the first truthy one wins.
+            </p>
+            <div class="row g-3 align-items-center">
+              <div class="col-md-4">
+                <label class="form-label">Rating (1–5): <strong>{rating}</strong></label>
+                <input class="form-control" type="range" min="1" max="5" bind:value="rating" />
+              </div>
+              <div class="col-md-8">
+                <div class="p-3 border rounded">
+                  <switch>
+                    <case test="rating >= 5">
+                      <span class="badge text-bg-success fs-6"><i class="bi bi-star-fill me-1"></i>Excellent (5)</span>
+                    </case>
+                    <case test="rating >= 4">
+                      <span class="badge text-bg-info fs-6"><i class="bi bi-star-half me-1"></i>Good (4)</span>
+                    </case>
+                    <case test="rating >= 3">
+                      <span class="badge text-bg-primary fs-6"><i class="bi bi-star me-1"></i>Average (3)</span>
+                    </case>
+                    <case test="rating >= 2">
+                      <span class="badge text-bg-warning fs-6"><i class="bi bi-dash-circle me-1"></i>Below average (2)</span>
+                    </case>
+                    <default>
+                      <span class="badge text-bg-danger fs-6"><i class="bi bi-x-circle me-1"></i>Poor (1)</span>
+                    </default>
+                  </switch>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </view>
+  </component>
+</galath>

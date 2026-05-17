@@ -1,0 +1,45 @@
+<component name="story-form-signup" tag="x-story-form-signup">
+  <view>
+    <form class="inspectoid-story-form">
+      <div class="inspectoid-form-grid">
+        <div class="mb-3">
+          <label for="signupFirstName" class="form-label">First Name</label>
+          <input type="text" class="form-control" id="signupFirstName" placeholder="Jane" autocomplete="given-name" />
+        </div>
+        <div class="mb-3">
+          <label for="signupLastName" class="form-label">Last Name</label>
+          <input type="text" class="form-control" id="signupLastName" placeholder="Doe" autocomplete="family-name" />
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="signupEmail" class="form-label">Work Email</label>
+        <input type="email" class="form-control" id="signupEmail" placeholder="jane@example.com" autocomplete="email" />
+      </div>
+      <div class="inspectoid-form-grid">
+        <div class="mb-3">
+          <label for="signupPassword" class="form-label">Password</label>
+          <input type="password" class="form-control" id="signupPassword" autocomplete="new-password" />
+          <div class="form-text">Use at least 12 characters.</div>
+        </div>
+        <div class="mb-3">
+          <label for="signupConfirm" class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="signupConfirm" autocomplete="new-password" />
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="signupPlan" class="form-label">Plan</label>
+        <select class="form-select" id="signupPlan">
+          <option value="starter">Starter</option>
+          <option value="team" selected="selected">Team</option>
+          <option value="enterprise">Enterprise</option>
+        </select>
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="signupTerms" />
+        <label class="form-check-label" for="signupTerms">I agree to the terms and privacy policy</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Create account</button>
+      <button type="button" class="btn btn-outline-secondary ms-2">Invite later</button>
+    </form>
+  </view>
+</component>

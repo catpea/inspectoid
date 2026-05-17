@@ -46,6 +46,28 @@
   font-size: .78rem;
   text-transform: uppercase;
   letter-spacing: .05em;
+  cursor: pointer;
+  user-select: none;
+
+  &::after {
+    content: '▾';
+    margin-left: auto;
+    font-size: .9em;
+    display: inline-block;
+    transition: transform .15s ease;
+  }
+}
+
+.cf-tree-group.is-collapsed > .cf-tree-label::after {
+  transform: rotate(-90deg);
+}
+
+.cf-tree-group.is-collapsed > .cf-tree-item {
+  display: none;
+}
+
+.cf-tree-group-recent > .cf-tree-item {
+  margin-left: .35rem;
 }
 
 .cf-tree-item {

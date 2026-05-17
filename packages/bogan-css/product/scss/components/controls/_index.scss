@@ -21,6 +21,19 @@
   letter-spacing: .04em;
 }
 
+.cf-control input[type="color"] {
+  height: 2rem;
+  padding: .15rem .25rem;
+  cursor: pointer;
+  border-radius: var(--cf-radius-sm);
+}
+
+.cf-control input[type="range"] {
+  padding: 0;
+  cursor: pointer;
+  accent-color: var(--cf-primary);
+}
+
 .cf-action-log {
   display: grid;
   gap: .35rem;

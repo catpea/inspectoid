@@ -47,6 +47,20 @@ export async function boot({ source, mount }) {
     .use(componentFeature)
     .use(renderingFeature);
 
-  await language.start();
+  try {
+    await language.start();
+  } catch (error) {
+    if (mount) {
+      const msg = String(error?.message ?? error);
+      mount.innerHTML = `<pre style="
+        margin:0;padding:1rem 1.25rem;
+        background:#1e1e1e;color:#f14c4c;
+        font-family:monospace;font-size:.85rem;
+        white-space:pre-wrap;word-break:break-word;
+        border-left:4px solid #f14c4c;
+      "><b>[galath] XML parse error</b>\n${msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>`;
+    }
+    throw error;
+  }
   return language;
 }

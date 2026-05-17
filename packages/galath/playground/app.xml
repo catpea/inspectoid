@@ -20,19 +20,26 @@
 
       <instance>
         <chapters>
-          <chapter id="welcome"     icon="bi-stars"         title="Welcome" />
-          <chapter id="signals"     icon="bi-broadcast"     title="Signals" />
-          <chapter id="instance"    icon="bi-database"      title="Instance Tree" />
-          <chapter id="bindings"    icon="bi-link-45deg"    title="Bindings" />
-          <chapter id="expressions" icon="bi-braces"        title="Expressions" />
-          <chapter id="paths"       icon="bi-signpost-split" title="Paths" />
-          <chapter id="lists"       icon="bi-collection"    title="Lists &amp; Templates" />
-          <chapter id="commands"    icon="bi-command"       title="Commands" />
-          <chapter id="controller"  icon="bi-person-gear"   title="Controllers" />
-          <chapter id="events"      icon="bi-broadcast-pin" title="XML Events" />
-          <chapter id="behaviors"   icon="bi-puzzle"        title="Behaviors" />
-          <chapter id="components"  icon="bi-boxes"         title="Components" />
-          <chapter id="imports"     icon="bi-arrow-down-up" title="Imports" />
+          <chapter id="welcome"     icon="bi-stars"                  title="Welcome" />
+          <chapter id="signals"     icon="bi-broadcast"              title="Signals" />
+          <chapter id="instance"    icon="bi-database"               title="Instance Tree" />
+          <chapter id="bindings"    icon="bi-link-45deg"             title="Bindings" />
+          <chapter id="expressions" icon="bi-braces"                 title="Expressions" />
+          <chapter id="paths"       icon="bi-signpost-split"         title="Paths" />
+          <chapter id="lists"       icon="bi-collection"             title="Lists &amp; Templates" />
+          <chapter id="switch"      icon="bi-sign-turn-right-fill"   title="Switch" />
+          <chapter id="commands"    icon="bi-command"                title="Commands" />
+          <chapter id="controller"  icon="bi-person-gear"            title="Controllers" />
+          <chapter id="events"      icon="bi-broadcast-pin"          title="XML Events" />
+          <chapter id="behaviors"   icon="bi-puzzle"                 title="Behaviors" />
+          <chapter id="components"  icon="bi-boxes"                  title="Components" />
+          <chapter id="slots"       icon="bi-layout-split"           title="Slots" />
+          <chapter id="emit"        icon="bi-megaphone"              title="Emit Events" />
+          <chapter id="lifecycle"   icon="bi-arrow-clockwise"        title="Lifecycle" />
+          <chapter id="persistence" icon="bi-hdd"                    title="Persistence" />
+          <chapter id="async"       icon="bi-cloud-download"         title="Async (fetch)" />
+          <chapter id="validation"  icon="bi-shield-check"           title="Validation" />
+          <chapter id="imports"     icon="bi-arrow-down-up"          title="Imports" />
         </chapters>
       </instance>
     </model>
@@ -187,25 +194,30 @@
           </aside>
 
           <section class="col overflow-auto">
-            <!--
-              Chapter switcher. Each chapter is its own custom element
-              registered by an imported XML file. A chain of <if>s is
-              the most readable form for newcomers and adding a chapter
-              is one line here plus the import.
-            -->
-            <if test="activeChapter === 'welcome'"    ><x-chapter-welcome    /></if>
-            <if test="activeChapter === 'signals'"    ><x-chapter-signals    /></if>
-            <if test="activeChapter === 'instance'"   ><x-chapter-instance   /></if>
-            <if test="activeChapter === 'bindings'"   ><x-chapter-bindings   /></if>
-            <if test="activeChapter === 'expressions'"><x-chapter-expressions /></if>
-            <if test="activeChapter === 'paths'"      ><x-chapter-paths      /></if>
-            <if test="activeChapter === 'lists'"      ><x-chapter-lists      /></if>
-            <if test="activeChapter === 'commands'"   ><x-chapter-commands   /></if>
-            <if test="activeChapter === 'controller'" ><x-chapter-controller /></if>
-            <if test="activeChapter === 'events'"     ><x-chapter-events     /></if>
-            <if test="activeChapter === 'behaviors'"  ><x-chapter-behaviors  /></if>
-            <if test="activeChapter === 'components'" ><x-chapter-components /></if>
-            <if test="activeChapter === 'imports'"    ><x-chapter-imports    /></if>
+            <!-- Chapter switcher. Adding a chapter: one import in index.html,
+                 one <chapter> in the instance above, one <case> here. -->
+            <switch on="activeChapter">
+              <case value="welcome"    ><x-chapter-welcome     /></case>
+              <case value="signals"    ><x-chapter-signals     /></case>
+              <case value="instance"   ><x-chapter-instance    /></case>
+              <case value="bindings"   ><x-chapter-bindings    /></case>
+              <case value="expressions"><x-chapter-expressions /></case>
+              <case value="paths"      ><x-chapter-paths       /></case>
+              <case value="lists"      ><x-chapter-lists       /></case>
+              <case value="switch"     ><x-chapter-switch      /></case>
+              <case value="commands"   ><x-chapter-commands    /></case>
+              <case value="controller" ><x-chapter-controller  /></case>
+              <case value="events"     ><x-chapter-events      /></case>
+              <case value="behaviors"  ><x-chapter-behaviors   /></case>
+              <case value="components" ><x-chapter-components  /></case>
+              <case value="slots"      ><x-chapter-slots       /></case>
+              <case value="emit"       ><x-chapter-emit        /></case>
+              <case value="lifecycle"  ><x-chapter-lifecycle   /></case>
+              <case value="persistence"><x-chapter-persistence /></case>
+              <case value="async"      ><x-chapter-async       /></case>
+              <case value="validation" ><x-chapter-validation  /></case>
+              <case value="imports"    ><x-chapter-imports     /></case>
+            </switch>
           </section>
         </div>
       </div>

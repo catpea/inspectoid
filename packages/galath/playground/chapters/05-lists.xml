@@ -132,6 +132,42 @@
             </ol>
           </div>
         </div>
+
+        <div class="card xes-card mt-4">
+          <div class="card-header bg-transparent">
+            <strong><i class="bi bi-key me-2"></i>Keyed loops — stable DOM under reorders</strong>
+          </div>
+          <div class="card-body">
+            <p class="text-secondary">
+              By default the morph layer updates rows <em>by position</em>: row 0 becomes row 0,
+              row 1 becomes row 1, and so on. That means reordering a list trashes focus,
+              scroll position, and any transient state inside each row.
+            </p>
+            <p class="text-secondary">
+              Add <code>key="@id"</code> (any expression that produces a unique string per item)
+              to opt in to <strong>identity-based morphing</strong>. The renderer stamps each
+              root element with <code>data-xes-key</code>; the morph layer reorders existing
+              DOM nodes to match rather than overwriting them in place.
+            </p>
+            <p class="text-secondary mb-3">
+              The attribute goes on <code>&lt;repeat&gt;</code>, on <code>&lt;items&gt;</code>,
+              or on the <code>&lt;datatemplate&gt;</code> itself (inherited by every
+              <code>&lt;items&gt;</code> that uses the template).
+            </p>
+            <pre class="xes-code rounded p-3 mb-0"><code><![CDATA[<!-- key on <repeat> -->
+<repeat ref="/tasks/task" as="task" key="$task/@id">
+  <div><text value="$task/@title" /></div>
+</repeat>
+
+<!-- key on <items> (overrides any key on the datatemplate) -->
+<items source="/tasks/task" as="task" template="task-row" key="$task/@id" />
+
+<!-- key on <datatemplate> (applies to every <items> that uses it) -->
+<datatemplate name="task-row" for="task" key="$task/@id">
+  <div><text value="$task/@title" /></div>
+</datatemplate>]]></code></pre>
+          </div>
+        </div>
       </div>
     </view>
   </component>

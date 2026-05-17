@@ -192,16 +192,59 @@ export function componentFeature(language) {
           }
 
           // <computed name="x" from="y">expr</computed> - derived signal.
-          // The legacy <map> spelling still works.
+          // `from` accepts a comma-separated list ("a, b, c") to depend on
+          // multiple sources; the body re-runs whenever any source changes.
+          // When `from` is empty (or names only unknown signals) we fall back
+          // to the instance-tree version counter so the body still re-evaluates
+          // on any tree mutation. The legacy <map> spelling still works.
           for (const tagName of ['computed', 'map']) {
             for (const el of language.childElements(model, tagName)) {
-              const sourceName = el.getAttribute('from');
-              const source = this.scope.signal(sourceName) || this.tree?.version;
-              if (!source) continue;
-              const expr = (el.querySelector('expression')?.textContent || el.textContent || 'value').trim();
-              this.scope.map(el.getAttribute('name'), source, value =>
-                language.evaluate(expr, this, { value, [sourceName]: value }, value),
-              );
+              const fromAttr = el.getAttribute('from') || '';
+              const sourceNames = fromAttr
+                .split(',')
+                .map(s => s.trim())
+                .filter(Boolean);
+              const sources = sourceNames
+                .map(name => this.scope.signal(name))
+                .filter(Boolean);
+              if (sources.length === 0 && this.tree) sources.push(this.tree.version);
+              if (sources.length === 0) continue;
+
+              const expr = (
+                el.querySelector('expression')?.textContent ||
+                el.textContent ||
+                'value'
+              ).trim();
+              const name = el.getAttribute('name');
+
+              const recompute = () => {
+                const ctx = {};
+                // Expose each named source value as a same-named local so
+                // the expression can use them directly even when the
+                // proxy-scope path is bypassed.
+                for (const sourceName of sourceNames) {
+                  const sig = this.scope.signal(sourceName);
+                  if (sig) ctx[sourceName] = sig.value;
+                }
+                // Single-source legacy convenience: `value` aliases the
+                // single source's current value. Multi-source computeds
+                // get the *first* declared source under `value`.
+                if (sourceNames.length > 0) {
+                  const first = this.scope.signal(sourceNames[0]);
+                  if (first) ctx.value = first.value;
+                }
+                return language.evaluate(expr, this, ctx, '');
+              };
+
+              const derived = new language.Signal(recompute());
+              this.scope.signal(name, derived);
+              for (const sig of sources) {
+                this.scope.collect(
+                  sig.subscribe(() => {
+                    derived.value = recompute();
+                  }, false),
+                );
+              }
             }
           }
         }

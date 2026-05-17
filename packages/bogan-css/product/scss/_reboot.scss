@@ -1,6 +1,17 @@
 body {
   min-width: 320px;
   background: var(--cf-bg);
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.cf-header,
+.cf-sidebar,
+.cf-toolbar,
+.cf-addon-panel,
+.cf-docs-panel,
+.cf-statusbar,
+.cf-preview-card {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
 }
 
 button,

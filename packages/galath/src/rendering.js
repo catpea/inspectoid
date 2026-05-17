@@ -59,6 +59,19 @@ export function renderingFeature(language) {
     'meta', 'source', 'track', 'wbr',
   ]);
 
+  // HTML boolean attributes: their presence means true, absence means false.
+  // When authored as `attr="{expr}"`, galath evaluates the expression and
+  // emits the attribute name only when truthy — never emits `attr="false"`.
+  // This covers every standard HTML boolean attr so authors never have to
+  // write `novalidate="novalidate"` or `selected="selected"` for dynamic cases.
+  const htmlBooleanAttrs = new Set([
+    'allowfullscreen', 'async', 'autofocus', 'autoplay', 'checked',
+    'controls', 'default', 'defer', 'disabled', 'formnovalidate',
+    'hidden', 'ismap', 'loop', 'multiple', 'muted', 'nomodule',
+    'novalidate', 'open', 'readonly', 'required', 'reversed',
+    'selected', 'typemustmatch',
+  ]);
+
   // Tags that the renderer should *display* as their serialized XML rather
   // than recurse into. They are "control plane" tags - if you accidentally
   // write `<commandset>` inside `<view>`, you get a code box, not silent
@@ -118,7 +131,7 @@ export function renderingFeature(language) {
     const items = instance.tree?.select(ref, local) ?? [];
     return items
       .map((item, index) => {
-        const childLocal = { ...local, [as]: item, [`$${as}`]: item, index };
+        const childLocal = makeIterationLocal(local, as, item, index, items.length);
         const html = language.renderChildren(
           [...node.childNodes],
           instance,
@@ -150,7 +163,7 @@ export function renderingFeature(language) {
     const items = instance.tree?.select(node.getAttribute('source'), local) ?? [];
     return items
       .map((item, index) => {
-        const childLocal = { ...local, [as]: item, [`$${as}`]: item, index };
+        const childLocal = makeIterationLocal(local, as, item, index, items.length);
         const html = language.renderChildren(
           [...template.childNodes],
           instance,
@@ -162,6 +175,35 @@ export function renderingFeature(language) {
         return injectKeyAttribute(html, key);
       })
       .join('');
+  }
+
+  // Build the per-iteration local scope for <repeat>/<items>:
+  //
+  //   $name / name  -> the loop item (XNode)
+  //   index, $index -> zero-based offset
+  //   first, $first -> true on the first iteration
+  //   last,  $last  -> true on the final iteration
+  //   count, $count -> total number of items in this iteration
+  //
+  // Both `$x` and `x` spellings work; pick whichever reads better in
+  // your expression. The `$`-prefixed form mirrors how path expressions
+  // refer to locals (`$todo/@text`) so authors can be consistent.
+  function makeIterationLocal(local, as, item, index, count) {
+    const first = index === 0;
+    const last = index === count - 1;
+    return {
+      ...local,
+      [as]: item,
+      [`$${as}`]: item,
+      index,
+      $index: index,
+      first,
+      $first: first,
+      last,
+      $last: last,
+      count,
+      $count: count,
+    };
   }
 
   // Stamp `data-xes-key="..."` onto the first element opening tag in `html`.
@@ -289,7 +331,12 @@ export function renderingFeature(language) {
     // appear in any order. We accumulate every class fragment here and
     // emit a single `class="..."` at the end so we never produce two
     // class attributes (which would be invalid HTML).
+    // `hasClassDirectives` stays true even when all class: expressions are
+    // currently false, so `data-xes-classes` is always emitted on elements
+    // that declare class management — morph needs it to know the element is
+    // tracked and should preserve external classes across every render pass.
     const classParts = [];
+    let hasClassDirectives = false;
 
     for (const attr of [...node.attributes]) {
       const name = attr.name;
@@ -337,6 +384,7 @@ export function renderingFeature(language) {
 
       // -- class:foo="expr" -----------------------------------------------
       if (name.startsWith('class:')) {
+        hasClassDirectives = true;
         if (language.evaluate(value, instance, local)) classParts.push(name.slice(6));
         continue;
       }
@@ -349,14 +397,17 @@ export function renderingFeature(language) {
         continue;
       }
 
-      // -- disabled="{expr}" ----------------------------------------------
-      if (name === 'disabled' && value.startsWith('{') && value.endsWith('}')) {
-        if (language.evaluate(value.slice(1, -1), instance, local)) attrs.push('disabled');
+      // -- HTML boolean attributes: attr="{expr}" -------------------------
+      // Works for disabled, selected, required, readonly, novalidate, etc.
+      // Emit only the attribute name when truthy; emit nothing when falsy.
+      if (htmlBooleanAttrs.has(name) && value.startsWith('{') && value.endsWith('}')) {
+        if (language.evaluate(value.slice(1, -1), instance, local)) attrs.push(name);
         continue;
       }
 
       // -- class="..." (interpolated; merged with class:* below) ----------
       if (name === 'class') {
+        hasClassDirectives = true;
         classParts.unshift(language.interpolate(value, instance, local));
         continue;
       }
@@ -366,9 +417,16 @@ export function renderingFeature(language) {
     }
 
     // Single class attribute, regardless of source ordering.
-    if (classParts.length) {
+    // `data-xes-classes` records exactly which classes galath owns on this
+    // element so morph can merge rather than replace — preserving any classes
+    // that external JS (e.g. bogan-css components.js) has added at runtime.
+    // It is emitted whenever ANY class directive was declared, even when all
+    // class: expressions are currently false and the merged value is empty.
+    // Without it, morph loses the tracking marker and reverts to naive replace.
+    if (hasClassDirectives) {
       const merged = classParts.filter(Boolean).join(' ').trim();
       if (merged) attrs.push(`class="${merged}"`);
+      attrs.push(`data-xes-classes="${merged}"`);
     }
 
     bindings.push(binding);
@@ -474,6 +532,19 @@ export function renderingFeature(language) {
         instance.renderScope.collect(() =>
           element.removeEventListener(eventName, handler),
         );
+
+        // Seed the initial property value. Morph sets properties only on
+        // *existing* elements; nodes appended on first render arrive via
+        // cloneNode and need an explicit property push here. Skip focused
+        // inputs so we don't clobber text the user is actively typing.
+        if (element !== document.activeElement) {
+          const init = readBindingValue(bind.target, instance, binding.local);
+          if (bind.property === 'checked') {
+            element.checked = Boolean(init);
+          } else if (bind.property in element) {
+            element[bind.property] = init ?? '';
+          }
+        }
       }
 
       // use:* attached behaviors.

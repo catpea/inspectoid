@@ -32,14 +32,41 @@
 export function xmlEventsFeature(language) {
   language.setupListeners = instance => {
     const listeners = language.firstChildElement(instance.definition, 'listeners');
-    if (!listeners || !instance.tree) return;
+    if (!listeners) return;
     for (const listener of language.childElements(listeners, 'listener')) {
+      const handler = listener.getAttribute('handler');
+
+      // Signal-change listener: fires when the named signal's value changes.
+      // Syntax: <listener signal="theme" handler="#onThemeChange" />
+      //         <listener signal="pinned"><store signal="pinned" key="app:pinned"/></listener>
+      // `$value` is available in inline operations and as a local in the action.
+      if (listener.hasAttribute('signal')) {
+        const signalName = listener.getAttribute('signal');
+        const sig = instance.scope.signal(signalName);
+        if (!sig) {
+          console.warn(`[galath] <listener signal="${signalName}"> — no such signal`);
+          continue;
+        }
+        instance.scope.collect(
+          sig.subscribe(value => {
+            const local = { $value: value, value };
+            if (handler?.startsWith('#')) {
+              language.executeAction(instance, handler.slice(1), local, null);
+            } else {
+              language.runOperations([...listener.children], instance, local, null);
+            }
+          }, false), // false = don't fire immediately on subscribe
+        );
+        continue;
+      }
+
+      // Data-tree event listener (original behaviour).
+      // Requires an instance tree; skip silently when the component has none.
+      if (!instance.tree) continue;
       const eventName = listener.getAttribute('event') || '*';
       const observer = listener.getAttribute('observer');
-      const handler = listener.getAttribute('handler');
       instance.scope.collect(
         instance.tree.on(eventName, event => {
-          // Path filter: only fire when the event is at or under `observer`.
           if (observer && !event.path.startsWith(observer)) return;
           if (handler?.startsWith('#')) {
             language.executeAction(instance, handler.slice(1), {}, event);

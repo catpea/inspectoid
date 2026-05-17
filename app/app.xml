@@ -1,0 +1,430 @@
+<galath xmlns:bind="urn:galath:bind" xmlns:on="urn:galath:on" xmlns:class="urn:galath:class">
+  <component name="inspectoid-app" tag="x-inspectoid-app">
+    <model>
+      <signal name="activeStory" value="" />
+      <signal name="activeTab" value="controls" />
+      <signal name="theme" value="light" />
+
+      <instance>
+        <import src="../.inspectoid/project.xml" />
+      </instance>
+    </model>
+
+    <controller>
+      <action name="syncRoute">
+        <eval>
+          const stories = select('/project/groups/group/story');
+          const ids = stories.map(story => story.get('id'));
+          const requested = (window.location.hash || '').replace(/^#/, '');
+          const current = valueOf('activeStory');
+          const next = ids.includes(requested) ? requested : (ids.includes(current) ? current : ids[0]);
+          if (next) set('activeStory', next);
+        </eval>
+      </action>
+
+      <action name="selectStory">
+        <set signal="activeStory" value="$event.currentTarget.dataset.storyId" />
+        <eval>
+          const id = $event.currentTarget.dataset.storyId;
+          if (id) window.location.hash = id;
+        </eval>
+      </action>
+
+      <action name="goPrev">
+        <eval>
+          const ids = select('/project/groups/group/story').map(story => story.get('id'));
+          const index = ids.indexOf(valueOf('activeStory'));
+          if (index &gt; 0) {
+            const next = ids[index - 1];
+            set('activeStory', next);
+            window.location.hash = next;
+          }
+        </eval>
+      </action>
+
+      <action name="goNext">
+        <eval>
+          const ids = select('/project/groups/group/story').map(story => story.get('id'));
+          const index = ids.indexOf(valueOf('activeStory'));
+          if (index &gt;= 0 &amp;&amp; index &lt; ids.length - 1) {
+            const next = ids[index + 1];
+            set('activeStory', next);
+            window.location.hash = next;
+          }
+        </eval>
+      </action>
+    </controller>
+
+    <listeners>
+      <listener signal="theme">
+        <store signal="theme" key="'componentsFantasyui.theme'" />
+      </listener>
+    </listeners>
+
+    <on:mount>
+      <restore signal="theme" key="'componentsFantasyui.theme'" default="'light'" />
+      <call action="syncRoute" />
+      <eval>
+        const onHash = () => {
+          const requested = (window.location.hash || '').replace(/^#/, '');
+          const ids = select('/project/groups/group/story').map(story => story.get('id'));
+          if (ids.includes(requested)) set('activeStory', requested);
+        };
+        window.addEventListener('hashchange', onHash);
+        window.__inspectoidHashHandler = onHash;
+
+        const onKey = event => {
+          if (event.altKey || event.ctrlKey || event.metaKey) return;
+          const target = event.target;
+          if (target &amp;&amp; (target.isContentEditable || target.matches?.('input, textarea, select'))) return;
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            const ids = select('/project/groups/group/story').map(story => story.get('id'));
+            const index = ids.indexOf(valueOf('activeStory'));
+            if (index &gt; 0) {
+              const next = ids[index - 1];
+              set('activeStory', next);
+              window.location.hash = next;
+            }
+          } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            const ids = select('/project/groups/group/story').map(story => story.get('id'));
+            const index = ids.indexOf(valueOf('activeStory'));
+            if (index &gt;= 0 &amp;&amp; index &lt; ids.length - 1) {
+              const next = ids[index + 1];
+              set('activeStory', next);
+              window.location.hash = next;
+            }
+          }
+        };
+        window.addEventListener('keydown', onKey);
+        window.__inspectoidKeyHandler = onKey;
+      </eval>
+    </on:mount>
+
+    <on:unmount>
+      <eval>
+        if (window.__inspectoidHashHandler) {
+          window.removeEventListener('hashchange', window.__inspectoidHashHandler);
+          window.__inspectoidHashHandler = null;
+        }
+        if (window.__inspectoidKeyHandler) {
+          window.removeEventListener('keydown', window.__inspectoidKeyHandler);
+          window.__inspectoidKeyHandler = null;
+        }
+      </eval>
+    </on:unmount>
+
+    <style>
+      :host {
+        display: block;
+      }
+
+      inspectoid-story-host {
+        display: block;
+        width: min(100%, 52rem);
+        margin: 0 auto;
+      }
+
+      .inspectoid-project-meta {
+        max-width: 12rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .inspectoid-story-form {
+        max-width: 44rem;
+        margin: 0 auto;
+      }
+
+      .inspectoid-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      @media (max-width: 640px) {
+        .inspectoid-form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <view>
+      <div class="cf-app">
+        <header class="cf-header">
+          <a class="cf-logo" href="./">
+            <span class="cf-logo-mark"><i class="bi bi-ui-checks-grid"></i></span>
+            <span>Inspectoid</span>
+          </a>
+          <nav class="cf-header-nav">
+            <a class="cf-header-link is-active" href="#">Stories</a>
+            <a class="cf-header-link" href="./.inspectoid/project.xml">Project XML</a>
+          </nav>
+          <div class="cf-search">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
+              <input class="form-control" type="search" placeholder="Search stories..." data-cf-search="" />
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2 ms-2">
+            <span class="cf-muted small inspectoid-project-meta">{valueOf('/project/@title')}</span>
+            <button class="btn btn-sm"
+                    class:btn-secondary="theme === 'light'"
+                    class:btn-outline-secondary="theme !== 'light'"
+                    type="button"
+                    data-cf-theme="light"
+                    on:click="set('theme', 'light')"
+                    title="Light mode"><i class="bi bi-sun"></i></button>
+            <button class="btn btn-sm"
+                    class:btn-secondary="theme === 'dark'"
+                    class:btn-outline-secondary="theme !== 'dark'"
+                    type="button"
+                    data-cf-theme="dark"
+                    on:click="set('theme', 'dark')"
+                    title="Dark mode"><i class="bi bi-moon-stars"></i></button>
+            <button class="btn btn-sm"
+                    class:btn-secondary="theme === 'auto'"
+                    class:btn-outline-secondary="theme !== 'auto'"
+                    type="button"
+                    data-cf-theme="auto"
+                    on:click="set('theme', 'auto')"
+                    title="System theme"><i class="bi bi-circle-half"></i></button>
+          </div>
+        </header>
+
+        <div class="cf-workbench has-docs">
+          <aside class="cf-sidebar cf-scrollbar">
+            <div class="cf-sidebar-header">
+              <strong>{valueOf('/project/@title')}</strong>
+            </div>
+            <nav class="cf-tree">
+              <repeat ref="/project/groups/group" as="group">
+                <div class="cf-tree-group">
+                  <div class="cf-tree-label">
+                    <i class="bi {valueOf('$group/@icon')} me-1"></i><text value="$group/@title" />
+                  </div>
+
+                  <repeat ref="$group/story" as="story" key="$story/@id">
+                    <a class="cf-tree-item"
+                       class:is-active="activeStory === valueOf('$story/@id')"
+                       href="#{valueOf('$story/@id')}"
+                       data-story-id="{valueOf('$story/@id')}"
+                       data-cf-label="{valueOf('$story/@label')}"
+                       on:click="#selectStory">
+                      <i class="bi {activeStory === valueOf('$story/@id') ? 'bi-record-circle-fill' : 'bi-circle'} me-1"></i>
+                      <text value="$story/@title" />
+                      <span class="cf-tree-badge"><text value="$story/@kind" /></span>
+                    </a>
+                  </repeat>
+                </div>
+              </repeat>
+            </nav>
+          </aside>
+
+          <main class="cf-center">
+            <div class="cf-toolbar">
+              <div class="cf-toolbar-group">
+                <button class="cf-tool is-active" type="button">
+                  <i class="bi bi-window me-1"></i>Canvas
+                </button>
+                <button class="cf-tool" type="button" data-cf-toggle-docs="">
+                  <i class="bi bi-file-text me-1"></i>Docs
+                </button>
+                <button class="cf-tool" type="button" data-cf-toggle-addons="">
+                  <i class="bi bi-sliders me-1"></i>Controls
+                </button>
+              </div>
+
+              <div class="cf-toolbar-group">
+                <button class="cf-tool" type="button" on:click="#goPrev" aria-label="Previous story" title="Previous story">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="cf-tool" type="button" on:click="#goNext" aria-label="Next story" title="Next story">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+
+              <div class="cf-toolbar-group">
+                <button class="cf-tool" type="button"
+                        data-cf-viewport="mobile"
+                        aria-label="Mobile viewport" title="Mobile (375 px)">
+                  <i class="bi bi-phone"></i>
+                </button>
+                <button class="cf-tool" type="button"
+                        data-cf-viewport="tablet"
+                        aria-label="Tablet viewport" title="Tablet (768 px)">
+                  <i class="bi bi-tablet"></i>
+                </button>
+                <button class="cf-tool is-active" type="button"
+                        data-cf-viewport="desktop"
+                        aria-label="Desktop viewport" title="Desktop (full)">
+                  <i class="bi bi-display"></i>
+                </button>
+              </div>
+
+              <span class="cf-toolbar-spacer"></span>
+
+              <div class="cf-toolbar-group">
+                <span class="cf-muted small me-2">
+                  {valueOf('/project/@title')} / <strong>{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@title')}</strong>
+                </span>
+                <button class="btn btn-sm btn-outline-secondary cf-icon-button"
+                        type="button" data-cf-canvas-bg=""
+                        aria-label="Cycle canvas background" title="Cycle background">
+                  <i class="bi bi-circle-half"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary cf-icon-button"
+                        type="button" data-cf-zoom="out" aria-label="Zoom out">
+                  <i class="bi bi-zoom-out"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary cf-icon-button"
+                        type="button" data-cf-zoom="reset" aria-label="Reset zoom">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary cf-icon-button"
+                        type="button" data-cf-zoom="in" aria-label="Zoom in">
+                  <i class="bi bi-zoom-in"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary cf-icon-button"
+                        type="button" data-cf-fullscreen="" aria-label="Fullscreen">
+                  <i class="bi bi-arrows-fullscreen"></i>
+                </button>
+              </div>
+            </div>
+
+            <section class="cf-canvas" aria-label="Story preview">
+              <div class="cf-preview-frame">
+                <div class="cf-preview-card p-4">
+                  <inspectoid-story-host story-tag="{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@component')}" />
+                </div>
+              </div>
+            </section>
+
+            <section class="cf-addon-panel">
+              <div class="cf-tabbar" role="tablist">
+                <button class="cf-addon-tab"
+                        class:is-active="activeTab === 'controls'"
+                        type="button"
+                        on:click="set('activeTab', 'controls')">Controls</button>
+                <button class="cf-addon-tab"
+                        class:is-active="activeTab === 'source'"
+                        type="button"
+                        on:click="set('activeTab', 'source')">Source</button>
+                <button class="cf-addon-tab"
+                        class:is-active="activeTab === 'a11y'"
+                        type="button"
+                        on:click="set('activeTab', 'a11y')">Accessibility</button>
+              </div>
+
+              <div class="cf-addon-content">
+                <if test="activeTab === 'controls'">
+                  <div class="cf-control-grid">
+                    <label class="cf-control">
+                      <span class="cf-control-label">story <code>string</code></span>
+                      <select class="form-select form-select-sm" bind:value="activeStory">
+                        <repeat ref="/project/groups/group/story" as="story">
+                          <option value="{valueOf('$story/@id')}"><text value="$story/@title" /></option>
+                        </repeat>
+                      </select>
+                    </label>
+
+                    <label class="cf-control">
+                      <span class="cf-control-label">component <code>tag</code></span>
+                      <input class="form-control form-control-sm"
+                             value="{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@component')}"
+                             readonly="readonly" />
+                    </label>
+
+                    <label class="cf-control">
+                      <span class="cf-control-label">source file <code>xml</code></span>
+                      <input class="form-control form-control-sm"
+                             value="{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@file')}"
+                             readonly="readonly" />
+                    </label>
+
+                    <label class="cf-control">
+                      <span class="cf-control-label">project <code>id</code></span>
+                      <input class="form-control form-control-sm"
+                             value="{valueOf('/project/@id')}"
+                             readonly="readonly" />
+                    </label>
+                  </div>
+                </if>
+
+                <if test="activeTab === 'source'">
+                  <div class="p-2" data-cf-pane="source">
+                    <pre class="cf-preview-card cf-mono mb-0 p-3" style="font-size:.8rem;overflow:auto"><code class="language-xml">&lt;import src="./.inspectoid/project.xml" /&gt;
+&lt;import src="./projects/forms/components/basic.xml" /&gt;
+&lt;import src="./projects/forms/components/validation.xml" /&gt;
+&lt;import src="./projects/forms/components/floating.xml" /&gt;
+&lt;import src="./projects/forms/components/sign-up.xml" /&gt;
+&lt;import src="./projects/forms/components/login.xml" /&gt;
+&lt;import src="./projects/forms/components/user-profile.xml" /&gt;
+&lt;import src="./projects/forms/components/application-settings.xml" /&gt;
+&lt;import src="./projects/forms/components/survey.xml" /&gt;
+
+&lt;story id="{activeStory}"
+       title="{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@title')}"
+       component="{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@component')}"
+       file="{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@file')}" /&gt;</code></pre>
+                  </div>
+                </if>
+
+                <if test="activeTab === 'a11y'">
+                  <div class="p-3">
+                    <span class="cf-a11y-score">
+                      <i class="bi bi-check2-circle me-1"></i>0 known violations
+                    </span>
+                    <ul class="list-unstyled mt-3 small cf-muted">
+                      <li><i class="bi bi-check2 text-success me-1"></i>Inputs use visible labels or ARIA labels</li>
+                      <li><i class="bi bi-check2 text-success me-1"></i>Forms expose keyboard-reachable controls</li>
+                      <li><i class="bi bi-check2 text-success me-1"></i>Required fields are marked in label text</li>
+                      <li><i class="bi bi-check2 text-success me-1"></i>Project stories can be navigated by hash links</li>
+                    </ul>
+                  </div>
+                </if>
+              </div>
+            </section>
+          </main>
+
+          <aside class="cf-docs-panel">
+            <div class="cf-docs-header">
+              <h2 class="h5 mb-1">{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@title')}</h2>
+              <p class="cf-muted small mb-0">{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@summary')}</p>
+            </div>
+            <div class="cf-docs-body">
+              <table class="cf-props-table">
+                <thead>
+                  <tr><th>Field</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Component</td><td>{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@component')}</td></tr>
+                  <tr><td>Project File</td><td>{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@file')}</td></tr>
+                  <tr><td>Kind</td><td>{valueOf('/project/groups/group/story[@id=' + activeStory + ']/@kind')}</td></tr>
+                  <tr><td>Project</td><td>{valueOf('/project/@id')}</td></tr>
+                </tbody>
+              </table>
+
+              <div class="cf-doc-example mt-3">
+                <p class="small cf-muted mb-2">Project manifest</p>
+                <a class="btn btn-sm btn-outline-secondary" href="{valueOf('/project/@manifest')}">
+                  <i class="bi bi-filetype-xml me-1"></i>Open XML
+                </a>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <footer class="cf-statusbar">
+          <span>
+            <i class="bi bi-check-circle-fill text-success me-1"></i>
+            Ready - {valueOf('/project/@title')} / {valueOf('/project/groups/group/story[@id=' + activeStory + ']/@title')}
+          </span>
+          <span>inspectoid {valueOf('/project/@version')}</span>
+        </footer>
+      </div>
+    </view>
+  </component>
+</galath>

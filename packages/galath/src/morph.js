@@ -70,10 +70,32 @@ function isCustomElement(el) {
 // Walk the new attribute set and copy values across; remove attributes that
 // don't exist in the new tree. We special-case form fields so that an input
 // being edited doesn't have its `value` ripped out from under the user.
+//
+// CLASS MERGING
+// Galath stamps `data-xes-classes` on every element whose classes it manages.
+// When that attribute is present on either side, we do a surgical merge instead
+// of a full class replace:
+//   - classes galath owned before but no longer wants → removed
+//   - classes galath now wants → added
+//   - all other classes (added by external JS like bogan-css) → untouched
+//
+// This eliminates the "is-active flicker" where bogan-css adds a class and
+// galath's next morph wipes it out.
 // -----------------------------------------------------------------------------
 function syncAttributes(fromEl, toEl) {
   const isFocusedInput =
     fromEl === document.activeElement && FORM_TAGS.has(fromEl.tagName);
+
+  // Read the galath-owned class sets from both sides up front so we can
+  // apply smart merging whenever `class` is touched below.
+  const newGalathClasses = new Set(
+    (toEl.getAttribute('data-xes-classes') ?? '').split(/\s+/).filter(Boolean),
+  );
+  const oldGalathClasses = new Set(
+    (fromEl.getAttribute('data-xes-classes') ?? '').split(/\s+/).filter(Boolean),
+  );
+  const hasClassTracking =
+    toEl.hasAttribute('data-xes-classes') || fromEl.hasAttribute('data-xes-classes');
 
   // Copy/replace attributes from the new element.
   for (const attr of toEl.attributes) {
@@ -81,6 +103,12 @@ function syncAttributes(fromEl, toEl) {
     // many devs (and Galath bindings) write to .value as a property. If the
     // input is currently focused we leave its live value alone.
     if (isFocusedInput && (attr.name === 'value' || attr.name === 'checked')) continue;
+
+    if (attr.name === 'class' && hasClassTracking) {
+      mergeClasses(fromEl, oldGalathClasses, newGalathClasses);
+      continue;
+    }
+
     if (fromEl.getAttribute(attr.name) !== attr.value) {
       fromEl.setAttribute(attr.name, attr.value);
     }
@@ -91,6 +119,13 @@ function syncAttributes(fromEl, toEl) {
   for (const attr of [...fromEl.attributes]) {
     if (!toEl.hasAttribute(attr.name)) {
       if (isFocusedInput && (attr.name === 'value' || attr.name === 'checked')) continue;
+
+      if (attr.name === 'class' && hasClassTracking) {
+        // Galath dropped all its classes this render; preserve external ones.
+        mergeClasses(fromEl, oldGalathClasses, newGalathClasses);
+        continue;
+      }
+
       fromEl.removeAttribute(attr.name);
     }
   }
@@ -106,6 +141,23 @@ function syncAttributes(fromEl, toEl) {
       if (fromEl.checked !== newChecked) fromEl.checked = newChecked;
     }
   }
+}
+
+// Surgically update `fromEl`'s class list:
+//   remove classes galath no longer owns, add classes it now owns,
+//   leave everything else (external JS additions) untouched.
+function mergeClasses(fromEl, oldGalathClasses, newGalathClasses) {
+  const live = new Set(fromEl.className.split(/\s+/).filter(Boolean));
+  for (const cls of oldGalathClasses) {
+    if (!newGalathClasses.has(cls)) live.delete(cls);
+  }
+  for (const cls of newGalathClasses) live.add(cls);
+  if (live.size === 0) {
+    if (fromEl.hasAttribute('class')) fromEl.removeAttribute('class');
+    return;
+  }
+  const merged = [...live].join(' ');
+  if (fromEl.className !== merged) fromEl.className = merged;
 }
 
 // -----------------------------------------------------------------------------

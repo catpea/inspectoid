@@ -1,30 +1,33 @@
 <!doctype html>
 <!--
-  bogan/index.html
-  ================
-  Storybook-clone shell built with:
-    • bogan-css  — the cf-* component workshop UI (Bootstrap-based theme)
-    • galath     — XML reactive framework (signals, switch, components)
+  inspectoid/index.html
+  ======================
 
-  No iframes. Components live directly in the DOM.
+  Inspectoid's entry point is intentionally small. The application shell
+  lives under ./app, and the active component project is selected through
+  ./.inspectoid/project.xml. The project XML and its component files are
+  imported here at startup, following the Galath playground pattern.
 
   To run:
-    npx serve .
-  Then open http://localhost:3000
+    python3 -m http.server 8080
+    open http://localhost:8080/
 -->
 <html lang="en" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bogan — Component Stories</title>
+  <title>Inspectoid - Component Project Inspector</title>
 
-  <!-- bogan-css: compiled Bootstrap theme with bi-* icon font included -->
   <link rel="stylesheet" href="./node_modules/bogan-css/product/css/components-fantasyui.min.css">
+  <style>
+    #mount:empty::before {
+      content: "Loading Inspectoid...";
+      display: block;
+      padding: 2rem;
+      color: #6c757d;
+    }
+  </style>
 
-  <!--
-    Import map: resolve bare specifiers to galath's local source.
-    galath is a workspace monorepo; the runtime lives in packages/galath/src.
-  -->
   <script type="importmap">
     {
       "imports": {
@@ -37,469 +40,97 @@
 <body>
   <div id="mount"></div>
 
-  <!--
-    Galath source. The browser ignores this MIME type; galath's boot()
-    reads textContent and parses it as XML. All elements inside <view>
-    blocks must therefore be valid XML (self-closing tags, quoted attrs).
-  -->
   <script type="application/xml" id="galath-source">
-    <galath version="1.0"
-            xmlns:bind="urn:galath:bind"
-            xmlns:on="urn:galath:on"
-            xmlns:class="urn:galath:class">
+    <galath version="1.0">
+      <import src="./app/app.xml" />
+      <import src="./.inspectoid/project.xml" />
 
-      <!-- ================================================================
-           STORY COMPONENTS
-           Each <component> is one story variant. They are pure presentational
-           components — no model, just a view rendering a Bootstrap form.
-           ================================================================ -->
-
-      <!-- Story 1: Basic Form -->
-      <component name="story-form-basic" tag="x-story-form-basic">
-        <view>
-          <form>
-            <div class="mb-3">
-              <label for="basicName" class="form-label">Full Name</label>
-              <input type="text" class="form-control" id="basicName" placeholder="Jane Doe" />
-            </div>
-            <div class="mb-3">
-              <label for="basicEmail" class="form-label">Email address</label>
-              <input type="email" class="form-control" id="basicEmail" placeholder="name@example.com" />
-              <div class="form-text">We will never share your email with anyone else.</div>
-            </div>
-            <div class="mb-3">
-              <label for="basicSubject" class="form-label">Subject</label>
-              <select class="form-select" id="basicSubject">
-                <option value="">Choose a topic…</option>
-                <option value="support">Support</option>
-                <option value="sales">Sales</option>
-                <option value="general">General inquiry</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="basicMessage" class="form-label">Message</label>
-              <textarea class="form-control" id="basicMessage" rows="4" placeholder="How can we help?"></textarea>
-            </div>
-            <div class="mb-3 form-check">
-              <input type="checkbox" class="form-check-input" id="basicConsent" />
-              <label class="form-check-label" for="basicConsent">I agree to the privacy policy</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Send message</button>
-            <button type="reset" class="btn btn-outline-secondary ms-2">Clear</button>
-          </form>
-        </view>
-      </component>
-
-      <!-- Story 2: Validation States -->
-      <component name="story-form-validation" tag="x-story-form-validation">
-        <view>
-          <form novalidate="novalidate">
-            <div class="mb-3">
-              <label for="valName" class="form-label">Full Name</label>
-              <input type="text" class="form-control is-valid" id="valName" value="Jane Doe" />
-              <div class="valid-feedback">Looks good!</div>
-            </div>
-            <div class="mb-3">
-              <label for="valEmail" class="form-label">Email address</label>
-              <input type="email" class="form-control is-invalid" id="valEmail" value="not-an-email" />
-              <div class="invalid-feedback">Please provide a valid email address.</div>
-            </div>
-            <div class="mb-3">
-              <label for="valSubject" class="form-label">Subject</label>
-              <select class="form-select is-valid" id="valSubject">
-                <option value="support" selected="selected">Support</option>
-                <option value="sales">Sales</option>
-                <option value="general">General inquiry</option>
-              </select>
-              <div class="valid-feedback">Great choice!</div>
-            </div>
-            <div class="mb-3">
-              <label for="valMessage" class="form-label">Message</label>
-              <textarea class="form-control is-invalid" id="valMessage" rows="4"></textarea>
-              <div class="invalid-feedback">Please enter a message (required).</div>
-            </div>
-            <div class="mb-3 form-check">
-              <input type="checkbox" class="form-check-input is-invalid" id="valConsent" />
-              <label class="form-check-label" for="valConsent">I agree to the privacy policy</label>
-              <div class="invalid-feedback">You must agree before submitting.</div>
-            </div>
-            <button type="submit" class="btn btn-primary">Send message</button>
-            <button type="reset" class="btn btn-outline-secondary ms-2">Clear</button>
-          </form>
-        </view>
-      </component>
-
-      <!-- Story 3: Floating Labels -->
-      <component name="story-form-floating" tag="x-story-form-floating">
-        <view>
-          <form>
-            <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatName" placeholder="Jane Doe" />
-              <label for="floatName">Full Name</label>
-            </div>
-            <div class="form-floating mb-3">
-              <input type="email" class="form-control" id="floatEmail" placeholder="name@example.com" />
-              <label for="floatEmail">Email address</label>
-            </div>
-            <div class="form-floating mb-3">
-              <select class="form-select" id="floatSubject">
-                <option value="">Choose a topic…</option>
-                <option value="support">Support</option>
-                <option value="sales">Sales</option>
-                <option value="general">General inquiry</option>
-              </select>
-              <label for="floatSubject">Subject</label>
-            </div>
-            <div class="form-floating mb-3">
-              <textarea class="form-control" id="floatMessage" placeholder="Your message" style="height:120px"></textarea>
-              <label for="floatMessage">Message</label>
-            </div>
-            <div class="mb-3 form-check">
-              <input type="checkbox" class="form-check-input" id="floatConsent" />
-              <label class="form-check-label" for="floatConsent">I agree to the privacy policy</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Send message</button>
-            <button type="reset" class="btn btn-outline-secondary ms-2">Clear</button>
-          </form>
-        </view>
-      </component>
-
-
-      <!-- ================================================================
-           MAIN APP COMPONENT
-           Owns the bogan-css shell structure. Reactive state lives here.
-           ================================================================ -->
-      <component name="bogan-app" tag="x-bogan-app">
-        <model>
-          <!-- Which story variant is shown in the canvas -->
-          <signal name="activeStory" value="basic" />
-          <!-- Which addon-panel tab is active -->
-          <signal name="activeTab" value="controls" />
-        </model>
-
-        <view>
-          <div class="cf-app">
-
-            <!-- Header -->
-            <header class="cf-header">
-              <a class="cf-logo" href="/">
-                <span class="cf-logo-mark"><i class="bi bi-book-half"></i></span>
-                <span>Bogan</span>
-              </a>
-              <nav class="cf-header-nav">
-                <a class="cf-header-link is-active" href="#">Stories</a>
-                <a class="cf-header-link" href="#">Docs</a>
-              </nav>
-              <div class="cf-search">
-                <div class="input-group input-group-sm">
-                  <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
-                  <input class="form-control" type="search" placeholder="Search stories…" data-cf-search="" />
-                </div>
-              </div>
-              <div class="d-flex gap-1 ms-2">
-                <button class="btn btn-sm btn-outline-secondary" type="button"
-                        data-cf-theme="light" title="Light mode"><i class="bi bi-sun"></i></button>
-                <button class="btn btn-sm btn-outline-secondary" type="button"
-                        data-cf-theme="dark" title="Dark mode"><i class="bi bi-moon-stars"></i></button>
-              </div>
-            </header>
-
-            <!-- Three-column workbench -->
-            <div class="cf-workbench has-docs">
-
-              <!-- Left: story tree -->
-              <aside class="cf-sidebar cf-scrollbar">
-                <div class="cf-sidebar-header">
-                  <strong>Story Hierarchy</strong>
-                </div>
-                <nav class="cf-tree">
-                  <div class="cf-tree-group">
-                    <div class="cf-tree-label">
-                      <i class="bi bi-folder2-open me-1"></i>Bootstrap / Form
-                    </div>
-
-                    <a class="cf-tree-item"
-                       class:is-active="activeStory === 'basic'"
-                       href="#"
-                       data-cf-label="form basic contact"
-                       on:click="set('activeStory', 'basic')">
-                      <i class="bi bi-circle me-1"></i>Basic
-                      <span class="cf-tree-badge">story</span>
-                    </a>
-
-                    <a class="cf-tree-item"
-                       class:is-active="activeStory === 'validation'"
-                       href="#"
-                       data-cf-label="form validation states feedback"
-                       on:click="set('activeStory', 'validation')">
-                      <i class="bi bi-circle me-1"></i>Validation
-                      <span class="cf-tree-badge">story</span>
-                    </a>
-
-                    <a class="cf-tree-item"
-                       class:is-active="activeStory === 'floating'"
-                       href="#"
-                       data-cf-label="form floating labels"
-                       on:click="set('activeStory', 'floating')">
-                      <i class="bi bi-circle me-1"></i>Floating Labels
-                      <span class="cf-tree-badge">story</span>
-                    </a>
-
-                  </div>
-                </nav>
-              </aside>
-
-              <!-- Center: toolbar + canvas + addon panel -->
-              <main class="cf-center">
-
-                <!-- Toolbar -->
-                <div class="cf-toolbar">
-                  <div class="cf-toolbar-group">
-                    <button class="cf-tool is-active" type="button">
-                      <i class="bi bi-window me-1"></i>Canvas
-                    </button>
-                    <button class="cf-tool" type="button" data-cf-toggle-docs="">
-                      <i class="bi bi-file-text me-1"></i>Docs
-                    </button>
-                    <button class="cf-tool" type="button" data-cf-toggle-addons="">
-                      <i class="bi bi-sliders me-1"></i>Controls
-                    </button>
-                  </div>
-                  <span class="cf-toolbar-spacer"></span>
-                  <div class="cf-toolbar-group">
-                    <span class="cf-muted small me-2">
-                      Bootstrap / Form / <strong>{activeStory}</strong>
-                    </span>
-                    <button class="btn btn-sm btn-outline-secondary cf-icon-button"
-                            type="button" data-cf-fullscreen="" aria-label="Fullscreen">
-                      <i class="bi bi-arrows-fullscreen"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Canvas: the active story renders here, no iframe -->
-                <section class="cf-canvas" aria-label="Story preview">
-                  <div class="cf-preview-frame">
-                    <div class="cf-preview-card p-4">
-                      <switch on="activeStory">
-                        <case value="basic">
-                          <x-story-form-basic />
-                        </case>
-                        <case value="validation">
-                          <x-story-form-validation />
-                        </case>
-                        <case value="floating">
-                          <x-story-form-floating />
-                        </case>
-                      </switch>
-                    </div>
-                  </div>
-                </section>
-
-                <!-- Addon panel -->
-                <section class="cf-addon-panel">
-                  <div class="cf-tabbar" role="tablist">
-                    <button class="cf-addon-tab"
-                            class:is-active="activeTab === 'controls'"
-                            type="button"
-                            on:click="set('activeTab', 'controls')">Controls</button>
-                    <button class="cf-addon-tab"
-                            class:is-active="activeTab === 'source'"
-                            type="button"
-                            on:click="set('activeTab', 'source')">Source</button>
-                    <button class="cf-addon-tab"
-                            class:is-active="activeTab === 'a11y'"
-                            type="button"
-                            on:click="set('activeTab', 'a11y')">Accessibility</button>
-                  </div>
-
-                  <div class="cf-addon-content">
-
-                    <!-- Controls pane -->
-                    <if test="activeTab === 'controls'">
-                      <div class="cf-control-grid">
-
-                        <label class="cf-control">
-                          <span class="cf-control-label">variant <code>string</code></span>
-                          <select class="form-select form-select-sm"
-                                  bind:value="activeStory">
-                            <option value="basic">basic</option>
-                            <option value="validation">validation</option>
-                            <option value="floating">floating</option>
-                          </select>
-                        </label>
-
-                        <label class="cf-control">
-                          <span class="cf-control-label">active story <code>string</code></span>
-                          <input class="form-control form-control-sm"
-                                 bind:value="activeStory" />
-                        </label>
-
-                      </div>
-                    </if>
-
-                    <!-- Source pane -->
-                    <if test="activeTab === 'source'">
-                      <div class="p-2">
-                        <switch on="activeStory">
-                          <case value="basic">
-                            <pre class="cf-preview-card cf-mono mb-0 p-3" style="font-size:.8rem;overflow:auto"><code><![CDATA[<form>
-  <div class="mb-3">
-    <label for="name" class="form-label">Full Name</label>
-    <input type="text" class="form-control" placeholder="Jane Doe">
-  </div>
-  <div class="mb-3">
-    <label for="email" class="form-label">Email address</label>
-    <input type="email" class="form-control">
-    <div class="form-text">We will never share your email.</div>
-  </div>
-  <div class="mb-3">
-    <label for="subject" class="form-label">Subject</label>
-    <select class="form-select">...</select>
-  </div>
-  <div class="mb-3">
-    <textarea class="form-control" rows="4"></textarea>
-  </div>
-  <button type="submit" class="btn btn-primary">Send message</button>
-</form>]]></code></pre>
-                          </case>
-                          <case value="validation">
-                            <pre class="cf-preview-card cf-mono mb-0 p-3" style="font-size:.8rem;overflow:auto"><code><![CDATA[<!-- Add .is-valid or .is-invalid to controls -->
-<input type="text" class="form-control is-valid" value="Jane Doe">
-<div class="valid-feedback">Looks good!</div>
-
-<input type="email" class="form-control is-invalid" value="bad">
-<div class="invalid-feedback">Please provide a valid email.</div>
-
-<select class="form-select is-valid">...</select>
-<div class="valid-feedback">Great choice!</div>]]></code></pre>
-                          </case>
-                          <case value="floating">
-                            <pre class="cf-preview-card cf-mono mb-0 p-3" style="font-size:.8rem;overflow:auto"><code><![CDATA[<!-- Wrap each field in .form-floating; label comes AFTER input -->
-<div class="form-floating mb-3">
-  <input type="text" class="form-control"
-         id="floatName" placeholder="Jane Doe">
-  <label for="floatName">Full Name</label>
-</div>
-
-<div class="form-floating mb-3">
-  <textarea class="form-control" style="height:120px"></textarea>
-  <label for="floatMsg">Message</label>
-</div>]]></code></pre>
-                          </case>
-                        </switch>
-                      </div>
-                    </if>
-
-                    <!-- Accessibility pane -->
-                    <if test="activeTab === 'a11y'">
-                      <div class="p-3">
-                        <span class="cf-a11y-score">
-                          <i class="bi bi-check2-circle me-1"></i>0 violations
-                        </span>
-                        <ul class="list-unstyled mt-3 small cf-muted">
-                          <li><i class="bi bi-check2 text-success me-1"></i>All inputs have associated labels</li>
-                          <li><i class="bi bi-check2 text-success me-1"></i>Form has a submit button</li>
-                          <li><i class="bi bi-check2 text-success me-1"></i>Color contrast passes WCAG AA</li>
-                          <li><i class="bi bi-check2 text-success me-1"></i>Interactive elements are keyboard-reachable</li>
-                        </ul>
-                      </div>
-                    </if>
-
-                  </div>
-                </section>
-
-              </main>
-
-              <!-- Right: docs panel -->
-              <aside class="cf-docs-panel">
-                <div class="cf-docs-header">
-                  <switch on="activeStory">
-                    <case value="basic">
-                      <h2 class="h5 mb-1">Form — Basic</h2>
-                      <p class="cf-muted small mb-0">Standard contact form with text, email, select, and textarea.</p>
-                    </case>
-                    <case value="validation">
-                      <h2 class="h5 mb-1">Form — Validation</h2>
-                      <p class="cf-muted small mb-0">Bootstrap validation states: .is-valid and .is-invalid with feedback.</p>
-                    </case>
-                    <case value="floating">
-                      <h2 class="h5 mb-1">Form — Floating Labels</h2>
-                      <p class="cf-muted small mb-0">Bootstrap .form-floating wrapper — label animates on focus/fill.</p>
-                    </case>
-                  </switch>
-                </div>
-                <div class="cf-docs-body">
-
-                  <table class="cf-props-table">
-                    <thead>
-                      <tr><th>Class</th><th>Purpose</th></tr>
-                    </thead>
-                    <tbody>
-                      <tr><td>.form-control</td><td>Styled text / email / textarea input</td></tr>
-                      <tr><td>.form-select</td><td>Styled select dropdown</td></tr>
-                      <tr><td>.form-label</td><td>Label above control</td></tr>
-                      <tr><td>.form-text</td><td>Helper text below control</td></tr>
-                      <tr><td>.form-check</td><td>Checkbox / radio wrapper</td></tr>
-                      <tr><td>.is-valid</td><td>Green valid state + feedback</td></tr>
-                      <tr><td>.is-invalid</td><td>Red invalid state + feedback</td></tr>
-                      <tr><td>.form-floating</td><td>Floating label wrapper</td></tr>
-                    </tbody>
-                  </table>
-
-                  <div class="cf-doc-example mt-3">
-                    <p class="small cf-muted mb-2">Live mini example:</p>
-                    <div class="mb-2">
-                      <label class="form-label small">Email</label>
-                      <input type="email" class="form-control form-control-sm"
-                             placeholder="name@example.com" />
-                    </div>
-                    <button class="btn btn-sm btn-primary">Submit</button>
-                  </div>
-
-                </div>
-              </aside>
-
-            </div><!-- /.cf-workbench -->
-
-            <!-- Status bar -->
-            <footer class="cf-statusbar">
-              <span>
-                <i class="bi bi-check-circle-fill text-success me-1"></i>
-                Ready — Bootstrap / Form / {activeStory}
-              </span>
-              <span>bogan v1.0.0</span>
-            </footer>
-
-          </div><!-- /.cf-app -->
-        </view>
-      </component>
-
-
-      <!-- ================================================================
-           APPLICATION ENTRY POINT
-           ================================================================ -->
-      <application name="bogan">
-        <x-bogan-app />
+      <application name="inspectoid">
+        <x-inspectoid-app />
       </application>
-
     </galath>
   </script>
 
-  <!-- bogan-css interactivity: search filtering, theme toggle, fullscreen -->
   <script src="./node_modules/bogan-css/product/js/bootstrap.bundle.min.js"></script>
   <script type="module" src="./node_modules/bogan-css/product/js/components.js"></script>
+  <script type="module" src="./app/components/story-host.js"></script>
 
-  <!-- Boot galath, expose on window for devtools exploration -->
   <script type="module">
     import { boot } from 'galath/boot';
 
-    const language = await boot({
-      source: document.getElementById('galath-source').textContent,
-      mount:  document.getElementById('mount'),
-    });
+    try {
+      const source = await sourceWithProjectImports(
+        document.getElementById('galath-source').textContent,
+        './.inspectoid/project.xml',
+      );
+      window.inspectoid = await boot({
+        source,
+        mount:  document.getElementById('mount'),
+      });
+    } catch (error) {
+      const mount = document.getElementById('mount');
+      mount.innerHTML = `
+        <div class="container-xxl py-5">
+          <div class="alert alert-danger">
+            <h2 class="h5"><i class="bi bi-exclamation-triangle me-2"></i>Inspectoid failed to boot</h2>
+            <pre class="mb-0">${String(error?.stack || error)}</pre>
+          </div>
+        </div>
+      `;
+      throw error;
+    }
 
-    window.bogan = language;
+    async function sourceWithProjectImports(source, projectSrc) {
+      const imports = await projectComponentImports(projectSrc);
+      if (imports.length === 0) return source;
+
+      const importXml = imports
+        .map(src => `      <import src="${escapeXmlAttribute(src)}" />`)
+        .join('\n');
+
+      return source.replace(
+        /(\n\s*<application\b)/,
+        `\n${importXml}\n$1`,
+      );
+    }
+
+    async function projectComponentImports(projectSrc) {
+      const response = await fetch(projectSrc);
+      if (!response.ok) {
+        throw new Error(`Failed to load ${projectSrc}: HTTP ${response.status}`);
+      }
+
+      const text = await response.text();
+      const projectDoc = new DOMParser().parseFromString(text, 'application/xml');
+      const parseError = projectDoc.querySelector('parsererror');
+      if (parseError) throw new Error(parseError.textContent.trim());
+
+      const imports = [];
+      const seen = new Set();
+      const add = src => {
+        if (!src || seen.has(src)) return;
+        seen.add(src);
+        imports.push(src);
+      };
+
+      for (const importEl of projectDoc.querySelectorAll('import[src]')) {
+        add(importEl.getAttribute('src'));
+      }
+      for (const storyEl of projectDoc.querySelectorAll('story[file]')) {
+        add(storyEl.getAttribute('file'));
+      }
+
+      window.inspectoidProjectImports = imports;
+      return imports;
+    }
+
+    function escapeXmlAttribute(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
   </script>
 </body>
 </html>

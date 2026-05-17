@@ -24,10 +24,38 @@
     linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px);
 }
 
+.cf-canvas.is-white {
+  background-color: #ffffff;
+  background-image: none;
+}
+
+.cf-canvas.is-checkerboard {
+  background-color: #c0c0c0;
+  background-image:
+    linear-gradient(45deg, #ffffff 25%, transparent 25%),
+    linear-gradient(-45deg, #ffffff 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #ffffff 75%),
+    linear-gradient(-45deg, transparent 75%, #ffffff 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
+
 .cf-preview-frame {
   @include cf-panel(.85rem);
   width: min(42rem, 100%);
   padding: 1.25rem;
+  transform: scale(var(--cf-zoom, 1));
+  transform-origin: top center;
+}
+
+.cf-preview-frame.is-mobile {
+  width: 375px;
+  max-width: 100%;
+}
+
+.cf-preview-frame.is-tablet {
+  width: 768px;
+  max-width: 100%;
 }
 
 .cf-preview-card {
@@ -115,4 +143,44 @@
 .cf-workbench.is-fullscreen,
 .cf-workbench.is-fullscreen:not(.has-docs) {
   grid-template-columns: 1fr;
+}
+
+// Source pane copy button
+.cf-panel-pane[data-cf-pane="source"] pre {
+  position: relative;
+}
+
+.cf-copy-btn {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+
+.cf-panel-pane[data-cf-pane="source"] pre:hover .cf-copy-btn,
+.cf-copy-btn:focus {
+  opacity: 1;
+}
+
+// Source code line numbers
+.cf-source-line {
+  display: block;
+  counter-increment: cf-line;
+
+  &::before {
+    content: counter(cf-line);
+    display: inline-block;
+    min-width: 2ch;
+    margin-right: 1.25rem;
+    color: var(--cf-muted);
+    text-align: right;
+    user-select: none;
+    opacity: .6;
+  }
+}
+
+.cf-panel-pane[data-cf-pane="source"] pre > code {
+  counter-reset: cf-line;
+  display: block;
 }
